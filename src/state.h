@@ -13,7 +13,11 @@
 *
 /
 
-
+class FsmObject
+{
+  int x;
+  int y;
+}
   
 class FsmCondition
 {
@@ -86,7 +90,16 @@ class FsmManager
 
     FsmState &currentState;
     vector<FsmStates> allStates;
-    vector<Fsm>
+    vector<FsmVariable> varsInput;
+    vector<FsmVariable> vars;
 
+    void receiveState();
+    void receiveAciton();
+    void receiveTransition();
+    void receiveVarInput();
+    void receiveVarOutput();
+    void receiveVarInternal();
+
+    
   // Maybe timer???
 }
