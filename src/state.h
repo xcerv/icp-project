@@ -12,6 +12,9 @@
 * @brief ...
 *
 /
+
+
+  
 class FsmCondition
 {
   protected: 
@@ -41,13 +44,49 @@ class FsmTransition
     bool setDestination(FsmState state);
     bool setCondition(FsmCondition cond);
 }
+
+class FsmAction
+{
+  protected:
+    string action;
+  public:
+
+    bool execute();
+    bool setAction(string action);
+    string getAction();
+}
   
 class FsmState
 {
   protected:
     string name;
-    vector<FsmTransition> transitions;
     size_t timeout;
+    vector<FsmTransition> transitions;
+    vector<FsmAction> actions;
     
 }
 
+// Abstract...
+class FsmVariable
+{
+  protected:
+    string name;
+    string value;
+  public:
+    // Getters and setters
+}
+
+class FsmInternalVariable
+{}
+
+class FsmManager
+{
+  protected:
+    string name;
+
+    FsmState &currentState;
+    vector<FsmStates> allStates;
+    vector<Fsm>
+
+  // Maybe timer???
+}
