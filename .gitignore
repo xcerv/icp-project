@@ -1,3 +1,7 @@
+# Build
+build/*
+doc/*
+
 # Prerequisites
 *.d
 
