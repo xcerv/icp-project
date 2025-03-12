@@ -14,6 +14,16 @@
 using namespace std;
 #include <string>
 
+enum varType : int
+{
+    INT,
+    FLOAT,
+    DOUBLE,
+    STRING,
+    CHAR,
+    BOOL,
+};
+
 struct FsmPoint
 {
   ssize_t x;
@@ -30,7 +40,7 @@ class FsmInterface
         virtual void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) = 0;
         virtual void updateVarInput(size_t id, string name, string value) = 0;
         virtual void updateVarOutput(size_t id, string name, string value) = 0;
-        virtual void updateVarInternal(size_t id, string name, string value) = 0;
+        virtual void updateVarInternal(size_t id, string name, string value, varType type) = 0;
 
         virtual void loadFile(string filename) = 0;
         virtual void saveFile(string filename) = 0;

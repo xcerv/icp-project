@@ -19,59 +19,61 @@
 
 using namespace std;
 
+
+
 class FsmCondition
 {
-  protected:
-    inline static size_t id = 0;
+    protected:
+        inline static size_t id = 0;
 
-    string condition;
+        string condition;
 
-  public:
-    FsmCondition();
+    public:
+        FsmCondition();
 
-    size_t getId();
-    string getCondition();
+        size_t getId();
+        string getCondition();
 
-    bool setCondition(string cond);
+        bool setCondition(string cond);
 
-    bool evaluate();
+        bool evaluate();
 };
 
 class FsmTransition
 {
-  protected:
-    inline static size_t id = 0;
+    protected:
+        inline static size_t id = 0;
 
-    FsmState source;
-    FsmState dest;
-    FsmCondition transCondition; // Condition for transition
+        FsmState source;
+        FsmState dest;
+        FsmCondition transCondition; // Condition for transition
 
-  public:
-    FsmTransition();
+    public:
+        FsmTransition();
 
-    size_t getId();
-    FsmState getSource();
-    FsmState getDestination();
-    FsmCondition getCondition();
+        size_t getId();
+        FsmState getSource();
+        FsmState getDestination();
+        FsmCondition getCondition();
 
-    bool setSource(FsmState state);
-    bool setDestination(FsmState state);
-    bool setCondition(FsmCondition cond);
+        bool setSource(FsmState state);
+        bool setDestination(FsmState state);
+        bool setCondition(FsmCondition cond);
 };
 
 class FsmAction
 {
-  protected:
-    string action;
-    inline static size_t id = 0;
-public:
-    FsmAction();
+    protected:
+        string action;
+        inline static size_t id = 0;
+    public:
+        FsmAction();
 
-    bool execute();
-    size_t getId();
-    string getAction();
+        bool execute();
+        size_t getId();
+        string getAction();
 
-    bool setAction(string action);
+        bool setAction(string action);
 };
 
 class FsmState
@@ -109,22 +111,23 @@ class FsmState
 // Abstract...
 class FsmVariable
 {
-  protected:
-    string name;
-    string value;
-  public:
+    protected:
+        string name;
+        string value;
+    public:
 
-    size_t getId();
-    string getName();
-    string getValue();
+        size_t getId();
+        string getName();
+        string getValue();
 
-    bool setName(string name);
-    bool setValue(string value);
+        bool setName(string name);
+        bool setValue(string value);
 };
 
 class FsmVariableInternal : FsmVariable
 {
     protected:
+        varType type;
         inline static size_t id = 0;
     public:
         size_t getId();
@@ -171,7 +174,7 @@ class FsmModel : public FsmInterface
     void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) override;
     void updateVarInput(size_t id, string name, string value) override;
     void updateVarOutput(size_t id, string name, string value) override;
-    void updateVarInternal(size_t id, string name, string value) override;
+    void updateVarInternal(size_t id, string name, string value, varType type) override;
 
     void loadFile(string filename) override;
     void saveFile(string filename) override;

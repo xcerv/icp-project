@@ -171,7 +171,7 @@ class FsmView : public FsmInterface
     void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) override;
     void updateVarInput(size_t id, string name, string value) override;
     void updateVarOutput(size_t id, string name, string value) override;
-    void updateVarInternal(size_t id, string name, string value) override;
+    void updateVarInternal(size_t id, string name, string value, varType type) override;
 
     void loadFile(string filename) override;
     void saveFile(string filename) override;
