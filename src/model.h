@@ -116,7 +116,8 @@ class FsmModel
   protected:
     string name;
 
-    FsmState &currentState;
+    FsmView &view;
+    size_t currentState;
 
     vector<FsmStates> states;
     vector<FsmAction> actions;
