@@ -4,7 +4,7 @@
  * @file state.h
  * @author  xlogin00
  *
- * @brief Interface for states...
+ * @brief Interface for classes working with MVC
  *
  */
 

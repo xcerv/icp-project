@@ -1,15 +1,15 @@
 /**
  * Project name: ICP Project 2024/2025
  *
- * @file state.h
+ * @file view.h
  * @author xlogin00
  *
- * @brief Interface for Model class
+ * @brief Interface for View class
  *
  */
 
-#ifndef FSM_MODEL_H_
-#define FSM_MODEL_H_
+#ifndef FSM_VIEW_H_
+#define FSM_VIEW_H_
 
 #include <string>
 #include <vector>
@@ -146,7 +146,7 @@ class FsmVariableOutput : FsmVariable
         size_t getId();
 };
 
-class FsmModel : public FsmInterface
+class FsmView : public FsmInterface
 {
   protected:
     string name;
