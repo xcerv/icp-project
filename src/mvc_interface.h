@@ -42,6 +42,14 @@ class FsmInterface
         virtual void updateVarOutput(size_t id, string name, string value) = 0;
         virtual void updateVarInternal(size_t id, string name, string value, varType type) = 0;
 
+        virtual void destroyState(size_t id) = 0;
+        virtual void destroyAction(size_t id) = 0;
+        virtual void destroyCondition(size_t id) = 0;
+        virtual void destroyTransition(size_t id) = 0;
+        virtual void destroyVarInput(size_t id) = 0;
+        virtual void destroyVarOutput(size_t id) = 0;
+        virtual void destroyVarInternal(size_t id) = 0;
+
         virtual void loadFile(string filename) = 0;
         virtual void saveFile(string filename) = 0;
 

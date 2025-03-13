@@ -173,6 +173,14 @@ class FsmView : public FsmInterface
     void updateVarOutput(size_t id, string name, string value) override;
     void updateVarInternal(size_t id, string name, string value, varType type) override;
 
+    void destroyState(size_t id) override;
+    void destroyAction(size_t id) override;
+    void destroyCondition(size_t id) override;
+    void destroyTransition(size_t id) override;
+    void destroyVarInput(size_t id) override;
+    void destroyVarOutput(size_t id) override;
+    void destroyVarInternal(size_t id) override;
+
     void loadFile(string filename) override;
     void saveFile(string filename) override;
     
