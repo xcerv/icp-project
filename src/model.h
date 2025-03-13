@@ -83,7 +83,8 @@ class FsmState
 
         string name;
         FsmPoint position;
-        size_t timeout;
+
+        stateType type; // May be only NORMAL or FINAL; ACTIVE can be tracked globally with state_id, since it's always one state
 
         // Reference to the map
         vector<size_t> transitions;
@@ -95,11 +96,9 @@ class FsmState
         size_t getId();
         string getName();
         FsmPoint getPosition();
-        size_t getTimeout();
 
         bool setName(string name);
         bool setPosition(FsmPoint point);
-        bool setTimeout(size_t timeout);
 
         bool addTransition(size_t id);
         bool removeTransition(size_t id);
