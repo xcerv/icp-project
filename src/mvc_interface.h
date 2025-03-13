@@ -24,6 +24,13 @@ enum varType : int
     BOOL,
 };
 
+enum stateType : int
+{
+    NORMAL,
+    FINAL,
+    ACTIVE,
+};
+
 struct FsmPoint
 {
   ssize_t x;
@@ -33,8 +40,7 @@ struct FsmPoint
 class FsmInterface
 {
     public:
-
-        virtual void updateState(size_t id, string name, FsmPoint pos) = 0;
+        virtual void updateState(size_t id, string name, FsmPoint pos, stateType type) = 0;
         virtual void updateAction(size_t id, string action) = 0;
         virtual void updateCondition(size_t id, string condition) = 0;
         virtual void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) = 0;
@@ -53,7 +59,8 @@ class FsmInterface
         virtual void loadFile(string filename) = 0;
         virtual void saveFile(string filename) = 0;
 
-        virtual void saveFile(string filename) = 0;
+        // This may be used only one-way
+        virtual void log(string time, string state, string varInputs, string varOutputs, string varInternals) = 0;
 
         virtual void cleanup() = 0;
         virtual void throwError(int errnum) = 0;

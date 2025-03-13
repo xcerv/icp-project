@@ -165,7 +165,7 @@ class FsmView : public FsmInterface
 
   public:
     // Interface methods
-    void updateState(size_t id, string name, FsmPoint pos) override;
+    void updateState(size_t id, string name, FsmPoint pos, stateType type) override;
     void updateAction(size_t id, string action) override;
     void updateCondition(size_t id, string condition) override;
     void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) override;
@@ -183,6 +183,8 @@ class FsmView : public FsmInterface
 
     void loadFile(string filename) override;
     void saveFile(string filename) override;
+
+    void log(string time, string state, string varInputs, string varOutputs, string varInternals) override;
     
     void cleanup() override; // Clear the class entirely
     void throwError(int errnum) override;
