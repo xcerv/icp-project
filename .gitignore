@@ -1,6 +1,11 @@
 # Build
-build/*
-doc/*
+build
+
+# Doc
+doc
+
+# Misc
+.vscode
 
 # Prerequisites
 *.d
