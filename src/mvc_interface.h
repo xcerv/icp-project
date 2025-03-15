@@ -41,8 +41,8 @@ class FsmInterface
 {
     public:
         virtual void updateState(size_t id, string name, FsmPoint pos, stateType type) = 0;
-        virtual void updateAction(size_t id, string action) = 0;
-        virtual void updateCondition(size_t id, string condition) = 0;
+        virtual void updateAction(size_t id, size_t parent_state_id, string action) = 0;
+        virtual void updateCondition(size_t parent_transition_id, string condition) = 0;
         virtual void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) = 0;
         virtual void updateVarInput(size_t id, string name, string value) = 0;
         virtual void updateVarOutput(size_t id, string name, string value) = 0;
@@ -50,7 +50,7 @@ class FsmInterface
 
         virtual void destroyState(size_t id) = 0;
         virtual void destroyAction(size_t id) = 0;
-        virtual void destroyCondition(size_t id) = 0;
+        virtual void destroyCondition(size_t parent_id) = 0;
         virtual void destroyTransition(size_t id) = 0;
         virtual void destroyVarInput(size_t id) = 0;
         virtual void destroyVarOutput(size_t id) = 0;
