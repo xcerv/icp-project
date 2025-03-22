@@ -14,15 +14,12 @@
 class FsmCondition
 {
     protected:
-        inline static size_t id = 0;
-
         string condition;
 
     public:
-        FsmCondition();
+        FsmCondition(string cond);
 
-        size_t getId();
-        string getCondition();
+        const string &getCondition() const;
 
         bool setCondition(string cond);
 

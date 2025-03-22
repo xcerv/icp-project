@@ -13,46 +13,62 @@ using namespace std;
 #include <string>
 #include "fsm_variable.h"
 
-/* GENERIC */
-size_t FsmVariable::getId()
+FsmVariable::FsmVariable(string name, string value):
+    name{name},
+    value{value}
 {
-    return size_t();
+
 }
 
-string FsmVariable::getName()
+const string &FsmVariable::getName() const
 {
-    return string();
+    return this->name;
 }
 
-string FsmVariable::getValue()
+const string &FsmVariable::getValue() const
 {
-    return string();
+    return this->value;
 }
 
 bool FsmVariable::setName(string name)
 {
-    return false;
+    this->name = name;
+    return true;
 }
 
 bool FsmVariable::setValue(string value)
 {
-    return false;
+    this->value = value;
+    return true;
 }
 
+/* GENERIC */
+
+
 /* INTERNAL */
-size_t FsmVariableInternal::getId()
+FsmVariableInternal::FsmVariableInternal(string name, string value, varType type) : FsmVariable(name, value),
+    type{type}
 {
-    return size_t();
+
+}
+
+const varType FsmVariableInternal::getType() const
+{
+    return this->type;
+}
+
+bool FsmVariableInternal::setType(varType newType)
+{
+    this->type = newType;
+    return true;
 }
 
 /* INPUT */
-size_t FsmVariableInput::getId()
+FsmVariableInput::FsmVariableInput(string name, string value) : FsmVariable(name, value)
 {
-    return size_t();
 }
 
 /* OUTPUT */
-size_t FsmVariableOutput::getId()
+FsmVariableOutput::FsmVariableOutput(string name, string value) : FsmVariable(name, value)
 {
-    return size_t();
 }

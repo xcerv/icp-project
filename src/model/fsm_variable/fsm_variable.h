@@ -23,49 +23,46 @@ class FsmVariable
         string value;
 
     public:
+        FsmVariable(string name, string value);
 
-        virtual size_t getId();
-        virtual string getName();
-        virtual string getValue();
+        virtual const string &getName() const;
+        virtual const string &getValue() const;
 
         virtual bool setName(string name);
         virtual bool setValue(string value);
 };
 
-
 /**
  * @brief Internal variable class
  */
-class FsmVariableInternal : FsmVariable
+class FsmVariableInternal : public FsmVariable
 {
     protected:
         varType type;
-        inline static size_t id = 0;
     public:
-        size_t getId();
+        FsmVariableInternal(string name, string value, varType type);
+
+        const varType getType() const;
+        bool setType(varType newType);
 };
 
 /**
  * @brief Input variable class
  */
-class FsmVariableInput : FsmVariable
+class FsmVariableInput : public FsmVariable
 {
-    protected:
-        inline static size_t id = 0;
     public:
-        size_t getId();
+        FsmVariableInput(string name, string value);
 };
 
 
 /**
  * @brief Output variable class 
  */
-class FsmVariableOutput : FsmVariable
+class FsmVariableOutput : public FsmVariable
 {
-    protected:
-        inline static size_t id = 0;
     public:
-        size_t getId();
+        FsmVariableOutput(string name, string value);
 };
 
 #endif

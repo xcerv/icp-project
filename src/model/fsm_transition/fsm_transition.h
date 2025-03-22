@@ -18,23 +18,20 @@
 class FsmTransition
 {
     protected:
-        inline static size_t id = 0;
-
-        FsmState source;
-        FsmState dest;
+        size_t source;
+        size_t dest;
         FsmCondition transCondition; // Condition for transition
 
     public:
-        FsmTransition();
+        FsmTransition(size_t src, size_t dest, string cond);
 
-        size_t getId();
-        FsmState getSource();
-        FsmState getDestination();
-        FsmCondition getCondition();
+        const size_t &getSource() const;
+        const size_t &getDestination() const;
+        const string &getCondition() const;
 
-        bool setSource(FsmState state);
-        bool setDestination(FsmState state);
-        bool setCondition(FsmCondition cond);
+        bool setSource(size_t state);
+        bool setDestination(size_t state);
+        bool setCondition(string condition);
 };
 
 #endif

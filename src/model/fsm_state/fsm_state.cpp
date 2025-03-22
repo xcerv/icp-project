@@ -8,71 +8,113 @@
  *
  */
 
+#include <unordered_set>
+#include <vector>
 #include "fsm_state.h"
 
 /**
- * @brief 
- * @return 
+ * @brief
+ * @param n
+ * @param p
+ * @param t
  */
-size_t FsmState::getId()
+FsmState::FsmState(string n, FsmPoint p, stateType t):
+    name{n},
+    position{p},
+    type{t}
 {
-    return size_t();
 }
 
-/**
- * @brief 
- * @return 
- */
-string FsmState::getName()
+const string &FsmState::getName() const
 {
-    return string();
+    return this->name;
 }
 
-/**
- * @brief 
- * @return 
- */
-FsmPoint FsmState::getPosition()
+const FsmPoint &FsmState::getPosition() const
 {
-    return FsmPoint();
+    return this->position;
 }
 
-/**
- * @brief 
- * @param name 
- * @return 
- */
+const stateType &FsmState::getType() const
+{
+    return this->type;
+}
+
+const size_t &FsmState::getActionByOrder(size_t order) const
+{
+    return this->actions.at(order);
+}
+
+const vector<size_t> &FsmState::getActions()
+{
+    return this->actions;
+}
+
+const unordered_set<size_t> &FsmState::getTransitions()
+{
+    return this->transitions;
+}
+
 bool FsmState::setName(string name)
 {
-    return false;
+    this->name = name;
+    return true;
 }
 
-/**
- * @brief 
- * @param point 
- * @return 
- */
-bool FsmState::setPosition(FsmPoint point)
+bool FsmState::setPosition(FsmPoint position)
 {
-    return false;
+    this->position = position;
+    return true;
+}
+
+bool FsmState::setType(stateType type)
+{
+    this->type = type;
+    return true;
 }
 
 bool FsmState::addTransition(size_t id)
 {
-    return false;
+    if(this->transitions.find(id) == this->transitions.end()){ // Inserted new
+        this->transitions.emplace(id);
+        return true;
+    }
+    else{ // Inserted nothing
+        return false;
+    }
 }
 
 bool FsmState::removeTransition(size_t id)
 {
-    return false;
+    if(this->transitions.find(id) != this->transitions.end()){ // Removed element
+        this->transitions.erase(id);
+        return true;
+    }
+    else{ // Removed nothing
+        return false;
+    }
 }
 
-bool FsmState::addAction(size_t id)
+
+bool FsmState::addAction(size_t id, size_t currOrder, size_t order)
 {
-    return false;
+    // Already at right position
+    if(order == currOrder && order<actions.size() && actions[order] == id) return true;
+
+    // id is present already
+    if(currOrder != SIZE_MAX)
+    {
+        actions.erase(actions.begin() + currOrder);
+    }
+
+    actions.insert(actions.begin() + order, id);
+
+    return true;
 }
 
-bool FsmState::removeAction(size_t id)
+bool FsmState::removeAction(size_t order)
 {
-    return false;
+    actions.erase(actions.begin()+order);
+
+    return true;
 }

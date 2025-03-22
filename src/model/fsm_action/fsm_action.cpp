@@ -13,27 +13,35 @@ using namespace std;
 #include <string>
 #include "fsm_action.h"
 
-FsmAction::FsmAction()
+FsmAction::FsmAction(string act, size_t ord):
+    action{act},
+    order{ord}
 {
-
 }
 
 bool FsmAction::execute()
 {
-    return false;
+    return false; // Todo
 }
 
-size_t FsmAction::getId()
+const string & FsmAction::getAction() const
 {
-    return size_t();
+    return this->action;
 }
 
-string FsmAction::getAction()
+const size_t & FsmAction::getOrder() const
 {
-    return string();
+    return this->order;
 }
 
 bool FsmAction::setAction(string action)
 {
-    return false;
+    this->action = action;
+    return true;
+}
+
+bool FsmAction::setOrder(size_t newOrder)
+{
+    this->order = newOrder;
+    return true;
 }

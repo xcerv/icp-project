@@ -15,15 +15,18 @@ class FsmAction
 {
     protected:
         string action;
-        inline static size_t id = 0;
+        size_t order;
+
     public:
-        FsmAction();
+        FsmAction(string act, size_t ord);
 
         bool execute();
-        size_t getId();
-        string getAction();
+
+        const string &getAction() const;
+        const size_t &getOrder() const;
 
         bool setAction(string action);
+        bool setOrder(size_t newOrder);
 };
 
 #endif

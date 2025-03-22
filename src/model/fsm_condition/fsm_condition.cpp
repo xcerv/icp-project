@@ -14,26 +14,24 @@ using namespace std;
 #include <string>
 #include "fsm_condition.h"
 
-FsmCondition::FsmCondition()
+
+FsmCondition::FsmCondition(string cond):
+    condition{cond}
 {
 }
 
-size_t FsmCondition::getId()
+const string &FsmCondition::getCondition() const
 {
-    return size_t();
-}
-
-string FsmCondition::getCondition()
-{
-    return string();
+    return this->condition;
 }
 
 bool FsmCondition::setCondition(string cond)
 {
-    return false;
+    this->condition = cond;
+    return true;
 }
 
 bool FsmCondition::evaluate()
 {
-    return false;
+    return false; // Todo
 }

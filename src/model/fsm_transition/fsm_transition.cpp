@@ -18,41 +18,41 @@ using namespace std;
 
 #include "fsm_transition.h"
 
-FsmTransition::FsmTransition()
+FsmTransition::FsmTransition(size_t src, size_t dest, string cond):
+    source{src},
+    dest{dest},
+    transCondition{cond}
 {
 }
 
-size_t FsmTransition::getId()
+const size_t &FsmTransition::getSource() const
 {
-    return size_t();
+    return this->source;
 }
 
-FsmState FsmTransition::getSource()
+const size_t &FsmTransition::getDestination() const
 {
-    return FsmState();
+    return this->dest;
 }
 
-FsmState FsmTransition::getDestination()
+const string &FsmTransition::getCondition() const
 {
-    return FsmState();
+    return this->transCondition.getCondition();
 }
 
-FsmCondition FsmTransition::getCondition()
+bool FsmTransition::setSource(size_t state)
 {
-    return FsmCondition();
+    this->source = state;
+    return true;
 }
 
-bool FsmTransition::setSource(FsmState state)
+bool FsmTransition::setDestination(size_t state)
 {
-    return false;
+    this->dest = state;
+    return true;
 }
 
-bool FsmTransition::setDestination(FsmState state)
+bool FsmTransition::setCondition(string condition)
 {
-    return false;
-}
-
-bool FsmTransition::setCondition(FsmCondition cond)
-{
-    return false;
+    return this->transCondition.setCondition(condition);
 }
