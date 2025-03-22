@@ -19,62 +19,19 @@
 
 using namespace std;
 
-class FsmCondition
-{
-  protected:
-    inline static size_t id = 0;
+/* Forward Declare */
+class ViewCondition;
+class ViewTransition;
+class ViewAction;
+class ViewState;
+class ViewVariable;
+class ViewVariableInternal;
+class ViewVariableInput;
+class ViewVariableOutput;
 
-    string condition;
+class FsmView;
 
-  public:
-    FsmCondition();
-
-    size_t getId();
-    string getCondition();
-
-    bool setCondition(string cond);
-
-    bool evaluate();
-};
-
-class FsmTransition
-{
-  protected:
-    inline static size_t id = 0;
-
-    FsmState source;
-    FsmState dest;
-    FsmCondition transCondition; // Condition for transition
-
-  public:
-    FsmTransition();
-
-    size_t getId();
-    FsmState getSource();
-    FsmState getDestination();
-    FsmCondition getCondition();
-
-    bool setSource(FsmState state);
-    bool setDestination(FsmState state);
-    bool setCondition(FsmCondition cond);
-};
-
-class FsmAction
-{
-  protected:
-    string action;
-    inline static size_t id = 0;
-public:
-    FsmAction();
-
-    bool execute();
-    size_t getId();
-    string getAction();
-
-    bool setAction(string action);
-};
-
-class FsmState
+class ViewState
 {
     protected:
         inline static size_t id = 0;
@@ -89,7 +46,7 @@ class FsmState
         vector<size_t> actions;
 
     public:
-        FsmState();
+        ViewState();
 
         size_t getId();
         string getName();
@@ -105,8 +62,63 @@ class FsmState
         bool removeAction(size_t id);
 };
 
+class ViewCondition
+{
+  protected:
+    inline static size_t id = 0;
+
+    string condition;
+
+  public:
+    ViewCondition();
+
+    size_t getId();
+    string getCondition();
+
+    bool setCondition(string cond);
+
+    bool evaluate();
+};
+
+class ViewTransition
+{
+  protected:
+    inline static size_t id = 0;
+
+    ViewState source;
+    ViewState dest;
+    ViewCondition transCondition; // Condition for transition
+
+  public:
+    ViewTransition();
+
+    size_t getId();
+    ViewState getSource();
+    ViewState getDestination();
+    ViewCondition getCondition();
+
+    bool setSource(ViewState state);
+    bool setDestination(ViewState state);
+    bool setCondition(ViewCondition cond);
+};
+
+class ViewAction
+{
+  protected:
+    string action;
+    inline static size_t id = 0;
+public:
+    ViewAction();
+
+    bool execute();
+    size_t getId();
+    string getAction();
+
+    bool setAction(string action);
+};
+
 // Abstract...
-class FsmVariable
+class ViewVariable
 {
   protected:
     string name;
@@ -121,7 +133,7 @@ class FsmVariable
     bool setValue(string value);
 };
 
-class FsmVariableInternal : FsmVariable
+class ViewVariableInternal : ViewVariable
 {
     protected:
         inline static size_t id = 0;
@@ -129,7 +141,7 @@ class FsmVariableInternal : FsmVariable
         size_t getId();
 };
 
-class FsmVariableInput : FsmVariable
+class ViewVariableInput : ViewVariable
 {
     protected:
         inline static size_t id = 0;
@@ -137,7 +149,7 @@ class FsmVariableInput : FsmVariable
         size_t getId();
 };
 
-class FsmVariableOutput : FsmVariable
+class ViewVariableOutput : ViewVariable
 {
     protected:
         inline static size_t id = 0;
@@ -150,19 +162,20 @@ class FsmView : public FsmInterface
   protected:
     string name;
 
-    shared_ptr<FsmInterface> view; // Subject to change?
+    shared_ptr<FsmInterface> model; // Subject to change?
     size_t currentState;
 
+    map<size_t,ViewState> states;
+    map<size_t,ViewAction> actions;
+    map<size_t,ViewCondition> conditions;
+    map<size_t,ViewTransition> transitions;
+    map<size_t,ViewVariableInternal> varsInternal;
+    map<size_t,ViewVariableInput> varsInput;
+    map<size_t,ViewVariableOutput> varsOutput;
 
-    map<size_t, FsmState> states;
-    map<size_t,FsmAction> actions;
-    map<size_t,FsmCondition> conditions;
-    map<size_t,FsmTransition> transitions;
-    map<size_t,FsmVariableInternal> varsInternal;
-    map<size_t,FsmVariableInput> varsInput;
-    map<size_t,FsmVariableOutput> varsOutput;
+  public:   
+    FsmView();
 
-  public:
     // Interface methods
     void updateState(size_t id, string name, FsmPoint pos, stateType type) override;
     void updateAction(size_t id, size_t parent_state_id, string action) override;

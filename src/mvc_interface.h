@@ -1,8 +1,8 @@
 /**
  * Project name: ICP Project 2024/2025
  *
- * @file state.h
- * @author  xlogin00
+ * @file mvc_interface.h
+ * @author  xcervia00
  *
  * @brief Interface for classes working with MVC
  *

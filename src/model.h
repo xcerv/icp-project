@@ -1,8 +1,8 @@
 /**
  * Project name: ICP Project 2024/2025
  *
- * @file state.h
- * @author xlogin00
+ * @file model.h
+ * @author xcervia00
  *
  * @brief Interface for Model class
  *
@@ -15,11 +15,54 @@
 #include <vector>
 #include <memory>
 #include <map>
+
 #include "mvc_interface.h"
 
 using namespace std;
 
+/* Forward Declare */
+class FsmCondition;
+class FsmTransition;
+class FsmAction;
+class FsmState;
+class FsmVariable;
+class FsmVariableInternal;
+class FsmVariableInput;
+class FsmVariableOutput;
+class FsmModel;
 
+/* Classes */
+
+class FsmState
+{
+    protected:
+        inline static size_t id = 0;
+
+        string name;
+        FsmPoint position;
+
+        stateType type; // May be only NORMAL or FINAL; ACTIVE can be tracked globally with state_id, since it's always one state
+
+        // Reference to the map
+        vector<size_t> transitions;
+        vector<size_t> actions;
+
+    public:
+        //FsmState();
+
+        size_t getId();
+        string getName();
+        FsmPoint getPosition();
+
+        bool setName(string name);
+        bool setPosition(FsmPoint point);
+
+        bool addTransition(size_t id);
+        bool removeTransition(size_t id);
+
+        bool addAction(size_t id);
+        bool removeAction(size_t id);
+};
 
 class FsmCondition
 {
@@ -76,37 +119,6 @@ class FsmAction
         bool setAction(string action);
 };
 
-class FsmState
-{
-    protected:
-        inline static size_t id = 0;
-
-        string name;
-        FsmPoint position;
-
-        stateType type; // May be only NORMAL or FINAL; ACTIVE can be tracked globally with state_id, since it's always one state
-
-        // Reference to the map
-        vector<size_t> transitions;
-        vector<size_t> actions;
-
-    public:
-        FsmState();
-
-        size_t getId();
-        string getName();
-        FsmPoint getPosition();
-
-        bool setName(string name);
-        bool setPosition(FsmPoint point);
-
-        bool addTransition(size_t id);
-        bool removeTransition(size_t id);
-
-        bool addAction(size_t id);
-        bool removeAction(size_t id);
-};
-
 // Abstract...
 class FsmVariable
 {
@@ -156,8 +168,7 @@ class FsmModel : public FsmInterface
     shared_ptr<FsmInterface> view; // Subject to change?
     size_t currentState;
 
-
-    map<size_t, FsmState> states;
+    map<size_t,FsmState> states;
     map<size_t,FsmAction> actions;
     map<size_t,FsmCondition> conditions;
     map<size_t,FsmTransition> transitions;
@@ -166,6 +177,8 @@ class FsmModel : public FsmInterface
     map<size_t,FsmVariableOutput> varsOutput;
 
   public:
+    FsmModel();
+
     // Interface methods
     void updateState(size_t id, string name, FsmPoint pos, stateType type) override;
     void updateAction(size_t id, size_t parent_state_id, string action) override;
