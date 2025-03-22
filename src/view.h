@@ -178,7 +178,7 @@ class FsmView : public FsmInterface
 
     // Interface methods
     void updateState(size_t id, string name, FsmPoint pos, stateType type) override;
-    void updateAction(size_t id, size_t parent_state_id, string action) override;
+    void updateAction(size_t id, size_t parent_state_id, size_t order, string action) override;
     void updateCondition(size_t parent_transition_id, string condition) override;
     void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) override;
     void updateVarInput(size_t id, string name, string value) override;
@@ -186,7 +186,7 @@ class FsmView : public FsmInterface
     void updateVarInternal(size_t id, string name, string value, varType type) override;
 
     void destroyState(size_t id) override;
-    void destroyAction(size_t id) override;
+    void destroyAction(size_t id, size_t parent_state_id) override;
     void destroyCondition(size_t parent_id) override;
     void destroyTransition(size_t id) override;
     void destroyVarInput(size_t id) override;
@@ -200,6 +200,12 @@ class FsmView : public FsmInterface
     
     void cleanup() override; // Clear the class entirely
     void throwError(int errnum) override;
+
+    void startInterpretation() override; // Do nothing for view?
+    void stopInterpretation() override; // Do nothing for view?
+
+    // View specific
+    void registerModel(shared_ptr<FsmInterface> model);
 };
 
 #endif
