@@ -7,6 +7,10 @@ doc
 # Misc
 .vscode
 
+# QT junk
+src/*.pro.user
+src/*pro.autosave
+
 # Prerequisites
 *.d
 
