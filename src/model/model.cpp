@@ -43,9 +43,6 @@ void FsmModel::destroyVarInput(size_t id){}
 void FsmModel::destroyVarOutput(size_t id){}
 void FsmModel::destroyVarInternal(size_t id){}
 
-void FsmModel::loadFile(string filename){}
-void FsmModel::saveFile(string filename){}
-
 void FsmModel::log(string time, string state, string varInputs, string varOutputs, string varInternals){}
 
 void FsmModel::cleanup(){} // Clear the class entirely
