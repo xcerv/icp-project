@@ -14,7 +14,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <map>
+#include <unordered_map>
 
 #include "mvc_interface.h"
 
@@ -28,6 +28,8 @@ using namespace std;
 
 /* Forward Declare */
 
+#define ID_UNSET SIZE_MAX
+
 /* Classes */
 class FsmModel : public FsmInterface
 {
@@ -37,20 +39,19 @@ class FsmModel : public FsmInterface
     shared_ptr<FsmInterface> view; // Subject to change?
     size_t currentState;
 
-    map<size_t,FsmState> states;
-    map<size_t,FsmAction> actions;
-    map<size_t,FsmCondition> conditions;
-    map<size_t,FsmTransition> transitions;
-    map<size_t,FsmVariableInternal> varsInternal;
-    map<size_t,FsmVariableInput> varsInput;
-    map<size_t,FsmVariableOutput> varsOutput;
+    unordered_map<size_t,FsmState> states;
+    unordered_map<size_t,FsmAction> actions;
+    unordered_map<size_t,FsmTransition> transitions;
+    unordered_map<size_t,FsmVariableInternal> varsInternal;
+    unordered_map<size_t,FsmVariableInput> varsInput;
+    unordered_map<size_t,FsmVariableOutput> varsOutput;
 
   public:
     FsmModel();
 
     // Interface methods
     void updateState(size_t id, string name, FsmPoint pos, stateType type) override;
-    void updateAction(size_t id, size_t parent_state_id, string action) override;
+    void updateAction(size_t id, size_t parent_state_id, size_t order, string action) override;
     void updateCondition(size_t parent_transition_id, string condition) override;
     void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) override;
     void updateVarInput(size_t id, string name, string value) override;
@@ -58,7 +59,7 @@ class FsmModel : public FsmInterface
     void updateVarInternal(size_t id, string name, string value, varType type) override;
 
     void destroyState(size_t id) override;
-    void destroyAction(size_t id) override;
+    void destroyAction(size_t id, size_t parent_state_id) override;
     void destroyCondition(size_t parent_id) override;
     void destroyTransition(size_t id) override;
     void destroyVarInput(size_t id) override;
@@ -72,6 +73,12 @@ class FsmModel : public FsmInterface
     
     void cleanup() override; // Clear the class entirely
     void throwError(int errnum) override;
+
+    void startInterpretation() override;
+    void stopInterpretation() override;
+
+    // Model specific
+    void registerView(shared_ptr<FsmInterface> view);
 };
 
 #endif
