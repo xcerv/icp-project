@@ -10,6 +10,7 @@ doc
 # QT junk
 src/*.pro.user
 src/*pro.autosave
+src/build
 
 # Prerequisites
 *.d
