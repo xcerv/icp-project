@@ -32,8 +32,8 @@ public:
     void displayCoords();
 
 public slots:
-    void workAreaLeftClick();
-    void workAreaRightClick();
+    void workAreaLeftClick(QPoint position);
+    void workAreaRightClick(QPoint position);
 private:
     Ui::EditorWindow *ui;
 

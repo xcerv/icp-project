@@ -8,9 +8,9 @@ WorkArea::~WorkArea(){}
 
 void WorkArea::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
-        emit leftClick();
+        emit leftClick(event->pos());
     } else if (event->button() == Qt::RightButton) {
-        emit rightClick();
+        emit rightClick(event->pos());
     }
 }
 

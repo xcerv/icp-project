@@ -19,8 +19,8 @@ public:
     ~WorkArea();
     void mousePressEvent(QMouseEvent *event)override;
 signals:
-    void rightClick();
-    void leftClick();
+    void rightClick(QPoint position);
+    void leftClick(QPoint position);
 protected:
     void paintEvent(QPaintEvent *event) override;
 };

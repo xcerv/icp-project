@@ -30,7 +30,6 @@ EditorWindow::EditorWindow(QWidget *parent)
     workAreaScrollLayout->addWidget(workArea);
     workAreaScrollLayout->setAlignment(Qt::AlignCenter);  // center workArea
     workAreaScrollContainer->setLayout(workAreaScrollLayout);
-    //workAreaScrollContainer->setStyleSheet("QWidget{background:black;}");
     ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
 }
 
@@ -47,12 +46,12 @@ void EditorWindow::resizeWorkArea(int width, int height){
     workArea->setFixedSize(width,height);
 }
 
-void EditorWindow::workAreaLeftClick(){
-    statusBarLabel->setText("left");
+void EditorWindow::workAreaLeftClick(QPoint position){
+    statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
 }
 
-void EditorWindow::workAreaRightClick(){
-    statusBarLabel->setText("right");
+void EditorWindow::workAreaRightClick(QPoint position){
+    statusBarLabel->setText("right: " + QString::number(position.x()) + ", " + QString::number(position.y()));
 }
 
 void EditorWindow::displayCoords(){
