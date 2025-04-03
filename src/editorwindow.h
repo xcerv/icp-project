@@ -12,6 +12,8 @@
 #define EDITORWINDOW_H
 
 #include <QMainWindow>
+#include <QLabel>
+#include "workarea.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -27,8 +29,17 @@ public:
     EditorWindow(QWidget *parent = nullptr);
     ~EditorWindow();
     void resizeWorkArea(int width, int height);
+    void displayCoords();
 
+public slots:
+    void workAreaLeftClick();
+    void workAreaRightClick();
 private:
     Ui::EditorWindow *ui;
+
+    QLabel * statusBarLabel;
+    WorkArea * workArea;
+    QWidget * workAreaScrollContainer;
+    QLayout * workAreaScrollLayout;
 };
 #endif // EDITORWINDOW_H

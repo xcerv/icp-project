@@ -16,14 +16,46 @@ EditorWindow::EditorWindow(QWidget *parent)
     , ui(new Ui::EditorWindow)
 {
     ui->setupUi(this);
+
+
+    statusBarLabel = new QLabel("nothing");
+    statusBar()->addWidget(statusBarLabel);
+
+    workArea = new WorkArea;
+    connect(workArea, &WorkArea::leftClick, this, &EditorWindow::workAreaLeftClick);
+    connect(workArea, &WorkArea::rightClick, this, &EditorWindow::workAreaRightClick);
     resizeWorkArea(1000,500);
+    workAreaScrollContainer = new QWidget();
+    workAreaScrollLayout = new QVBoxLayout(workAreaScrollContainer);  // layout for centering
+    workAreaScrollLayout->addWidget(workArea);
+    workAreaScrollLayout->setAlignment(Qt::AlignCenter);  // center workArea
+    workAreaScrollContainer->setLayout(workAreaScrollLayout);
+    //workAreaScrollContainer->setStyleSheet("QWidget{background:black;}");
+    ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
 }
 
 EditorWindow::~EditorWindow()
 {
+    delete workAreaScrollContainer;
+    delete workAreaScrollLayout;
+    delete workArea;
+    delete statusBarLabel;
     delete ui;
 }
 
 void EditorWindow::resizeWorkArea(int width, int height){
-    ui->workArea->setFixedSize(width,height);
+    workArea->setFixedSize(width,height);
 }
+
+void EditorWindow::workAreaLeftClick(){
+    statusBarLabel->setText("left");
+}
+
+void EditorWindow::workAreaRightClick(){
+    statusBarLabel->setText("right");
+}
+
+void EditorWindow::displayCoords(){
+
+}
+
