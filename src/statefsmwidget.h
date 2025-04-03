@@ -51,6 +51,7 @@ public:
      * @param cond condition to be added and displayed
      */
     void addCondition(QString cond);
+    void recolor(const QString& c1, const QString& c2);
 signals:
     /**
      * @brief rightClick onto state

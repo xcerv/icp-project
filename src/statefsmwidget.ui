@@ -24,21 +24,10 @@
 background: #b3d1ff/*#F0F5FF*/
 }
 
-QWidget#StateFSMWidget{
-background: white
-}
-
-QPushButton{
-color:navy;
-background:#b3d1ff;
-border: 3px solid #b3d1ff;
-}
-
 QLabel{
 color: navy;
 font:14px &quot;Nimbus Mono PS&quot;;
 }
-
 
 QScrollArea{
 border: 5px solid #b3d1ff;
@@ -115,7 +104,6 @@ QScrollBar::add-line:horizontal
         subcontrol-position: right;
         subcontrol-origin: margin;
     }
-
 
 QTextEdit, QListView {
     background-attachment: scroll;

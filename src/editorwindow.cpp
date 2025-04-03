@@ -67,16 +67,17 @@ void EditorWindow::workAreaRightClick(QPoint position){
 void EditorWindow::stateFSMRightClick(){
     statusBarLabel->setText("DEBUG: right-clicked on state");
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
+    stateClicked->recolor("#b3d1ff","navy");
 
     //debug outputs
-    stateClicked->setName("right-clicked");
+    //stateClicked->setName("right-clicked");
     //stateClicked->addCondition("condition");
 }
 
 void EditorWindow::stateFSMLeftClick(){
     statusBarLabel->setText("DEBUG: left-clicked on state");
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
-    stateClicked->setName("left-clicked");
+    stateClicked->recolor("red","green");
 }
 
 void EditorWindow::insertFSMState(QPoint position, QString name){
