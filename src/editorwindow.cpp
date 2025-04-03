@@ -60,7 +60,7 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 
 void EditorWindow::workAreaRightClick(QPoint position){
     statusBarLabel->setText("right: " + QString::number(position.x()) + ", " + QString::number(position.y()));
-    insertFSMState(position, "state");
+    insertFSMState(position, "state"); //todo: get name of state from user
 }
 
 
@@ -69,8 +69,14 @@ void EditorWindow::stateFSMRightClick(){
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
     //debug outputs
-    //stateClicked->setName("clicked");
+    stateClicked->setName("right-clicked");
     //stateClicked->addCondition("condition");
+}
+
+void EditorWindow::stateFSMLeftClick(){
+    statusBarLabel->setText("DEBUG: left-clicked on state");
+    StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
+    stateClicked->setName("left-clicked");
 }
 
 void EditorWindow::insertFSMState(QPoint position, QString name){
@@ -93,7 +99,6 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
                             (fPos.x() < sx && fsx > sx && fPos.y() < position.y() && fsy > position.y())
                                            );
     }
-    //canBeInserted = position <
     if(canBeInserted){
         StateFSMWidget * s = new StateFSMWidget(position,this);
         s->setParent(workArea);
@@ -101,7 +106,7 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
         s->setName(name);
         s->show();
         connect(s, &StateFSMWidget::rightClick, this, &EditorWindow::stateFSMRightClick);
-        //connect(s, &StateFSMWidget::leftClick, this, &EditorWindow::stateFSMLeftClick);
+        connect(s, &StateFSMWidget::leftClick, this, &EditorWindow::stateFSMLeftClick);
         allStates.push_back(s);
     }else{ //
         statusBarLabel->setText("DEBUG: state didnt fit");

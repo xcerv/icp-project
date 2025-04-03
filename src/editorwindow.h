@@ -68,14 +68,14 @@ public slots:
      * @brief after any FSM is left clicked
      * @todo should work only for connecting, maybe opening detailed info about state??
      */
-    /*void stateFSMLeftClick();*/
+    void stateFSMLeftClick();
 private:
     Ui::EditorWindow *ui;
 
-    QLabel * statusBarLabel;
-    WorkArea * workArea;
-    QWidget * workAreaScrollContainer;
-    QLayout * workAreaScrollLayout;
-    std::vector<StateFSMWidget*> allStates;
+    QLabel * statusBarLabel;//label on status bar
+    WorkArea * workArea;// work area widget
+    QWidget * workAreaScrollContainer;// container for scroll area
+    QLayout * workAreaScrollLayout; // layout for scroll area
+    std::vector<StateFSMWidget*> allStates; //vector of all states in the system
 };
 #endif // EDITORWINDOW_H

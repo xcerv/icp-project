@@ -26,22 +26,47 @@ class StateFSMWidget : public QWidget
 public:
     explicit StateFSMWidget(QPoint pos, QWidget *parent = nullptr);
     ~StateFSMWidget();
+    /**
+     * @brief adds mousePressEvent
+     * @param event what happend (mouse left click / mouse right click)
+     */
     void mousePressEvent(QMouseEvent *event)override;
+    /**
+     * @brief sets name of state
+     * @param name name of state to be displayed
+     */
     void setName(QString name);
-
+    /**
+     * @brief returns size of state
+     * @return size
+     */
     QPoint getSize();
+    /**
+     * @brief returns position of state within workArea
+     * @return position
+     */
     QPoint getPosition();
-public slots:
+    /**
+     * @brief adds a condition into the state
+     * @param cond condition to be added and displayed
+     */
     void addCondition(QString cond);
 signals:
+    /**
+     * @brief rightClick onto state
+     */
     void rightClick();
+    /**
+     * @brief leftClick onto state
+     */
+    void leftClick();
 private:
     Ui::StateFSMWidget *ui;
-    QLayout * scrollLayout;
-    QWidget * scrollContainer;
-    std::vector<QLabel*> allConditions;
-    QPoint position;
-    QPoint size;
+    QLayout * scrollLayout; //layout for scroll area
+    QWidget * scrollContainer; //container for scroll area
+    std::vector<QLabel*> allConditions; //vector of all conditions of state
+    QPoint position; //position of state wothin workArea
+    QPoint size; //size of state
 };
 
 #endif // STATEFSMWIDGET_H

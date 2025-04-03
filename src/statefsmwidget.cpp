@@ -42,7 +42,9 @@ StateFSMWidget::~StateFSMWidget()
 
 
 void StateFSMWidget::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::RightButton) {
+    if (event->button() == Qt::LeftButton) {
+        emit leftClick();
+    } else if (event->button() == Qt::RightButton) {
         emit rightClick();
     }
 }
