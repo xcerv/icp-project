@@ -13,7 +13,9 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include "statefsmwidget.h"
 #include "workarea.h"
+#include <vector>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,12 +30,45 @@ class EditorWindow: public QMainWindow
 public:
     EditorWindow(QWidget *parent = nullptr);
     ~EditorWindow();
+
+    /**
+     * @brief resizes workArea
+     * @param width
+     * @param height
+     * @todo check if no states "fall out"
+     */
     void resizeWorkArea(int width, int height);
 
+    /**
+     * @brief adds new FSM state into workArea if possible
+     * @param coords
+     * @param name
+     * @todo check if doesnt fall out of workArea + doesnt collide with other states
+     */
+    void insertFSMState(QPoint position, QString name);
+
 public slots:
+    /**
+     * @brief what happens after workArea is left clicked (no action)
+     * @param position
+     */
     void workAreaLeftClick(QPoint position);
+    /**
+     * @brief what happens after workArea is right clicked (now spawns new state)
+     * @param position
+     * @todo bring up menu with options to do (add state, resize workArea, .. )
+     */
     void workAreaRightClick(QPoint position);
+    /**
+     * @brief after any FSM is right clicked
+     * @todo bring up menu with possible actions (delete, copy, add condition, connect, set as first state, .. )
+     */
     void stateFSMRightClick();
+    /**
+     * @brief after any FSM is left clicked
+     * @todo should work only for connecting, maybe opening detailed info about state??
+     */
+    /*void stateFSMLeftClick();*/
 private:
     Ui::EditorWindow *ui;
 
@@ -41,5 +76,6 @@ private:
     WorkArea * workArea;
     QWidget * workAreaScrollContainer;
     QLayout * workAreaScrollLayout;
+    std::vector<StateFSMWidget*> allStates;
 };
 #endif // EDITORWINDOW_H
