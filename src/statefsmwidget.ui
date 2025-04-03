@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StateFSMWidget</class>
+ <widget class="QWidget" name="StateFSMWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>196</width>
+    <height>215</height>
+   </rect>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget{
+background: #b3d1ff/*#F0F5FF*/
+}
+
+QWidget#StateFSMWidget{
+background: white
+}
+
+QPushButton{
+color:navy;
+background:#b3d1ff;
+border: 3px solid #b3d1ff;
+}
+
+QLabel{
+color: navy;
+font:14px;
+}
+
+
+QScrollArea{
+border: 5px solid #b3d1ff;
+}
+
+QScrollArea::corner {
+    background: transparent;
+}
+
+QScrollBar::vertical
+    {
+        background-color:  lightgray;
+        width: 15px;
+        margin: 15px 3px 15px 3px;
+		 border:0px;
+    }
+QScrollBar::horizontal
+    {
+        background-color:  lightgray;
+        height: 15px;
+        margin: 3px 15px 3px 15px;
+		 border:0px;
+    }
+
+QScrollBar::handle
+    {
+        background-color: navy;
+        min-height: 5px;
+    }
+
+QScrollBar::sub-line:vertical
+    {
+        margin: 0px 0px 3px 0px;
+		 border-image: url(:/arrows/img/up.svg);
+		 border-width:0px;
+		 background-color:transparent;
+	    height: 10px;
+        width: 9px;
+        subcontrol-position: top;
+        subcontrol-origin: margin;
+    }
+QScrollBar::add-line:vertical
+    {
+        margin: 3px 0px 0px 0px;
+		 border-image: url(:/arrows/img/down.svg);
+		 border-width:0px;
+		 background-color:transparent;
+        height: 10px;
+        width: 9px;
+        subcontrol-position: bottom;
+        subcontrol-origin: margin;
+    }
+
+
+QScrollBar::sub-line:horizontal
+    {
+        margin: 0px 3px 0px 0px;
+		 border-image: url(:/arrows/img/left.svg);
+		 border-width:0px;
+		 background-color:transparent;
+	    height: 9px;
+        width: 10px;
+        subcontrol-position: left;
+        subcontrol-origin: margin;
+    }
+QScrollBar::add-line:horizontal
+    {
+        margin: 0px 0px 0px 3px;
+		 border-image: url(:/arrows/img/right.svg);
+		 border-width:0px;
+		 background-color:transparent;
+        height: 9px;
+        width: 10px;
+        subcontrol-position: right;
+        subcontrol-origin: margin;
+    }
+
+
+QTextEdit, QListView {
+    background-attachment: scroll;
+}
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="name">
+     <property name="font">
+      <font>
+       <family>Nimbus Mono PS</family>
+       <pointsize>-1</pointsize>
+       <italic>false</italic>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>name of state</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>5</number>
+     </property>
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>518</width>
+        <height>518</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="minimumSize">
+          <size>
+           <width>500</width>
+           <height>500</height>
+          </size>
+         </property>
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -11,14 +11,17 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     editorwindow.cpp  \
+    statefsmwidget.cpp \
     workarea.cpp
 
 HEADERS += \
     editorwindow.h  \
+    statefsmwidget.h \
     workarea.h
 
 FORMS += \
-    editorwindow.ui 
+    editorwindow.ui  \
+    statefsmwidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

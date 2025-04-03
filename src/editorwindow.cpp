@@ -10,6 +10,8 @@
 
 #include "editorwindow.h"
 #include "ui_editorwindow.h"
+#include "statefsmwidget.h"
+
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,9 +54,15 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 
 void EditorWindow::workAreaRightClick(QPoint position){
     statusBarLabel->setText("right: " + QString::number(position.x()) + ", " + QString::number(position.y()));
+    StateFSMWidget * n = new StateFSMWidget;
+    n->setParent(workArea);
+    n->move(position);
+    n->show();
+    connect(n, &StateFSMWidget::rightClick, this, &EditorWindow::stateFSMRightClick);
 }
 
-void EditorWindow::displayCoords(){
 
+void EditorWindow::stateFSMRightClick(){
+    statusBarLabel->setText("DEBUG: right-clicked on state");
 }
 

@@ -29,11 +29,11 @@ public:
     EditorWindow(QWidget *parent = nullptr);
     ~EditorWindow();
     void resizeWorkArea(int width, int height);
-    void displayCoords();
 
 public slots:
     void workAreaLeftClick(QPoint position);
     void workAreaRightClick(QPoint position);
+    void stateFSMRightClick();
 private:
     Ui::EditorWindow *ui;
 
