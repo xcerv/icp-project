@@ -10,10 +10,11 @@ TARGET = icp_fsm_interpreter
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 INCLUDEPATH += $$PWD/model
+INCLUDEPATH += $$PWD/interpreter
 
-SOURCES += $$files($$PWD/*.cpp, true)
+SOURCES += $$files($$PWD/*.cpp, true) \
 
-HEADERS += $$files($$PWD/*.h, true)
+HEADERS += $$files($$PWD/*.h, true) \
 
 FORMS += $$files($$PWD/*.ui, true)
 

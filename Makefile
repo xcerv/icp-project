@@ -14,7 +14,7 @@ QMAKE=qmake
 QT_PRO=$(SRC)/*.pro
 
 all: $(BUILD)
-	$(MAKE) -C $(BUILD)
+	$(MAKE) -j8 -C $(BUILD)
 
 run: all
 	./$(BUILD)/$(TARGET)
