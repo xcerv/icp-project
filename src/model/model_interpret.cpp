@@ -18,6 +18,12 @@
 
 using namespace std;
 
+void FsmModel::renameFsm(const QString &name)
+{
+    this->machine.setObjectName(name);
+    view->renameFsm(name);
+}
+
 void FsmModel::startInterpretation()
 {
     return; // Todo

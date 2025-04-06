@@ -22,7 +22,7 @@ using namespace std;
  * @brief 
  * @param filename 
  */
-void FsmModel::loadFile(string filename)
+void FsmModel::loadFile(const QString &filename)
 {
 
 }
@@ -31,7 +31,7 @@ void FsmModel::loadFile(string filename)
  * @brief 
  * @param filename 
  */
-void FsmModel::saveFile(string filename)
+void FsmModel::saveFile(const QString &filename)
 {
 
 }

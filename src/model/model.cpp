@@ -8,329 +8,262 @@
  *
  */
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <map>
 #include <stdexcept>
+
+#include <QtAlgorithms>
+#include <QVariant>
 
 #include "mvc_interface.h"
 #include "model.h"
 
 using namespace std;
 
-FsmModel::FsmModel():
-    name{"unnamed"},
-    view{nullptr},
-    currentState{0}
+
+/* Templates */
+template <typename Key, typename Value, typename UpdateFunc, typename InsertFunc>
+void updateOrInsert(QHash<Key, Value> &container, const Key &key, UpdateFunc &&updater, InsertFunc &&inserter)
+{
+    auto it = container.find(key);
+
+    if (it != container.end()) {
+        // Key exists, call the update
+        updater(it.value());
+    } else {
+        // Key does not exist, create new one
+        container.insert(key, inserter());
+    }
+}
+
+template <typename Key, typename Value, typename UpdateFunc>
+void safeUpdate(QHash<Key, Value> &container, const Key &key, UpdateFunc &&updater, const char* errorMsg)
+{
+    auto it = container.find(key);
+
+    if (it != container.end()) {
+        // Key exists, call the update
+        updater(it.value());
+    } else {
+        // Key does not exist, throw error
+        throw std::runtime_error(errorMsg);
+    }
+}
+
+template <typename Key, typename Value>
+Value safeGetter(const QHash<Key, Value> &container, const Key &key, const char* errorMsg)
+{
+    auto it = container.find(key);
+
+    if (it != container.end()) {
+        // Key exists, call the update
+        return it.value();
+    } else {
+        // Key does not exist, throw error
+        throw std::runtime_error(errorMsg);
+    }
+}
+
+
+FsmModel::FsmModel() : view{nullptr}
 {
     // ...
 }
 
-// Interface methods
-void FsmModel::updateState(size_t id, string name, FsmPoint pos, stateType type)
+void FsmModel::updateState(const QString &name, const QPoint &pos)
 {
-    auto it = states.find(id);
+    updateOrInsert(
+        this->states, 
+        name, 
+        // Update
+        [&](ActionState *target){
+            target->setPosition(pos);
+        },
+        // New
+        [&]() -> ActionState* {
+            auto tmp = new ActionState("", pos);
+            this->machine.addState(tmp);
+            return tmp;
+        }
+    );
 
-    if(it != states.end()) // Updating old
-    {
-        it->second.setName(name);
-        it->second.setPosition(pos);
-        it->second.setType(type);
-    }
-    else // Inserting new
-    {
-        states.emplace(id, FsmState(name, pos, type));
-    }
-
-    // Update the view 
-    view->updateState(id, name, pos, type);
+    view->updateState(name, pos);
 }
 
-void FsmModel::updateAction(size_t id, size_t parent_state_id, size_t order, string action)
+void FsmModel::updateAction(const QString &parentState, const QString &action)
 {
+    safeUpdate(
+        this->states, 
+        parentState, 
+        // Update
+        [&](ActionState *target){
+            target->setAction(action);
+        },
+        "MODEL: Failed to update action - No parent state found"
+    );
 
-    // Update action
-    auto it = actions.find(id);
-    size_t oldOrder = ID_UNSET;
+    view->updateAction(parentState, action);
+}
 
-    if(it != actions.end())
-    {
-        it->second.setAction(action);
-        oldOrder = it->second.getOrder();
-        it->second.setOrder(order);
+void FsmModel::updateInitialState(const QString &name)
+{
+    safeUpdate(
+        this->states, 
+        name, 
+        // Update
+        [&](ActionState *target){
+            target->machine()->setInitialState(target);
+        },
+        "MODEL: Failed to update initial state - No parent state found"
+    );
+
+    view->updateInitialState(name);
+}
+
+void FsmModel::updateCondition(size_t transitionId, const QString &condition)
+{
+    safeUpdate(
+        this->transitions, 
+        transitionId, 
+        // Update
+        [&](CombinedTransition *target){
+            target->setCondition(condition);
+        },
+        "MODEL: Failed to update initial state - No parent state found"
+    );
+
+    view->updateCondition(transitionId, condition);
+}
+
+void FsmModel::updateTransition(size_t transitionId, const QString &srcState, const QString &destState)
+{
+    updateOrInsert(
+        this->transitions, 
+        transitionId, 
+        // Update
+        [&](CombinedTransition *target){
+            // if(srcState == target->targetState) ... swap; // Might use, if we let transitions to change their parents 
+            target->setTargetState(safeGetter(states, destState, "MODEL: Failed to obtain destination state"));
+        },
+        // New
+        [&]() -> CombinedTransition* {
+            auto tmp = new CombinedTransition(transitionId);
+            safeGetter(states, srcState, "MODEL: Failed to obtain source state")->addTransition(tmp);
+            tmp->setTargetState(safeGetter(states, destState, "MODEL: Failed to obtain destination state"));
+            return tmp;
+        }
+    );
+
+    view->updateTransition(transitionId, srcState, destState);
+}
+
+void FsmModel::updateVarInput(const QString &name, const QString &value)
+{
+    varsInput.insert(name, value);
+    view->updateVarInput(name, value);
+}
+
+void FsmModel::updateVarOutput(const QString &name, const QString &value)
+{
+    varsOutput.insert(name, value);
+    view->updateVarOutput(name, value);
+}
+
+void FsmModel::updateVarInternal(const QString &name, const QVariant &value)
+{
+    varsInternal.insert(name, value);
+    view->updateVarInternal(name, value);
+}
+
+void FsmModel::destroyState(const QString &name)
+{
+    auto it = safeGetter(this->states, name, "MODULE: Failed to obtain state to destroy");
+
+    // Destroy all transitions attached to this state
+    for (auto &trans : it->transitions()) {
+        destroyTransition(static_cast<CombinedTransition*>(trans)->getId());
     }
-    else
-    {
-        actions.emplace(id, FsmAction(action, order));
-    }
+
+    // Unregister from state machine
+    if(it->machine() != nullptr)
+        {it->machine()->removeState(it);}
     
-    // Update parent state
-    auto it_st = states.find(parent_state_id);
-    if(it_st != states.end())
-    {
-        it_st->second.addAction(id, oldOrder, order);
-    }
-    else
-    {
-        throw runtime_error("MODEL: Attempted to set action of non-existent state");
-    }
+    // Remove from states list
+    this->states.remove(name);
 
-    // Update the view 
-    view->updateAction(id, parent_state_id, order, action);
+    // Delete the state itself
+    delete it;
+    it = nullptr;
+
+    view->destroyState(name);
 }
 
-
-void FsmModel::updateCondition(size_t parent_transition_id, string condition)
+void FsmModel::destroyAction(const QString &parentState)
 {
-    auto it = transitions.find(parent_transition_id);
-
-    if(it != transitions.end())
-    {
-        it->second.setCondition(condition);
-    }
-    else
-    {
-        throw runtime_error("MODEL: Attempting to set condition of non-existant transition");
-    }
-
-    view->updateCondition(parent_transition_id, condition);
+    safeGetter(this->states, parentState, "MODEL: Failed to obtain parent state of action to destroy")->setAction("");
+    view->destroyAction(parentState);
 }
 
-void FsmModel::updateTransition(size_t id, size_t id_state_src, size_t id_state_dest)
+
+void FsmModel::destroyCondition(size_t transitionId)
 {
-    auto it = transitions.find(id); // See if transition already exists
-    auto it_st = states.find(id_state_src); // New source state
-
-    if(it_st == states.end() || states.find(id_state_dest) == states.end()) // Parameter states don't exist ==> error
-        {throw runtime_error("MODEL: Transition is not tied to source state");}
-
-    if(it != transitions.end()) // Found existing transition
-    {
-        if(it->second.getSource() != id_state_src) // Check if source state is changing
-        {
-            // Unregister from original source state
-            auto it_orig_st = states.find(it->second.getSource());
-            if(it_orig_st == states.end()) 
-                {throw runtime_error("MODEL: Transition wasn't originally tied to an existing state");}
-            it_orig_st->second.removeTransition(id);
-            
-            // Register to new source state
-            it_st->second.addTransition(id);
-            it->second.setSource(id_state_src);
-        }
-
-        it->second.setDestination(id_state_dest);
-    }
-    else // Create new transition
-    {
-        transitions.emplace(id, FsmTransition(id_state_src, id_state_dest, ""));
-        it_st->second.addTransition(id);
-    }
-
-    view->updateTransition(id, id_state_src, id_state_dest);
+    safeGetter(this->transitions, transitionId, "MODEL: Failed to obtain parent transition of condition to destroy")->setCondition("");
+    view->destroyCondition(transitionId);
 }
 
-void FsmModel::updateVarInput(size_t id, string name, string value)
+void FsmModel::destroyTransition(size_t transitionId)
 {
-    auto it = varsInput.find(id);
+    auto it = safeGetter(this->transitions, transitionId, "MODEL: Failed to obtain transition to destroy");
+    
+    // Unregister from state
+    if(it->machine() != nullptr)
+        {it->machine()->removeTransition(it);} 
 
-    if(it != varsInput.end()) // Updating old
-    {
-        it->second.setName(name);
-        it->second.setValue(value);
-    }
-    else // Inserting new
-    {
-        varsInput.emplace(id, FsmVariableInput(name, value));
-    }
+    // Remove transition itself
+    this->transitions.remove(transitionId); 
 
-    view->updateVarInput(id, name, value);
+    // Free the transition itself
+    delete it;
+    it = nullptr;
+
+    view->destroyTransition(transitionId);
 }
-void FsmModel::updateVarOutput(size_t id, string name, string value)
+
+void FsmModel::destroyVarInput(const QString &name)
 {
-    auto it = varsOutput.find(id);
-
-    if(it != varsOutput.end()) // Updating old
-    {
-        it->second.setName(name);
-        it->second.setValue(value);
-    }
-    else // Inserting new
-    {
-        varsOutput.emplace(id, FsmVariableOutput(name, value));
-    }
-
-    view->updateVarOutput(id, name, value);
+    this->varsInput.remove(name);
+    view->destroyVarInput(name);
 }
 
-void FsmModel::updateVarInternal(size_t id, string name, string value, varType type)
+void FsmModel::destroyVarOutput(const QString &name)
 {
-    auto it = varsInternal.find(id);
-
-    if(it != varsInternal.end()) // Updating old
-    {
-        it->second.setName(name);
-        it->second.setValue(value);
-        it->second.setType(type);
-    }
-    else // Inserting new
-    {
-        varsInternal.emplace(id, FsmVariableInternal(name, value, type));
-    }
-
-    view->updateVarInternal(id, name, value, type);
+    this->varsOutput.remove(name);
+    view->destroyVarOutput(name);
 }
 
-void FsmModel::destroyState(size_t id)
+void FsmModel::destroyVarInternal(const QString &name)
 {
-    auto it = states.find(id);
-    if(it != states.end()) // Destroying existing
-    {
-        // Destroy actions tied to state
-        for (auto &act : it->second.getActions()) {
-            destroyAction(act, id);
-        }
-
-        // Destroy transitions tied to state
-        for (auto &trans : it->second.getTransitions()) {
-            destroyTransition(trans);
-        }
-
-        // Destroy state itself
-        states.erase(it);
-    }
-    else
-    {
-        throw runtime_error("MODEL: Attempt to destroy non-existant state");
-    }
-
-    view->destroyState(id);
+    this->varsInternal.remove(name);
+    view->destroyVarInternal(name);
 }
 
-void FsmModel::destroyAction(size_t id, size_t parent_state_id)
-{    auto it = actions.find(id);
-    if(it != actions.end()) // Destroying existing
-    {
-        // Unregister from state
-        auto it_st = states.find(parent_state_id);
-        if(it_st->second.getActionByOrder(it->second.getOrder() != id)){
-            throw runtime_error("MODEL: Attempt to unlink action from state with incorrect order");;
-        }
-
-        if(it_st != states.end()){
-            it_st->second.removeAction(it->second.getOrder());
-        }
-        else{
-            throw runtime_error("MODEL: Attempt to unlink state during action destruction");
-        }
-
-        // Remove action itself
-        actions.erase(it);
-    }
-    else
-    {
-        throw runtime_error("MODEL: Attempt to destroy non-existant state");
-    }
-    view->destroyAction(id, parent_state_id);
-}
-
-void FsmModel::destroyCondition(size_t parent_id)
-{
-    auto it = transitions.find(parent_id);
-    if(it != transitions.end()) // Destroying existing
-    {
-        it->second.setCondition(""); // Just set to empty string
-    }
-    else // Somehow the parent transition doesn't exist
-    {
-        throw runtime_error("MODEL: Attempt to destroy non-existant transition's condition");
-    }
-
-    view->destroyCondition(parent_id);
-}
-
-void FsmModel::destroyTransition(size_t id)
-{
-    auto it = transitions.find(id);
-    if(it != transitions.end()) // Destroying existing
-    {
-        // Unlink from source state
-        auto it_st = states.find(it->second.getSource());
-        if(it_st == states.end())
-            {throw runtime_error("MODEL: Attempt to destroy transition with nonexistant source state");}
-        
-        bool unlink_res = it_st->second.removeTransition(id);
-
-        if (unlink_res == false)
-            {throw runtime_error("MODEL: Attempt to unlink transition that was not linked to source state");}
-
-        // Destroy the transition itself
-        transitions.erase(it);
-    }
-    else // Somehow the parent transition doesn't exist
-    {
-        throw runtime_error("MODEL: Attempt to destroy non-existant transition");
-    }
-
-    view->destroyTransition(id);
-}
-
-void FsmModel::destroyVarInput(size_t id)
-{
-    auto it = varsInput.find(id);
-    if(it != varsInput.end()) // Destroying existing
-    {
-        varsInput.erase(it);
-    }
-    else
-    {
-        throw runtime_error("MODEL: Attempt to destroy non-existant input variable");
-    }
-
-    view->destroyVarInput(id);
-}
-
-void FsmModel::destroyVarOutput(size_t id)
-{
-    auto it = varsOutput.find(id);
-    if(it != varsOutput.end()) // Destroying existing
-    {
-        varsOutput.erase(it);
-    }
-    else
-    {
-        throw runtime_error("MODEL: Attempt to destroy non-existant output variable");
-    }
-
-    view->destroyVarOutput(id);
-}
-
-void FsmModel::destroyVarInternal(size_t id)
-{
-    auto it = varsInternal.find(id);
-    if(it != varsInternal.end()) // Destroying existing
-    {
-        varsInternal.erase(it);
-    }
-    else
-    {
-        throw runtime_error("MODEL: Attempt to destroy non-existant internal variable");
-    }
-
-    view->destroyVarInternal(id);
-}
-
-void FsmModel::log(string time, string state, string varInputs, string varOutputs, string varInternals)
+void FsmModel::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals)
 {
     return; // Null operation for model?
 }
 
 void FsmModel::cleanup()
 {
+    // Unlink states from FSM
+    for (ActionState* st : states.values()) {
+        if (st != nullptr) {
+            machine.removeState(st);
+        }
+    }
+
+    /** @todo Check that the removal here is correct; state should have ownership of its transition and will delete them too... probably */
+    qDeleteAll(states);
     states.clear();
-    actions.clear();
     transitions.clear();
+
     varsInternal.clear();
     varsInput.clear();
     varsOutput.clear();

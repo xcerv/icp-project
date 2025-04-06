@@ -11,18 +11,23 @@
 #ifndef FSM_MODEL_H_
 #define FSM_MODEL_H_
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <unordered_map>
-
 #include "mvc_interface.h"
 
-#include "fsm_state/fsm_state.h"
-#include "fsm_condition/fsm_condition.h"
-#include "fsm_transition/fsm_transition.h"
-#include "fsm_action/fsm_action.h"
-#include "fsm_variable/fsm_variable.h"
+// #include "fsm_state/fsm_state.h"
+// #include "fsm_condition/fsm_condition.h"
+// #include "fsm_transition/fsm_transition.h"
+// #include "fsm_action/fsm_action.h"
+// #include "fsm_variable/fsm_variable.h"
+
+#include "action_state.h"
+#include "combined_transition.h"
+
+#include <QJSEngine>
+#include <QStateMachine>
+#include <QHash>
+#include <QObject>
+#include <QVariant>
+
 
 using namespace std;
 
@@ -33,52 +38,57 @@ using namespace std;
 /* Classes */
 class FsmModel : public FsmInterface
 {
-  protected:
-    string name;
 
-    shared_ptr<FsmInterface> view; // Subject to change?
-    size_t currentState;
+    protected:
+        QStateMachine machine; ///< Main FSM machine to be interpreted
+        QJSEngine engine; ///< Native javascript interpreter for evaluating conditions/actions
 
-    unordered_map<size_t,FsmState> states;
-    unordered_map<size_t,FsmAction> actions;
-    unordered_map<size_t,FsmTransition> transitions;
-    unordered_map<size_t,FsmVariableInternal> varsInternal;
-    unordered_map<size_t,FsmVariableInput> varsInput;
-    unordered_map<size_t,FsmVariableOutput> varsOutput;
+        shared_ptr<FsmInterface> view; ///< Reference to view
 
-  public:
-    FsmModel();
+        QHash<QString,ActionState*> states; ///< List of all states used within the FSM
+        QHash<size_t,CombinedTransition*> transitions;
+        QHash<QString,QVariant> varsInternal; ///< Internal variable - may be of variable type
+        QHash<QString,QString> varsInput; ///< Input variable - only string format
+        QHash<QString,QString> varsOutput; ///< Output variable - only string format
 
-    // Interface methods
-    void updateState(size_t id, string name, FsmPoint pos, stateType type) override;
-    void updateAction(size_t id, size_t parent_state_id, size_t order, string action) override;
-    void updateCondition(size_t parent_transition_id, string condition) override;
-    void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) override;
-    void updateVarInput(size_t id, string name, string value) override;
-    void updateVarOutput(size_t id, string name, string value) override;
-    void updateVarInternal(size_t id, string name, string value, varType type) override;
+    public:
+        FsmModel();
 
-    void destroyState(size_t id) override;
-    void destroyAction(size_t id, size_t parent_state_id) override;
-    void destroyCondition(size_t parent_id) override;
-    void destroyTransition(size_t id) override;
-    void destroyVarInput(size_t id) override;
-    void destroyVarOutput(size_t id) override;
-    void destroyVarInternal(size_t id) override;
+        // Interface methods
+        void updateState(const QString &name, const QPoint &pos) override;
+        void updateAction(const QString &parentState, const QString &action) override;
+        void updateInitialState(const QString &name) override;
 
-    void loadFile(string filename) override;
-    void saveFile(string filename) override;
+        void updateCondition(size_t transitionId, const QString &condition) override;
+        void updateTransition(size_t transitionId, const QString &srcState, const QString &destState) override;
+        void updateVarInput(const QString &name, const QString &value) override;
+        void updateVarOutput(const QString &name, const QString &value) override;
+        void updateVarInternal(const QString &name, const QVariant &value) override;
 
-    void log(string time, string state, string varInputs, string varOutputs, string varInternals) override;
-    
-    void cleanup() override; // Clear the class entirely
-    void throwError(int errnum) override;
+        void destroyState(const QString &name) override;
+        void destroyAction(const QString &parentState) override;
+        void destroyCondition(size_t transitionId) override;
+        void destroyTransition(size_t transitionId) override;
+        void destroyVarInput(const QString &name) override;
+        void destroyVarOutput(const QString &name) override;
+        void destroyVarInternal(const QString &name) override;
 
-    void startInterpretation() override;
-    void stopInterpretation() override;
+        void loadFile(const QString &filename) override;
+        void saveFile(const QString &filename) override;
 
-    // Model specific
-    void registerView(shared_ptr<FsmInterface> view);
+        void renameFsm(const QString &name) override;
+
+        // This may be used only one-way
+        void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) override;
+
+        void startInterpretation() override;
+        void stopInterpretation() override;
+
+        void cleanup() override;
+        void throwError(int errnum) override;
+
+        // Model specific
+        void registerView(shared_ptr<FsmInterface> view);
 };
 
 #endif
