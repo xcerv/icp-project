@@ -13,7 +13,18 @@
 #include <QDebug>
 #include <QObject>
 #include <QStateMachine>
+#include <QRegularExpression>
+
 #include <stdexcept>
+
+CombinedTransition::CombinedTransition(const size_t id) 
+    :
+    m_pending{false},
+    m_pending_id{-1},
+    m_id{id}
+{
+    
+}
  
 CombinedTransition::CombinedTransition(const QString &name, const QString &guard, const QString &timeout) 
     :
@@ -21,16 +32,40 @@ CombinedTransition::CombinedTransition(const QString &name, const QString &guard
     m_guard{guard}, 
     m_timeout{timeout},
     m_pending{false},
-    m_pending_id{-1}
+    m_pending_id{-1},
+    m_id{0}
 {
 
+}
+
+CombinedTransition::CombinedTransition(const QString &unparsed_condition)
+    :
+    m_pending{false},
+    m_pending_id{-1},
+    m_id{0}
+{
+    this->setCondition(unparsed_condition);
+}
+
+
+bool CombinedTransition::setCondition(const QString &condition)
+{
+   // Complex parsing here...
+   QRegularExpression re(REGEX_TRANSITION_CONDITION);
+
+      
+}
+
+const size_t CombinedTransition::getId() const
+{
+    return m_id;
 }
 
 void CombinedTransition::stopTimer()
 {
     // Cancel any timed events
     if(m_pending && m_pending_id != -1)
-        this->m_parentMachine()->cancelDelayedEvent(this->m_pending_id);
+        this->machine()->cancelDelayedEvent(this->m_pending_id);
 
     this->m_pending_id = -1;
     this->m_pending = false;
@@ -63,7 +98,7 @@ bool CombinedTransition::eventTest(QEvent *e)
         if(!ok || timeoutMs < 0){timeoutMs = 0;}
 
         // Start new timeout
-        this->m_pending_id = m_parentMachine()->postDelayedEvent(new FsmTimeoutEvent(this), timeoutMs);
+        this->m_pending_id = this->machine()->postDelayedEvent(new FsmTimeoutEvent(this), timeoutMs);
         this->m_pending = true;
 
     } else if(e->type() == FsmTimeoutEvent::getType())  // Something timed-out - was it me?
@@ -111,9 +146,4 @@ void CombinedTransition::onTransition(QEvent * e)
         auto curr = static_cast<CombinedTransition*>(tr);
         curr->stopTimer();
     }
-}
-
-QStateMachine *CombinedTransition::m_parentMachine() const
-{
-    return (this->parent() != nullptr) ? static_cast<QStateMachine*>(this->parent()->parent()) : nullptr;
 }

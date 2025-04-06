@@ -15,6 +15,8 @@
 #include <QStateMachine>
 #include <QAbstractTransition>
 
+#define REGEX_TRANSITION_CONDITION "([a-zA-Z_-]* +)?(\[[.*]\] +)?(@[1-9][0-9]*)?"
+
 /**
  * @brief Class used for transitions in ICP FSM - it combines two possible input events (initial Input and Timeout)
  */
@@ -30,6 +32,8 @@ class CombinedTransition : public QAbstractTransition
         bool m_pending; ///< Flags whether a Timeout event spawned by this transition is pending
         int m_pending_id; ///< The id of delayed Timeout event; -1 if nothing pending 
 
+        size_t m_id;
+
     protected:
         /**
          * @brief Tests whether transition should be triggered
@@ -43,12 +47,6 @@ class CombinedTransition : public QAbstractTransition
          */
         void onTransition(QEvent *e) override;
 
-        /**
-         * @brief Returns pointer to the parent QStateMachine
-         * @return Returns pointer to QStateMachine
-         */
-        QStateMachine *m_parentMachine() const;
-
     public:
         /**
          * @brief Constructor for combined transition
@@ -57,10 +55,17 @@ class CombinedTransition : public QAbstractTransition
          * @param timeout 
          */
         CombinedTransition(const QString &name, const QString &guard, const QString &timeout);
+        CombinedTransition(const QString &unparsed_condition);
+        CombinedTransition(const size_t id);
 
         // Stop timer - might be performed for all transitions always onTransition?
         // Parsing might be perfomed by model
         // Empty string possible for name, guard and even timeout - there will always be a timer
+
+        bool setCondition(const QString &condition);
+
+        const size_t getId() const;
+        
 
         /**
          * @brief Stops any delayed events started by this transition
