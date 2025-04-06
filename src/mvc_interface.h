@@ -11,17 +11,12 @@
 #ifndef MVC_INTERFACE_H_
 #define MVC_INTERFACE_H_
 
-using namespace std;
-#include <string>
+#include <QObject>
+#include <QString>
 
 enum varType : int
 {
-    INT,
-    FLOAT,
-    DOUBLE,
-    STRING,
-    CHAR,
-    BOOL,
+
 };
 
 enum stateType : int
@@ -31,36 +26,35 @@ enum stateType : int
     ACTIVE,
 };
 
-struct FsmPoint
-{
-  ssize_t x;
-  ssize_t y;
-};
-
 class FsmInterface
 {
     public:
-        virtual void updateState(size_t id, string name, FsmPoint pos, stateType type) = 0;
-        virtual void updateAction(size_t id, size_t parent_state_id, size_t order, string action) = 0; /// @note Order from 0
-        virtual void updateCondition(size_t parent_transition_id, string condition) = 0;
-        virtual void updateTransition(size_t id, size_t id_state_src, size_t id_state_dest) = 0;
-        virtual void updateVarInput(size_t id, string name, string value) = 0;
-        virtual void updateVarOutput(size_t id, string name, string value) = 0;
-        virtual void updateVarInternal(size_t id, string name, string value, varType type) = 0;
+        virtual void updateState(const QString &name, const QPoint &pos) = 0;
+        virtual void updateAction(const QString &parentState, const QString &action) = 0;
+        virtual void updateInitialState(const QString &name) = 0;
 
-        virtual void destroyState(size_t id) = 0;
-        virtual void destroyAction(size_t id, size_t parent_state_id) = 0;
-        virtual void destroyCondition(size_t parent_id) = 0;
-        virtual void destroyTransition(size_t id) = 0;
-        virtual void destroyVarInput(size_t id) = 0;
-        virtual void destroyVarOutput(size_t id) = 0;
-        virtual void destroyVarInternal(size_t id) = 0;
 
-        virtual void loadFile(string filename) = 0;
-        virtual void saveFile(string filename) = 0;
+        virtual void updateCondition(size_t transitionId, const QString &condition) = 0;
+        virtual void updateTransition(size_t transitionId, const QString &srcState, const QString &destState) = 0;
+        virtual void updateVarInput(const QString &name, const QString &value) = 0;
+        virtual void updateVarOutput(const QString &name, const QString &value) = 0;
+        virtual void updateVarInternal(const QString &name, const QVariant &value) = 0;
+
+        virtual void destroyState(const QString &name) = 0;
+        virtual void destroyAction(const QString &parentState) = 0;
+        virtual void destroyCondition(size_t transitionId) = 0;
+        virtual void destroyTransition(size_t transitionId) = 0;
+        virtual void destroyVarInput(const QString &name) = 0;
+        virtual void destroyVarOutput(const QString &name) = 0;
+        virtual void destroyVarInternal(const QString &name) = 0;
+
+        virtual void loadFile(const QString &filename) = 0;
+        virtual void saveFile(const QString &filename) = 0;
+
+        virtual void renameFsm(const QString &name) = 0;
 
         // This may be used only one-way
-        virtual void log(string time, string state, string varInputs, string varOutputs, string varInternals) = 0;
+        virtual void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) = 0;
 
         virtual void startInterpretation() = 0;
         virtual void stopInterpretation() = 0;
