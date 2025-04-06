@@ -11,6 +11,9 @@
 #ifndef FSM_CONDITION_H_
 #define FSM_CONDITION_H_
 
+using namespace std;
+#include <string>
+
 class FsmCondition
 {
     protected:

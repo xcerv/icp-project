@@ -11,6 +11,8 @@
 #ifndef FSM_TRANSITION_H_
 #define FSM_TRANSITION_H_
 
+using namespace std;
+
 // Forward declare
 #include "model/fsm_state/fsm_state.h"
 #include "model/fsm_condition/fsm_condition.h"

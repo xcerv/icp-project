@@ -12,10 +12,18 @@
 #ifndef FSM_STATE_H_
 #define FSM_STATE_H_
 
+using namespace std;
+
 #include <string>
 #include <vector>
 #include <unordered_set>
+
 #include "mvc_interface.h"
+
+struct FsmPoint{
+    ssize_t x;
+    ssize_t y;
+};
 
 class FsmState
 {

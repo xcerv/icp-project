@@ -11,6 +11,9 @@
 #ifndef FSM_ACTION_H_
 #define FSM_ACTION_H_
 
+using namespace std;
+#include <string>
+
 class FsmAction
 {
     protected:
