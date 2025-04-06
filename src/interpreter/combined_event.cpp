@@ -12,27 +12,29 @@
 #include <QObject>
 #include <QStateMachine>
 #include <QPointer>
+#include <QDebug>
 
 /* Input Event */
-FsmInputEvent::FsmInputEvent(const QString &inName, const QString &inVal) 
+
+FsmInputEvent::FsmInputEvent(const QString &inName)
     : 
-    QEvent(FsmInputEvent::type()),
-    name(inName),
-    value(inVal) 
+    QEvent(FsmInputEvent::getType()),
+    name(inName)
 {
 
 }
 
-const QString &FsmInputEvent::getName() const{return this->name;}
+const QString &FsmInputEvent::getName() const { return this->name; }
 
 QEvent::Type FsmInputEvent::getType() { return FsmInputEvent::m_eventType; }
-QEvent::Type FsmInputEvent::m_eventType = static_cast<QEvent::Type>(QEvent::registerEventType());
+const QEvent::Type FsmInputEvent::m_eventType = static_cast<QEvent::Type>(QEvent::registerEventType());
 
 
 /* Timeout Event */
+
 FsmTimeoutEvent::FsmTimeoutEvent(QAbstractTransition *objIdentity)
     : 
-    QEvent(FsmTimeoutEvent::type()),
+    QEvent(FsmTimeoutEvent::getType()),
     m_identity(objIdentity)
 {
 
@@ -40,4 +42,4 @@ FsmTimeoutEvent::FsmTimeoutEvent(QAbstractTransition *objIdentity)
 
 QEvent::Type FsmTimeoutEvent::getType(){return FsmTimeoutEvent::m_eventType;}
 QAbstractTransition* FsmTimeoutEvent::getIdentity(){return m_identity.data();}
-QEvent::Type FsmTimeoutEvent::m_eventType = static_cast<QEvent::Type>(QEvent::registerEventType());
+const QEvent::Type FsmTimeoutEvent::m_eventType = static_cast<QEvent::Type>(QEvent::registerEventType());

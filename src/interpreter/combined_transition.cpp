@@ -10,9 +10,10 @@
 
 #include "combined_transition.h"
 #include "combined_event.h"
-
+#include <QDebug>
 #include <QObject>
 #include <QStateMachine>
+#include <stdexcept>
  
 CombinedTransition::CombinedTransition(const QString &name, const QString &guard, const QString &timeout) 
     :
@@ -20,15 +21,24 @@ CombinedTransition::CombinedTransition(const QString &name, const QString &guard
     m_guard{guard}, 
     m_timeout{timeout},
     m_pending{false},
-    m_pending_id{-1},
-    m_parentMachine{static_cast<QStateMachine*>(this->parent()->parent())}
+    m_pending_id{-1}
 {
+
+}
+
+void CombinedTransition::stopTimer()
+{
+    // Cancel any timed events
+    if(m_pending && m_pending_id != -1)
+        this->m_parentMachine()->cancelDelayedEvent(this->m_pending_id);
+
+    this->m_pending_id = -1;
+    this->m_pending = false;
 }
 
 bool CombinedTransition::eventTest(QEvent *e)
 {
     if(e == nullptr) return false;
-
 
     if(e->type() == FsmInputEvent::getType()) // Initial input trigger
     {
@@ -53,7 +63,7 @@ bool CombinedTransition::eventTest(QEvent *e)
         if(!ok || timeoutMs < 0){timeoutMs = 0;}
 
         // Start new timeout
-        this->m_pending_id = m_parentMachine->postDelayedEvent(new FsmTimeoutEvent(this), timeoutMs);
+        this->m_pending_id = m_parentMachine()->postDelayedEvent(new FsmTimeoutEvent(this), timeoutMs);
         this->m_pending = true;
 
     } else if(e->type() == FsmTimeoutEvent::getType())  // Something timed-out - was it me?
@@ -83,13 +93,27 @@ bool CombinedTransition::eventTest(QEvent *e)
     return false;
 }
 
-void CombinedTransition::onTransition(QEvent *)
+void CombinedTransition::onTransition(QEvent * e)
 {
-    /*
-    // Stop
-    foreach(&tr, this->parent)
-    {
+    // Ignore unexpected events
+    if(e == nullptr || e->type() != FsmTimeoutEvent::getType() || static_cast<FsmTimeoutEvent*>(e)->getIdentity() != this)
+        return;
 
+    // Parent must exist!
+    if(this->parent() == nullptr) 
+        return; // Throw exception?
+
+    auto parentState = static_cast<QState*>(this->parent());
+
+    // Stop any pending timers
+    foreach(auto &tr, parentState->transitions())
+    {
+        auto curr = static_cast<CombinedTransition*>(tr);
+        curr->stopTimer();
     }
-    */
+}
+
+QStateMachine *CombinedTransition::m_parentMachine() const
+{
+    return (this->parent() != nullptr) ? static_cast<QStateMachine*>(this->parent()->parent()) : nullptr;
 }
