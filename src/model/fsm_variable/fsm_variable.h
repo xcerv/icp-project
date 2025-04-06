@@ -11,7 +11,10 @@
 #ifndef FSM_VARIABLE_H_
 #define FSM_VARIABLE_H_
 
+using namespace std;
+
 #include "mvc_interface.h"
+#include <string>
 
 /**
  * @brief Abstract class for representing variables
