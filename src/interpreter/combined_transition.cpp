@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QObject>
 #include <QStateMachine>
+#include <QJSEngine>
 #include <QRegularExpression>
 
 #include <stdexcept>
@@ -66,7 +67,7 @@ bool CombinedTransition::setCondition(const QString &condition)
         throw std::runtime_error("MODEL: Given guard condition has unsupported format");
     }
 
-    return false;      
+    return false;
 }
 
 size_t CombinedTransition::getId() const
@@ -101,8 +102,13 @@ bool CombinedTransition::eventTest(QEvent *e)
         // Try guard condition here...
         if(m_guard != "")
         {
-            // QScriptEngine check here...
-            // return false // Failed check ==> don't transition
+            /** @todo Additional checks? */
+            QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->machine()->parent()); // Get the parent of main statemachine --> the QJSEngine 
+            QJSValue guard_result = engine->evaluate(this->m_guard);
+            
+            // Has to be bool and that is true
+            if(!guard_result.isBool() || !guard_result.toBool())
+                return false;
         }
 
         // Guard passed... start timeout

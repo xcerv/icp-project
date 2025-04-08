@@ -32,7 +32,10 @@ void ActionState::onEntry(QEvent *event)
 
 void ActionState::executeAction()
 {
-    // Evaluate this action using m_scriptEngine...
+    QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent());
+    auto result = engine->evaluate(this->getAction());
+
+    // Update values of global objects... variables that is
 }
 
 QJSEngine *ActionState::m_scriptEngine() const

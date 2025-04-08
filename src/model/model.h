@@ -28,10 +28,16 @@
 #include <QObject>
 #include <QVariant>
 
-
 using namespace std;
 
-/* Forward Declare */
+
+struct ContextBackup
+{
+    QHash<QString,QVariant> vInternal;
+    QHash<QString,QString> vInput;
+    QHash<QString,QString> vOutput;
+    QAbstractState* initialState; 
+};
 
 #define ID_UNSET SIZE_MAX
 
@@ -40,8 +46,8 @@ class FsmModel : public FsmInterface
 {
 
     protected:
-        QStateMachine machine; ///< Main FSM machine to be interpreted
         QJSEngine engine; ///< Native javascript interpreter for evaluating conditions/actions
+        QStateMachine machine; ///< Main FSM machine to be interpreted
 
         shared_ptr<FsmInterface> view; ///< Reference to view
 
@@ -50,6 +56,8 @@ class FsmModel : public FsmInterface
         QHash<QString,QVariant> varsInternal; ///< Internal variable - may be of variable type
         QHash<QString,QString> varsInput; ///< Input variable - only string format
         QHash<QString,QString> varsOutput; ///< Output variable - only string format
+
+        ContextBackup backup;
 
     public:
         FsmModel();

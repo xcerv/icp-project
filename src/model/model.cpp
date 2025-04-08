@@ -64,7 +64,10 @@ Value safeGetter(const QHash<Key, Value> &container, const Key &key, const char*
 }
 
 
-FsmModel::FsmModel() : view{nullptr}
+FsmModel::FsmModel() 
+    :
+    machine{&engine},
+    view{nullptr}
 {
     // ...
 }

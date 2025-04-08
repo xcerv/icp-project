@@ -26,10 +26,29 @@ void FsmModel::renameFsm(const QString &name)
 
 void FsmModel::startInterpretation()
 {
-    return; // Todo
+    // Backup 
+    backup.vInternal = this->varsInternal;
+    backup.vInput = this->varsInput;
+    backup.vOutput = this->varsOutput;
+    backup.initialState = this->machine.initialState();
+
+    // Set global variables for QJSEngine
+    // todo... // this->engine.globalObject
+
+    this->machine.start();
+    return;
 }
 
 void FsmModel::stopInterpretation()
 {
-    return; // Todo
+    // On full stop restore original values (maybe add another button for restoring?)
+    this->varsInternal = backup.vInternal;
+    this->varsInput = backup.vInput;
+    this->varsOutput = backup.vOutput;
+    this->machine.setInitialState(backup.initialState);
+
+    this->machine.stop();
+    return;
 }
+
+// Should there be pause method?
