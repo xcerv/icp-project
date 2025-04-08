@@ -50,10 +50,23 @@ CombinedTransition::CombinedTransition(const QString &unparsed_condition)
 
 bool CombinedTransition::setCondition(const QString &condition)
 {
-   // Complex parsing here...
+   // Regex parsing here...
    QRegularExpression re(REGEX_TRANSITION_CONDITION);
+   QRegularExpressionMatch match = re.match(condition);
 
-      
+    if(match.hasMatch())
+    {
+        this->m_name = match.captured(1);
+        this->m_guard = match.captured(3);
+        this->m_timeout = match.captured(5);
+        return true;
+    }
+    else
+    {
+        throw std::runtime_error("MODEL: Given guard condition has unsupported format");
+    }
+
+    return false;      
 }
 
 const size_t CombinedTransition::getId() const
