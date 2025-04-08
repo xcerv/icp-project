@@ -25,6 +25,7 @@ ActionState::ActionState(const QString &action, const QPoint &position)
 
 void ActionState::onEntry(QEvent *event)
 {
+    (void)event;
     this->executeAction();
     this->machine()->postEvent(new FsmInputEvent("")); // Upon entry, implicitlly fire 'empty' input
 }
@@ -42,6 +43,7 @@ QJSEngine *ActionState::m_scriptEngine() const
 bool ActionState::setPosition(const QPoint &position)
 {
     this->m_position = position;
+    return true;
 }
 
 const QPoint &ActionState::getPosition() const
@@ -52,6 +54,7 @@ const QPoint &ActionState::getPosition() const
 bool ActionState::setAction(const QString &action)
 {
     this->m_action = action;
+    return true;
 }
 
 const QString &ActionState::getAction() const
