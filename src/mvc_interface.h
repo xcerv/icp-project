@@ -54,7 +54,8 @@ class FsmInterface
         virtual void renameFsm(const QString &name) = 0;
 
         // This may be used only one-way
-        virtual void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) = 0;
+        virtual void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const = 0;
+        virtual void log() const = 0; // Request log
 
         virtual void startInterpretation() = 0;
         virtual void stopInterpretation() = 0;

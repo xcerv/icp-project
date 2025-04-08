@@ -104,8 +104,14 @@ void FsmView::updateVarInternal(const QString &name, const QVariant &value)
 void FsmView::cleanup(){} // Clear the class entirely
 void FsmView::throwError(int errnum){}
 
-void FsmView::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals)
+void FsmView::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
 {
+}
+
+void FsmView::log() const
+{
+    // Here will be the the visualisation of the state handled
+    return;
 }
 
 void FsmView::startInterpretation()

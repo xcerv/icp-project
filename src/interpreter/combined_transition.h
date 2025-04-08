@@ -64,7 +64,7 @@ class CombinedTransition : public QAbstractTransition
 
         bool setCondition(const QString &condition);
 
-        const size_t getId() const;
+        size_t getId() const;
         
 
         /**

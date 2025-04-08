@@ -69,7 +69,7 @@ bool CombinedTransition::setCondition(const QString &condition)
     return false;      
 }
 
-const size_t CombinedTransition::getId() const
+size_t CombinedTransition::getId() const
 {
     return m_id;
 }

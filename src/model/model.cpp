@@ -12,6 +12,7 @@
 
 #include <QtAlgorithms>
 #include <QVariant>
+#include <QDateTime>
 
 #include "mvc_interface.h"
 #include "model.h"
@@ -245,9 +246,22 @@ void FsmModel::destroyVarInternal(const QString &name)
     view->destroyVarInternal(name);
 }
 
-void FsmModel::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals)
+void FsmModel::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
 {
+    (void)time;
+    (void)state;
+    (void)varInputs;
+    (void)varOutputs;
+    (void)varInternals;
+
     return; // Null operation for model?
+}
+
+void FsmModel::log() const
+{
+    // Deprecate this below: Just let view take its internal representation rather than pass ours
+    // view->log(QDateTime::currentDateTime().toString(), (*this->machine.configuration().begin())->objectName(),
+    view->log();
 }
 
 void FsmModel::cleanup()

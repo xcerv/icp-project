@@ -79,7 +79,8 @@ class FsmModel : public FsmInterface
         void renameFsm(const QString &name) override;
 
         // This may be used only one-way
-        void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) override;
+        void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const override;
+        virtual void log() const = 0; // Request log
 
         void startInterpretation() override;
         void stopInterpretation() override;
