@@ -60,13 +60,15 @@ class FsmView : public FsmInterface
 
         // This may be used only one-way
         void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const override;
-        virtual void log() const = 0; // Request log
+        void log() const override; // Request log
 
         void startInterpretation() override;
         void stopInterpretation() override;
 
         void cleanup() override;
         void throwError(int errnum) override;
+
+        void outputEvent(const QString &outName) override;
 
         // View specific
         void registerModel(shared_ptr<FsmInterface> model);

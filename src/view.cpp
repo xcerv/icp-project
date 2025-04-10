@@ -104,6 +104,11 @@ void FsmView::updateVarInternal(const QString &name, const QVariant &value)
 void FsmView::cleanup(){} // Clear the class entirely
 void FsmView::throwError(int errnum){}
 
+void FsmView::outputEvent(const QString &outName)
+{
+    // Output msg to some output window
+}
+
 void FsmView::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
 {
 }
