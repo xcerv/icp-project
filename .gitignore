@@ -11,6 +11,7 @@ doc
 src/*.pro.user
 src/*pro.autosave
 src/build
+src/debug_bld
 
 # Prerequisites
 *.d
