@@ -103,7 +103,7 @@ bool CombinedTransition::eventTest(QEvent *e)
         if(m_guard != "")
         {
             /** @todo Additional checks? */
-            QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->machine()->parent()); // Get the parent of main statemachine --> the QJSEngine 
+            QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent()); // Get the parent of main statemachine --> the QJSEngine 
             QJSValue guard_result = engine->evaluate(this->m_guard);
             
             // Has to be bool and that is true
