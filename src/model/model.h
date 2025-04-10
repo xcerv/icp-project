@@ -40,8 +40,6 @@ struct ContextBackup
     QAbstractState* initialState; 
 };
 
-#define ID_UNSET SIZE_MAX
-
 /* Classes */
 class FsmModel : public FsmInterface
 {
