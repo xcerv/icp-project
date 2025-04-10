@@ -21,6 +21,7 @@
 
 #include "action_state.h"
 #include "combined_transition.h"
+#include "script_helper.h"
 
 #include <QJSEngine>
 #include <QStateMachine>
@@ -44,6 +45,7 @@ struct ContextBackup
 /* Classes */
 class FsmModel : public FsmInterface
 {
+    friend class ScriptHelper;
 
     protected:
         QJSEngine engine; ///< Native javascript interpreter for evaluating conditions/actions
@@ -57,10 +59,12 @@ class FsmModel : public FsmInterface
         QHash<QString,QString> varsInput; ///< Input variable - only string format
         QHash<QString,QString> varsOutput; ///< Output variable - only string format
 
-        ContextBackup backup;
+        ContextBackup backup; ///< Backup of machine state prior to interpretation
+        ScriptHelper scriptHelper; ///< Separate interface for communication with QJSEngine
 
     public:
         FsmModel();
+        virtual ~FsmModel();
 
         // Interface methods
         void updateState(const QString &name, const QPoint &pos) override;
@@ -88,7 +92,7 @@ class FsmModel : public FsmInterface
 
         // This may be used only one-way
         void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const override;
-        virtual void log() const = 0; // Request log
+        void log() const override; // Request log
 
         void startInterpretation() override;
         void stopInterpretation() override;
@@ -96,8 +100,14 @@ class FsmModel : public FsmInterface
         void cleanup() override;
         void throwError(int errnum) override;
 
+        void outputEvent(const QString &outName) override;
+
         // Model specific
         void registerView(shared_ptr<FsmInterface> view);
+        QAbstractState* getActiveState() const;
+
+        // Getter
+        QStateMachine *getMachine();
 };
 
 #endif

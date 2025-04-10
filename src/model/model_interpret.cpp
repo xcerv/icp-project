@@ -32,8 +32,7 @@ void FsmModel::startInterpretation()
     backup.vOutput = this->varsOutput;
     backup.initialState = this->machine.initialState();
 
-    // Set global variables for QJSEngine
-    // todo... // this->engine.globalObject
+    ActionState::setLastState(nullptr);
 
     this->machine.start();
     return;

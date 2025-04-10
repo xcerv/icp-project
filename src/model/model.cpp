@@ -66,10 +66,19 @@ Value safeGetter(const QHash<Key, Value> &container, const Key &key, const char*
 
 FsmModel::FsmModel() 
     :
-    machine{&engine},
-    view{nullptr}
+    engine{},
+    machine{static_cast<QObject*>(&engine)},
+    view{nullptr},
+    scriptHelper{this, nullptr}
 {
-    // ...
+    // Link model to QJSEngine
+    QJSValue helperEngine = engine.newQObject(&this->scriptHelper);
+    engine.globalObject().setProperty("icp", helperEngine);
+}
+
+FsmModel::~FsmModel()
+{
+    
 }
 
 void FsmModel::updateState(const QString &name, const QPoint &pos)
@@ -294,7 +303,22 @@ void FsmModel::throwError(int errnum)
     view->throwError(errnum);
 }
 
+void FsmModel::outputEvent(const QString &outName)
+{
+    view->outputEvent(outName);
+}
+
 void FsmModel::registerView(shared_ptr<FsmInterface> view)
 {
     this->view = move(view);
+}
+
+QAbstractState *FsmModel::getActiveState() const
+{
+    return (*this->machine.configuration().begin());
+}
+
+QStateMachine *FsmModel::getMachine()
+{
+    return &this->machine;
 }
