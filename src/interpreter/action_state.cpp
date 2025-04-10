@@ -10,6 +10,7 @@
 
 #include <QObject>
 #include <QJSEngine>
+#include <QDebug>
 
 #include "action_state.h"
 #include "combined_transition.h"
@@ -18,14 +19,23 @@
 ActionState::ActionState(const QString &action, const QPoint &position) 
     :
     m_action{action},
-    m_position{position}
+    m_position{position},
+    m_timeVisited{}
 {
-
+    
 }
 
 void ActionState::onEntry(QEvent *event)
 {
     (void)event;
+
+    // If state was changed, update timer
+    if(this != ActionState::getLastState())
+    {
+        ActionState::setLastState(this);
+        m_timeVisited.start();
+    }
+
     this->executeAction();
     this->machine()->postEvent(new FsmInputEvent("")); // Upon entry, implicitlly fire 'empty' input
 }
@@ -33,9 +43,8 @@ void ActionState::onEntry(QEvent *event)
 void ActionState::executeAction()
 {
     QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent());
+    //auto result = engine->evaluate(QString("with (icp) { %1 }").arg(this->getAction()));
     auto result = engine->evaluate(this->getAction());
-
-    // Update values of global objects... variables that is
 }
 
 QJSEngine *ActionState::m_scriptEngine() const
@@ -64,3 +73,21 @@ const QString &ActionState::getAction() const
 {
     return this->m_action;
 }
+
+bool ActionState::setLastState(ActionState *state)
+{
+    ActionState::m_lastState = state;
+    return true;
+}
+
+ActionState *ActionState::getLastState()
+{
+    return ActionState::m_lastState;
+}
+
+qint64 ActionState::getElapsed() const
+{
+    return m_timeVisited.elapsed();
+}
+
+QPointer<ActionState> ActionState::m_lastState = nullptr;

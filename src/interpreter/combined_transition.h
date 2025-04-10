@@ -32,7 +32,7 @@ class CombinedTransition : public QAbstractTransition
         bool m_pending; ///< Flags whether a Timeout event spawned by this transition is pending
         int m_pending_id; ///< The id of delayed Timeout event; -1 if nothing pending 
 
-        size_t m_id;
+        size_t m_id; ///< Unique identifier of the transition
 
     protected:
         /**
@@ -51,22 +51,35 @@ class CombinedTransition : public QAbstractTransition
         /**
          * @brief Constructor for combined transition
          * @param name The of the Input event that may trigger this condition
-         * @param guard 
-         * @param timeout 
+         * @param guard The guard condition that is checked before triggering this transition
+         * @param timeout The timeout to wait for once the transition is deemed triggerable
          */
         CombinedTransition(const QString &name, const QString &guard, const QString &timeout);
+        /**
+         * @brief Constructor that parses input string into m_name, m_guard, m_timeout
+         * @param unparsed_condition The condition string to be parsed and set as the members
+         */
         CombinedTransition(const QString &unparsed_condition);
+        /**
+         * @brief The Main constructor that sets unique id for the transition
+         * @param id The unique ID to set for this transition
+         */
         CombinedTransition(const size_t id);
 
-        // Stop timer - might be performed for all transitions always onTransition?
-        // Parsing might be perfomed by model
-        // Empty string possible for name, guard and even timeout - there will always be a timer
-
+        /**
+         * @brief Setter for the conditions
+         * @note Input string will be parsed into m_name, m_guard, m_timeout
+         * @param condition The condition to be processed and set
+         * @return Returns true on success, otherwise false
+         */
         bool setCondition(const QString &condition);
 
+        /**
+         * @brief Getter for the unique identifier (m_id) of this state
+         * @return Returns size_t being the unique ID of this state
+         */
         size_t getId() const;
         
-
         /**
          * @brief Stops any delayed events started by this transition
          * @note Restarts m_pending and m_pending_id to default
