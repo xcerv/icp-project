@@ -34,7 +34,9 @@ void ScriptHelper::registerFunctions()
 QVariant ScriptHelper::getInternal(const QString &name)
 {
     if(!m_model->varsInternal.contains(name))
-        {throw std::runtime_error("INTERPRETER: Access to undefined variable: " + name.toStdString());}
+    {
+        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+    }
     return m_model->varsInternal.value(name);
 }
 
@@ -46,7 +48,9 @@ void ScriptHelper::setInternal(const QString &name, const QVariant &value)
 QString ScriptHelper::getInput(const QString &name)
 {
     if(!m_model->varsInput.contains(name))
-        {throw std::runtime_error("INTERPRETER: Access to undefined variable: " + name.toStdString());}
+    {
+        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+    }
     return m_model->varsInput.value(name);
 }
 
@@ -58,7 +62,9 @@ void ScriptHelper::setInput(const QString &name, const QString &value)
 QString ScriptHelper::getOutput(const QString &name)
 {
     if(!m_model->varsOutput.contains(name))
-        {throw std::runtime_error("INTERPRETER: Access to undefined variable: " + name.toStdString());}
+    {
+        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+    }
     return m_model->varsOutput.value(name);
 }
 
@@ -92,7 +98,7 @@ QJSValue ScriptHelper::valueof(const QString &name)
         return QJSValue(this->m_model->varsOutput.value(name));
     }
     else{
-        throw std::runtime_error("INTERPRETER: valueof - Access to undefined variable: " + name.toStdString());
+        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: valueof - Access to undefined variable: " + name);
     }
 }
 

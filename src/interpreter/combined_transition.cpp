@@ -15,6 +15,7 @@
 #include <QStateMachine>
 #include <QJSEngine>
 #include <QRegularExpression>
+#include "fsm_exceptions.h"
 
 #include <stdexcept>
 
@@ -64,7 +65,7 @@ bool CombinedTransition::setCondition(const QString &condition)
     }
     else
     {
-        throw std::runtime_error("MODEL: Given guard condition has unsupported format");
+        throw FsmModelException(ERROR_CONDITION_FORMAT, "MODEL: Given guard condition has unsupported format");
     }
 
     return false;
