@@ -14,6 +14,28 @@
 #include <QObject>
 #include <QString>
 
+enum FsmErrorType : int
+{
+    ERROR_GENERIC,
+
+    // Model specific, probably
+    ERROR_UNDEFINED_STATE,
+    ERROR_UNDEFINED_TRANSITION,
+    ERROR_CONDITION_FORMAT,
+
+    ERROR_RENAME_EXISTING,
+
+    // Interpreter specific, probably
+    ERROR_INTERPRETATION_EVALUATION,
+    
+};
+
+struct FsmError
+{
+    FsmErrorType errNum = ERROR_GENERIC;
+    const char *errMsg = "";
+};
+
 enum varType : int
 {
 
@@ -30,9 +52,9 @@ class FsmInterface
 {
     public:
         virtual void updateState(const QString &name, const QPoint &pos) = 0;
+        virtual void updateStateName(const QString &oldName, const QString &newName) = 0;
         virtual void updateAction(const QString &parentState, const QString &action) = 0;
         virtual void updateInitialState(const QString &name) = 0;
-
 
         virtual void updateCondition(size_t transitionId, const QString &condition) = 0;
         virtual void updateTransition(size_t transitionId, const QString &srcState, const QString &destState) = 0;
@@ -63,7 +85,8 @@ class FsmInterface
         virtual void outputEvent(const QString &outName) = 0;
 
         virtual void cleanup() = 0;
-        virtual void throwError(int errnum) = 0;
+        virtual void throwError(FsmErrorType errNum) = 0;
+        virtual void throwError(FsmErrorType errNum, const QString &errMsg) = 0;
 };
 
 #endif
