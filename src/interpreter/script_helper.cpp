@@ -19,70 +19,74 @@ ScriptHelper::ScriptHelper(FsmModel *model, QObject *parent)
     m_model{model}
 {
     Q_ASSERT(m_model); // Not necessary, but just to be safe
-
-
-    // Register new functions
-    // this->registerFunctions();
 }
 
-void ScriptHelper::registerFunctions()
-{
-    // Left blank - if we decide to abandon "icp." prefix in the script, we may register global functions here directly
-    return;
-}
-
-QVariant ScriptHelper::getInternal(const QString &name)
+QJSValue ScriptHelper::getInternal(const QString &name)
 {
     if(!m_model->varsInternal.contains(name))
     {
-        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+        return QJSValue(QJSValue::UndefinedValue);
     }
-    return m_model->varsInternal.value(name);
+    
+    return m_model->engine.toScriptValue(m_model->varsInternal.value(name));
 }
 
-void ScriptHelper::setInternal(const QString &name, const QVariant &value)
+bool ScriptHelper::setInternal(const QString &name, const QVariant &value)
 {
     if(!m_model->varsInternal.contains(name))
     {
-        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined internal variable: " + name);
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined internal variable: " + name);
+        return false;
     }
     m_model->updateVarInternal(name, value);
+
+    return true;
 }
 
-QString ScriptHelper::getInput(const QString &name)
+QJSValue ScriptHelper::getInput(const QString &name)
 {
     if(!m_model->varsInput.contains(name))
     {
-        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+        return QJSValue(QJSValue::UndefinedValue);
     }
-    return m_model->varsInput.value(name);
+
+    return m_model->engine.toScriptValue(m_model->varsInput.value(name));
 }
 
-void ScriptHelper::setInput(const QString &name, const QString &value)
+bool ScriptHelper::setInput(const QString &name, const QString &value)
 {
     if(!m_model->varsInput.contains(name))
     {
-        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined input: " + name);
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined input: " + name);
+        return false;
     }
     m_model->updateVarInput(name, value);
+    return true;
 }
 
-QString ScriptHelper::getOutput(const QString &name)
+QJSValue ScriptHelper::getOutput(const QString &name)
 {
     if(!m_model->varsOutput.contains(name))
     {
-        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Access to undefined variable: " + name);
+        return QJSValue(QJSValue::UndefinedValue);
     }
-    return m_model->varsOutput.value(name);
+
+    return m_model->engine.toScriptValue(m_model->varsOutput.value(name));
 }
 
-void ScriptHelper::setOutput(const QString &name, const QString &value)
+bool ScriptHelper::setOutput(const QString &name, const QString &value)
 {
     if(!m_model->varsOutput.contains(name))
     {
-        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined output: " + name);
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined output: " + name);
+        return false;
     }
+
     m_model->updateVarOutput(name, value);
+    return true;
 }
 
 /*
@@ -93,8 +97,9 @@ void ScriptHelper::setOutput(const QString &name, const QString &value)
 
 void ScriptHelper::output(const QString &name, const QJSValue &value)
 {
-    this->setOutput(name, value.toString());
-    m_model->outputEvent(name);
+    if(this->setOutput(name, value.toString())){
+        m_model->outputEvent(name);
+    }
 }
 
 QJSValue ScriptHelper::valueof(const QString &name)
@@ -110,7 +115,8 @@ QJSValue ScriptHelper::valueof(const QString &name)
         return QJSValue(this->m_model->varsOutput.value(name));
     }
     else{
-        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: valueof - Access to undefined variable: " + name);
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: valueof - Access to undefined variable: " + name);
+        return QJSValue(QJSValue::UndefinedValue);
     }
 }
 

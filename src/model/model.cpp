@@ -13,6 +13,7 @@
 #include <QtAlgorithms>
 #include <QVariant>
 #include <QDateTime>
+#include <QDebug>
 
 #include "mvc_interface.h"
 #include "model.h"
@@ -325,11 +326,13 @@ void FsmModel::throwError(FsmErrorType errNum)
 
 void FsmModel::throwError(FsmErrorType errNum, const QString &errMsg)
 {
+    qDebug() << "ERRNUM:" << errNum << "ERRMSG:" << errMsg;
     view->throwError(errNum, errMsg);
 }
 
 void FsmModel::outputEvent(const QString &outName)
 {
+    qDebug() << outName << ": " << this->varsOutput.value(outName);
     view->outputEvent(outName);
 }
 

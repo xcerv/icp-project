@@ -33,16 +33,14 @@ class ScriptHelper : public QObject
         // Explicit due to Qt restrictions
         explicit ScriptHelper(FsmModel* model, QObject *parent = nullptr); 
 
-        void registerFunctions();
+        Q_INVOKABLE QJSValue getInternal(const QString& name);
+        Q_INVOKABLE bool setInternal(const QString& name, const QVariant& value);
 
-        Q_INVOKABLE QVariant getInternal(const QString& name);
-        Q_INVOKABLE void setInternal(const QString& name, const QVariant& value);
+        Q_INVOKABLE QJSValue getInput(const QString& name);
+        Q_INVOKABLE bool setInput(const QString& name, const QString& value);
 
-        Q_INVOKABLE QString getInput(const QString& name);
-        Q_INVOKABLE void setInput(const QString& name, const QString& value);
-
-        Q_INVOKABLE QString getOutput(const QString& name);
-        Q_INVOKABLE void setOutput(const QString& name, const QString& value);
+        Q_INVOKABLE QJSValue getOutput(const QString& name);
+        Q_INVOKABLE bool setOutput(const QString& name, const QString& value);
 
 
         /*

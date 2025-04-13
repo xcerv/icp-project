@@ -16,7 +16,15 @@
 #include "mvc_interface.h"
 #include "model.h"
 
+#include <QtGlobal>
+
 using namespace std;
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
+    #define STOP_EVALUATION(engine) do{(engine).throwError("Interpretation error");}while(0)
+#else
+    #define STOP_EVALUATION(engine) 
+#endif
 
 void FsmModel::renameFsm(const QString &name)
 {
@@ -40,22 +48,14 @@ void FsmModel::startInterpretation()
 
 void FsmModel::interpretationError(FsmErrorType errNum)
 {
-    // Unsupported by Qt 5.5
-    // QScriptContext *ctx = engine->currentContext();
-    // if(ctx)
-    //     this->engine.throwError(errMsg);
-
+    STOP_EVALUATION(this->engine);
     this->stopInterpretation();
     this->throwError(errNum);
 }
 
 void FsmModel::interpretationError(FsmErrorType errNum, const QString &errMsg)
 {
-    // Unsupported by Qt 5.5
-    // QScriptContext *ctx = engine->currentContext();
-    // if(ctx)
-    //     this->engine.throwError(errMsg);
-
+    STOP_EVALUATION(this->engine);
     this->stopInterpretation();
     this->throwError(errNum, errMsg);
 }

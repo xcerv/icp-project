@@ -36,6 +36,8 @@ void ActionState::onEntry(QEvent *event)
         m_timeVisited.start();
     }
 
+    qDebug() << "New state entered: " << this->objectName();
+
     this->executeAction();
     this->machine()->postEvent(new FsmInputEvent("")); // Upon entry, implicitlly fire 'empty' input
 }
