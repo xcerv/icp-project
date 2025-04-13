@@ -32,6 +32,10 @@ void FsmView::updateState(const QString &name, const QPoint &pos)
 {
 }
 
+void FsmView::updateStateName(const QString &oldName, const QString &newName)
+{
+}
+
 void FsmView::updateAction(const QString &parentState, const QString &action)
 {
 }
@@ -102,7 +106,16 @@ void FsmView::updateVarInternal(const QString &name, const QVariant &value)
 
 
 void FsmView::cleanup(){} // Clear the class entirely
-void FsmView::throwError(int errnum){}
+
+void FsmView::throwError(FsmErrorType errNum)
+{
+    return; // Nop?
+}
+
+void FsmView::throwError(FsmErrorType errNum, const QString &errMsg)
+{
+    return; // Nop?
+}
 
 void FsmView::outputEvent(const QString &outName)
 {

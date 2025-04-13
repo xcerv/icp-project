@@ -36,6 +36,7 @@ class FsmView : public FsmInterface
 
         // Interface methods
         void updateState(const QString &name, const QPoint &pos) override;
+        void updateStateName(const QString &oldName, const QString &newName) override;
         void updateAction(const QString &parentState, const QString &action) override;
         void updateInitialState(const QString &name) override;
 
@@ -66,7 +67,8 @@ class FsmView : public FsmInterface
         void stopInterpretation() override;
 
         void cleanup() override;
-        void throwError(int errnum) override;
+        void throwError(FsmErrorType errNum) override;
+        void throwError(FsmErrorType errNum, const QString &errMsg) override;
 
         void outputEvent(const QString &outName) override;
 
