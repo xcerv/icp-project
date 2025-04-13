@@ -50,6 +50,7 @@ class ScriptHelper : public QObject
         */
 
         Q_INVOKABLE void output(const QString &name, const QJSValue &value);
+        Q_INVOKABLE void set(const QString &name, const QJSValue &value);
         Q_INVOKABLE QJSValue valueof(const QString &name);
         Q_INVOKABLE bool defined(const QString &name);
         Q_INVOKABLE qint64 elapsed();

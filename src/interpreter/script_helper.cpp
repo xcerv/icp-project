@@ -102,6 +102,17 @@ void ScriptHelper::output(const QString &name, const QJSValue &value)
     }
 }
 
+void ScriptHelper::set(const QString &name, const QJSValue &value)
+{
+    if(m_model->varsInternal.contains(name)){
+        this->setInternal(name, value.toVariant());
+    }
+    else{
+        this->m_model->interpretationError(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: set - Access to undefined variable: " + name);
+        return;
+    }
+}
+
 QJSValue ScriptHelper::valueof(const QString &name)
 {
     if(m_model->varsInternal.contains(name)){
