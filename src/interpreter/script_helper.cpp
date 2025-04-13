@@ -42,6 +42,10 @@ QVariant ScriptHelper::getInternal(const QString &name)
 
 void ScriptHelper::setInternal(const QString &name, const QVariant &value)
 {
+    if(!m_model->varsInternal.contains(name))
+    {
+        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined internal variable: " + name);
+    }
     m_model->updateVarInternal(name, value);
 }
 
@@ -56,6 +60,10 @@ QString ScriptHelper::getInput(const QString &name)
 
 void ScriptHelper::setInput(const QString &name, const QString &value)
 {
+    if(!m_model->varsInput.contains(name))
+    {
+        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined input: " + name);
+    }
     m_model->updateVarInput(name, value);
 }
 
@@ -70,6 +78,10 @@ QString ScriptHelper::getOutput(const QString &name)
 
 void ScriptHelper::setOutput(const QString &name, const QString &value)
 {
+    if(!m_model->varsOutput.contains(name))
+    {
+        throw FsmModelException(ERROR_INTERPRETATION_EVALUATION, "INTERPRETER: Attempt to set undefined output: " + name);
+    }
     m_model->updateVarOutput(name, value);
 }
 
@@ -113,3 +125,9 @@ qint64 ScriptHelper::elapsed()
 {
     return static_cast<ActionState*>(m_model->getActiveState())->getElapsed();
 }
+
+void ScriptHelper::engine_error(const QJSValue &errNum, const QString &errMsg)
+{
+    this->m_model->interpretationError(static_cast<FsmErrorType>(errNum.toInt()), errMsg);
+}
+

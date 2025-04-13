@@ -45,8 +45,8 @@ void FsmModel::interpretationError(FsmErrorType errNum)
     // if(ctx)
     //     this->engine.throwError(errMsg);
 
-    this->machine.stop();
-    this->view->throwError(errNum);
+    this->stopInterpretation();
+    this->throwError(errNum);
 }
 
 void FsmModel::interpretationError(FsmErrorType errNum, const QString &errMsg)
@@ -56,19 +56,21 @@ void FsmModel::interpretationError(FsmErrorType errNum, const QString &errMsg)
     // if(ctx)
     //     this->engine.throwError(errMsg);
 
-    this->machine.stop();
-    this->view->throwError(errNum, errMsg);
+    this->stopInterpretation();
+    this->throwError(errNum, errMsg);
 }
 
 void FsmModel::stopInterpretation()
 {
+    this->machine.stop();
+
     // On full stop restore original values (maybe add another button for restoring?)
     this->varsInternal = backup.vInternal;
     this->varsInput = backup.vInput;
     this->varsOutput = backup.vOutput;
     this->machine.setInitialState(backup.initialState);
 
-    this->machine.stop();
+    this->engine.collectGarbage();
     return;
 }
 

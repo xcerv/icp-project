@@ -51,10 +51,11 @@ class ScriptHelper : public QObject
         ============================
         */
 
-        Q_INVOKABLE void output(const QString& name, const QJSValue& value);
-        Q_INVOKABLE QJSValue valueof(const QString& name);
-        Q_INVOKABLE bool defined(const QString& name);
+        Q_INVOKABLE void output(const QString &name, const QJSValue &value);
+        Q_INVOKABLE QJSValue valueof(const QString &name);
+        Q_INVOKABLE bool defined(const QString &name);
         Q_INVOKABLE qint64 elapsed();
+        Q_INVOKABLE void engine_error(const QJSValue &errNum, const QString &errMsg);
 };
 
 #endif
