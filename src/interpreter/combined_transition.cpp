@@ -88,7 +88,7 @@ void CombinedTransition::stopTimer()
 
 bool CombinedTransition::eventTest(QEvent *e)
 {
-    if(e == nullptr) return false;
+    if(e == nullptr || !this->machine()->isRunning()) return false;
 
     if(e->type() == FsmInputEvent::getType()) // Initial input trigger
     {
@@ -101,7 +101,7 @@ bool CombinedTransition::eventTest(QEvent *e)
             return false;
 
         // Try guard condition here...
-        if(m_guard != "")
+        if(!m_guard.isEmpty())
         {
             /** @todo Additional checks? */
             QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent()); // Get the parent of main statemachine --> the QJSEngine 
@@ -113,13 +113,32 @@ bool CombinedTransition::eventTest(QEvent *e)
         }
 
         // Guard passed... start timeout
-        bool ok;
-        int timeoutMs = this->m_timeout.toInt(&ok);
-        if(!ok || timeoutMs < 0){timeoutMs = 0;}
+        int timeoutMs = 0;
+
+        // Timeout is not empty - extract its value
+        if(!m_timeout.isEmpty())
+        {
+            bool ok;
+            timeoutMs = this->m_timeout.toInt(&ok);
+
+            // Timeout is not a number ==> Try to evaluate it as a script and expect integer value as output
+            if(!ok)
+            {
+                auto timeoutResult = (static_cast<QJSEngine*>(this->machine()->parent())->evaluate(this->m_timeout));
+                
+                if(timeoutResult.isNumber())
+                {
+                    timeoutMs = timeoutResult.toInt();
+                }
+            }
+
+            if(timeoutMs < 0){timeoutMs = 0;}
+        }
 
         // Start new timeout
         this->m_pending_id = this->machine()->postDelayedEvent(new FsmTimeoutEvent(this), timeoutMs);
         this->m_pending = true;
+        return false;
 
     } else if(e->type() == FsmTimeoutEvent::getType())  // Something timed-out - was it me?
     {

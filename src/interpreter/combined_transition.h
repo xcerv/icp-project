@@ -15,7 +15,7 @@
 #include <QStateMachine>
 #include <QAbstractTransition>
 
-#define REGEX_TRANSITION_CONDITION "^ *([a-zA-Z_-]+)? *(\\[(.+)\\])? *(@ *([1-9][0-9]*))? *$"
+#define REGEX_TRANSITION_CONDITION "^ *([a-zA-Z_-]+)? *(\\[([\\x00-\\x7F]+)\\])? *(@ *([\\x00-\\x7F]+))? *$"
 
 /**
  * @brief Class used for transitions in ICP FSM - it combines two possible input events (initial Input and Timeout)
