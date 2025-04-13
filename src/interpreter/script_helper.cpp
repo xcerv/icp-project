@@ -113,6 +113,11 @@ void ScriptHelper::set(const QString &name, const QJSValue &value)
     }
 }
 
+QJSValue ScriptHelper::get(const QString &name)
+{
+    return this->getInput(name);
+}
+
 QJSValue ScriptHelper::valueof(const QString &name)
 {
     if(m_model->varsInternal.contains(name)){
@@ -141,6 +146,11 @@ bool ScriptHelper::defined(const QString &name)
 qint64 ScriptHelper::elapsed()
 {
     return static_cast<ActionState*>(m_model->getActiveState())->getElapsed();
+}
+
+qint32 ScriptHelper::atoi(const QJSValue &value)
+{
+    return value.toInt();
 }
 
 void ScriptHelper::engine_error(const QJSValue &errNum, const QString &errMsg)
