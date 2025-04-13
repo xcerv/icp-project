@@ -22,6 +22,7 @@
 #include "action_state.h"
 #include "combined_transition.h"
 #include "script_helper.h"
+#include "fsm_exceptions.h"
 
 #include <QJSEngine>
 #include <QStateMachine>
@@ -30,6 +31,15 @@
 #include <QVariant>
 
 using namespace std;
+
+#define CATCH_MODEL(code)                                                           \
+                            try{                                                    \
+                                code                                                \
+                            }                                                       \
+                            catch(const FsmModelException &ex){                     \
+                                this->view->throwError(ex.errorCode(), ex.what());  \
+                                return;                                             \
+                            }                                                        
 
 
 struct ContextBackup
@@ -66,6 +76,7 @@ class FsmModel : public FsmInterface
 
         // Interface methods
         void updateState(const QString &name, const QPoint &pos) override;
+        void updateStateName(const QString &oldName, const QString &newName) override;
         void updateAction(const QString &parentState, const QString &action) override;
         void updateInitialState(const QString &name) override;
 
@@ -96,7 +107,8 @@ class FsmModel : public FsmInterface
         void stopInterpretation() override;
 
         void cleanup() override;
-        void throwError(int errnum) override;
+        void throwError(FsmErrorType errNum) override;
+        void throwError(FsmErrorType errNum, const QString &errMsg) override;
 
         void outputEvent(const QString &outName) override;
 
@@ -104,8 +116,63 @@ class FsmModel : public FsmInterface
         void registerView(shared_ptr<FsmInterface> view);
         QAbstractState* getActiveState() const;
 
-        // Getter
+        // Machine getter
         QStateMachine *getMachine();
+
+        // Interpretation error
+        void interpretationError(FsmErrorType errNum);
+        void interpretationError(FsmErrorType errNum, const QString &errMsg);
+
+    /* Template getters/setters */
+    private:    
+        /**
+         * @brief Tempate for safely getting elements out of model's internal containters
+         * @tparam Key The key to search the element by
+         * @tparam Value The type of value that is stored in the container
+         * @param container Container storing the elements
+         * @param key The key to look for in the container
+         * @param errnum The error number thrown when element is not found
+         * @param errMsg The specific message that may be used when printing error to user
+         * @return Returns the element of type Value
+         */
+        template <typename Key, typename Value>
+        Value safeGetter(const QHash<Key, Value> &container, const Key &key, const FsmModelException &err)
+        {
+            auto it = container.find(key);
+        
+            if (it != container.end()) {
+                // Key exists, call the update
+                return it.value();
+            } else {
+                // Key does not exist, throw error
+                throw err;
+            }
+        }
+
+        /**
+         * @brief Safely searches model's internal containers for an element to update
+         * @tparam Key The key to search the element by
+         * @tparam Value The type of value that is stored in the container
+         * @tparam UpdateFunc The function that is used to update the element 
+         * @param container Container storing the elements
+         * @param key The key to look for in the container
+         * @param errnum The error number thrown when element is not found
+         * @param errmsg The specific message that may be used when printing error to user
+         */
+        template <typename Key, typename Value, typename UpdateFunc>
+        void safeUpdate(QHash<Key, Value> &container, const Key &key, UpdateFunc &&updater, const FsmModelException &err)
+        {
+            auto it = container.find(key);
+
+            if (it != container.end()) {
+                // Key exists, call the update
+                updater(it.value());
+            } else {
+                // Key does not exist, throw error
+                throw err;
+            }
+        }
+
 };
 
 #endif

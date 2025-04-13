@@ -38,6 +38,28 @@ void FsmModel::startInterpretation()
     return;
 }
 
+void FsmModel::interpretationError(FsmErrorType errNum)
+{
+    // Unsupported by Qt 5.5
+    // QScriptContext *ctx = engine->currentContext();
+    // if(ctx)
+    //     this->engine.throwError(errMsg);
+
+    this->machine.stop();
+    this->view->throwError(errNum);
+}
+
+void FsmModel::interpretationError(FsmErrorType errNum, const QString &errMsg)
+{
+    // Unsupported by Qt 5.5
+    // QScriptContext *ctx = engine->currentContext();
+    // if(ctx)
+    //     this->engine.throwError(errMsg);
+
+    this->machine.stop();
+    this->view->throwError(errNum, errMsg);
+}
+
 void FsmModel::stopInterpretation()
 {
     // On full stop restore original values (maybe add another button for restoring?)
