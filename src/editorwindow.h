@@ -16,6 +16,8 @@
 #include "statefsmwidget.h"
 #include "workarea.h"
 #include <vector>
+#include <QCloseEvent>
+#include "variablesdisplay.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -69,13 +71,38 @@ public slots:
      * @todo should work only for connecting, maybe opening detailed info about state??
      */
     void stateFSMLeftClick();
+protected:
+    /**
+     * @brief overrides the default closeEvent -- asks if saving is wanted
+     * @param event that happened
+     */
+    void closeEvent(QCloseEvent *event) override;
 private:
-    Ui::EditorWindow *ui;
+    /**
+     * @brief checks wheter or not a FSM can be inserted in a provided spot
+     * (checking for collision with other states and going out of bounds)
+     * @param position position of FSM we want to check if fits
+     * @return true if it would fit
+     */
+    bool checkIfFSMFits(QPoint position);
 
+    /**
+     * @brief returns the minimum size the work-area can be based on position of FSM states
+     * @return minimum size
+     */
+    QPoint getMinWorkAreaSize();
+
+    /**
+     * @brief resizes work-area
+     */
+    void resizeWorkArea();
+
+    Ui::EditorWindow *ui;
     QLabel * statusBarLabel;//label on status bar
     WorkArea * workArea;// work area widget
     QWidget * workAreaScrollContainer;// container for scroll area
     QLayout * workAreaScrollLayout; // layout for scroll area
     std::vector<StateFSMWidget*> allStates; //vector of all states in the system
+    VariablesDisplay * variablesDisplay;
 };
 #endif // EDITORWINDOW_H
