@@ -7,6 +7,15 @@ VariablesDisplay::VariablesDisplay(QWidget *parent)
 {
     ui->setupUi(this);
     connect(ui->btnHide, &QPushButton::clicked,this, &VariablesDisplay::hideOrShow);
+    connect(ui->btnAddOutputVar, &QPushButton::clicked, this, [this](){insertVariable(ui->lblOutputVar);});
+    connect(ui->btnAddInputVar, &QPushButton::clicked, this, [this](){insertVariable(ui->lblInputVar);});
+    connect(ui->btnAddInternalVar, &QPushButton::clicked, this, [this](){insertVariable(ui->lblInternalVar);});
+    ui->btnRemoveInputVar->setDisabled(true);
+    ui->btnRemoveOutputVar->setDisabled(true);
+    ui->btnRemoveInternalVar->setDisabled(true);
+    ui->btnEditInputVar->setDisabled(true);
+    ui->btnEditOutputVar->setDisabled(true);
+    ui->btnEditInternalVar->setDisabled(true);
 }
 
 VariablesDisplay::~VariablesDisplay()
@@ -23,15 +32,20 @@ void VariablesDisplay::hideOrShow(){
         ui->btnHide->setText("hide");
         setFixedSize(400,300);
     }
-
-    ui->lblInputVar->setVisible(shown);
-    ui->lblOutputVar->setVisible(shown);
-    ui->lblInternalVar->setVisible(shown);
-
-    ui->btnAddInputVar->setVisible(shown);
-    ui->btnAddOutputVar->setVisible(shown);
-    ui->btnAddInternalVar->setVisible(shown);
     ui->scrollArea->setVisible(shown);
 }
 
+void VariablesDisplay::insertVariable(QLabel *type){
+    QString name = "name";
+    QString value = "value";
+    QFormLayout *layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
+
+    QLabel *newLblName = new QLabel(name, ui->scrollAreaWidgetContents);
+    QLabel *newLblValue = new QLabel(value, ui->scrollAreaWidgetContents);
+
+    int row;
+    layout->getWidgetPosition(type, &row, nullptr);
+    layout->insertRow(row + 1, newLblName, newLblValue);
+
+}
 
