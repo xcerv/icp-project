@@ -30,10 +30,10 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
 
 StateFSMWidget::~StateFSMWidget()
 {
-    for (QLabel* label : allConditions) {
-        delete label;  // free all condition labels
+    for (QLabel* label : allOutputs) {
+        delete label;  // free all output labels
     }
-    allConditions.clear();  // ensure the vector is empty
+    allOutputs.clear();  // ensure the vector is empty
     delete scrollContainer;
     delete scrollLayout;
     delete ui;
@@ -54,11 +54,11 @@ void StateFSMWidget::setName(QString name){
 }
 
 
-void StateFSMWidget::addCondition(QString cond){
+void StateFSMWidget::addOutput(QString cond){
     QLabel * l = new QLabel;
     l->setText(cond);
     scrollLayout->addWidget(l);
-    allConditions.push_back(l);
+    allOutputs.push_back(l);
 }
 
 QPoint StateFSMWidget::getSize(){
@@ -70,8 +70,6 @@ QPoint StateFSMWidget::getPosition(){
 }
 
 
-//c1 -- for body
-//c2 -- for labels and scroll(?)
 void StateFSMWidget::recolor(const QString& c1, const QString& c2) {
     QString style = QString(
                         "QWidget { background: %1; }"
