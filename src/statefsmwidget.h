@@ -47,10 +47,15 @@ public:
      */
     QPoint getPosition();
     /**
-     * @brief adds a condition into the state
-     * @param cond condition to be added and displayed
+     * @brief adds a output into the state
+     * @param cond output to be added and displayed
      */
-    void addCondition(QString cond);
+    void addOutput(QString cond);
+    /**
+     * @brief recolors the state
+     * @param c1 primary color (of body)
+     * @param c2 secondary color (of text)
+     */
     void recolor(const QString& c1, const QString& c2);
 signals:
     /**
@@ -65,7 +70,7 @@ private:
     Ui::StateFSMWidget *ui;
     QLayout * scrollLayout; //layout for scroll area
     QWidget * scrollContainer; //container for scroll area
-    std::vector<QLabel*> allConditions; //vector of all conditions of state
+    std::vector<QLabel*> allOutputs; //vector of all outputs of state
     QPoint position; //position of state wothin workArea
     QPoint size; //size of state
 };
