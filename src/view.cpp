@@ -40,7 +40,7 @@ void FsmView::updateAction(const QString &parentState, const QString &action)
 {
 }
 
-void FsmView::updateInitialState(const QString &name)
+void FsmView::updateActiveState(const QString &name)
 {
 }
 

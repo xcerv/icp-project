@@ -38,7 +38,7 @@ class FsmView : public FsmInterface
         void updateState(const QString &name, const QPoint &pos) override;
         void updateStateName(const QString &oldName, const QString &newName) override;
         void updateAction(const QString &parentState, const QString &action) override;
-        void updateInitialState(const QString &name) override;
+        void updateActiveState(const QString &name) override;
 
         void updateCondition(size_t transitionId, const QString &condition) override;
         void updateTransition(size_t transitionId, const QString &srcState, const QString &destState) override;

@@ -50,7 +50,7 @@ FsmModel::FsmModel()
 
 FsmModel::~FsmModel()
 {
-    
+    this->cleanup();
 }
 
 void FsmModel::updateState(const QString &name, const QPoint &pos)
@@ -119,7 +119,7 @@ void FsmModel::updateAction(const QString &parentState, const QString &action)
     view->updateAction(parentState, action);
 }
 
-void FsmModel::updateInitialState(const QString &name)
+void FsmModel::updateActiveState(const QString &name)
 {
     CATCH_MODEL(
         safeUpdate(
@@ -134,7 +134,7 @@ void FsmModel::updateInitialState(const QString &name)
         );
     )
 
-    view->updateInitialState(name);
+    view->updateActiveState(name);
 }
 
 void FsmModel::updateCondition(size_t transitionId, const QString &condition)

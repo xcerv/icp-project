@@ -54,7 +54,7 @@ class FsmInterface
         virtual void updateState(const QString &name, const QPoint &pos) = 0;
         virtual void updateStateName(const QString &oldName, const QString &newName) = 0;
         virtual void updateAction(const QString &parentState, const QString &action) = 0;
-        virtual void updateInitialState(const QString &name) = 0;
+        virtual void updateActiveState(const QString &name) = 0;
 
         virtual void updateCondition(size_t transitionId, const QString &condition) = 0;
         virtual void updateTransition(size_t transitionId, const QString &srcState, const QString &destState) = 0;
