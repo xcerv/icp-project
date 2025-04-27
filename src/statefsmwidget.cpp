@@ -55,7 +55,9 @@ void StateFSMWidget::setName(QString name){
     ui->name->setText(name);
 }
 
-
+QString StateFSMWidget::getName(){
+    return ui->name->text();
+}
 void StateFSMWidget::addOutput(QString cond){
     QLabel * l = new QLabel;
     l->setText(cond);

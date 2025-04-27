@@ -37,6 +37,11 @@ public:
      */
     void setName(QString name);
     /**
+     * @brief gets name of state
+     * @return name of state
+     */
+    QString getName();
+    /**
      * @brief returns size of state
      * @return size
      */

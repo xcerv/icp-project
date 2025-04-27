@@ -65,15 +65,12 @@ EditorWindow::~EditorWindow()
 }
 
 void EditorWindow::variableToBeAdded(enum variableType type){
-    statusBarLabel->setText("variables Are to be Added");
     // make dialog for getting neccassary info
     QDialog dialog(this);
-    //dialog.setStyleSheet("QWidget{background-color: white}");
-    dialog.setWindowTitle("Resize work-area");
+    dialog.setWindowTitle("Add variable");
 
     QFormLayout form(&dialog);
 
-    // two spinboxes (width, height)
     QLineEdit *nameInput = new QLineEdit(&dialog);
     form.addRow("Name:", nameInput);
 
@@ -271,6 +268,25 @@ void EditorWindow::stateFSMRightClick(){
     QAction* setStartAction = menu.addAction("Set as starting");
     QAction* addOutputAction = menu.addAction("Add output ...");
     QAction* renameStateAction = menu.addAction("Rename ...");
+    connect(renameStateAction, &QAction::triggered, this, [=](bool){
+        QDialog dialog(this);
+        dialog.setWindowTitle("Add variable");
+
+        QFormLayout form(&dialog);
+
+        QLineEdit *nameInput = new QLineEdit(&dialog);
+        form.addRow("Name:", nameInput);
+
+        // OK + Cancel buttons
+        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+        connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
+            model->updateStateName(stateClicked->getName(),nameInput->text());
+        }
+        ;});
 
     menu.exec(QCursor::pos());
 }

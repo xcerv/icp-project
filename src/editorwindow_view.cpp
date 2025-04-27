@@ -18,7 +18,7 @@
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
     if(allStates.contains(name)){
-
+        //TODO..
     }else{
         insertFSMState(pos, name);
     }
@@ -26,6 +26,7 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
 
 void EditorWindow::updateStateName(const QString &oldName, const QString &newName)
 {
+    allStates[oldName]->setName(newName);
 }
 
 void EditorWindow::updateAction(const QString &parentState, const QString &action)
