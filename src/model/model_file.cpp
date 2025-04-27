@@ -8,15 +8,34 @@
  *
  */
 
-#include <string>
-#include <vector>
-#include <memory>
-#include <map>
+#include <QObject>
+#include <QString>
+#include <QFile>
+#include <QRegularExpression>
+#include <QPoint>
+#include <QDebug>
 
 #include "mvc_interface.h"
 #include "model.h"
 
 using namespace std;
+
+// Regular
+#define REGEX_NAME
+// Variable regexes
+
+// Generic regex for variables ==> name and 
+#define REGEX_VARIABLE
+// Internal variable regex ==> type and 
+#define REGEX_VARIABLE_INTERNAL "" REGEX_VARIABLE ""
+#define REGEX_VARIABLE_INPUT REGEX_VARIABLE
+#define REGEX_VARIABLE_OUTPUT REGEX_VARIABLE
+
+// Regex for states
+#define REGEX_STATE
+
+// Regex for transitions
+#define REGEX_TRANSITION
 
 /**
  * @brief 
