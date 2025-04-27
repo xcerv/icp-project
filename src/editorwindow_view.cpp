@@ -134,7 +134,7 @@ void EditorWindow::stopInterpretation()
     return; // NOP?
 }
 
-void EditorWindow::registerModel(std::shared_ptr<FsmInterface> model)
+void EditorWindow::registerModel(FsmInterface *model)
 {
-    this->model = std::move(model); // todo: can own each other?
+    this->model = model; // todo: can own each other?
 }
