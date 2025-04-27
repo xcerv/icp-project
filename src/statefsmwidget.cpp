@@ -30,12 +30,14 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
 
 StateFSMWidget::~StateFSMWidget()
 {
+    /*
     for (QLabel* label : allOutputs) {
         delete label;  // free all output labels
     }
     allOutputs.clear();  // ensure the vector is empty
     delete scrollContainer;
     delete scrollLayout;
+    */
     delete ui;
 }
 

@@ -47,6 +47,7 @@ EditorWindow::EditorWindow(QWidget *parent)
 
 EditorWindow::~EditorWindow()
 {
+    /*
     for (StateFSMWidget* state : allStates) {
         delete state;  // free all condition labels
     }
@@ -55,6 +56,7 @@ EditorWindow::~EditorWindow()
     delete workAreaScrollLayout;
     delete workArea;
     delete statusBarLabel;
+    */
     delete ui;
 }
 
