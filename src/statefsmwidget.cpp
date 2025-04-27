@@ -30,12 +30,14 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
 
 StateFSMWidget::~StateFSMWidget()
 {
+    /*
     for (QLabel* label : allOutputs) {
         delete label;  // free all output labels
     }
     allOutputs.clear();  // ensure the vector is empty
     delete scrollContainer;
     delete scrollLayout;
+    */
     delete ui;
 }
 
@@ -53,7 +55,9 @@ void StateFSMWidget::setName(QString name){
     ui->name->setText(name);
 }
 
-
+QString StateFSMWidget::getName(){
+    return ui->name->text();
+}
 void StateFSMWidget::addOutput(QString cond){
     QLabel * l = new QLabel;
     l->setText(cond);

@@ -11,13 +11,17 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Editor</string>
+   <string>newFSM</string>
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
 background-color: #F0F5FF
 }
 
+QLabel{
+color: navy;
+font:14px &quot;Nimbus Mono PS&quot;;
+}
 
 QScrollArea::corner {
     background: transparent;

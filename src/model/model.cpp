@@ -17,6 +17,7 @@
 
 #include "mvc_interface.h"
 #include "model.h"
+#include "combined_event.h"
 
 using namespace std;
 
@@ -338,6 +339,22 @@ void FsmModel::outputEvent(const QString &outName)
 
 void FsmModel::inputEvent(const QString &name, const QString &value)
 {
+    // Accept events only if interpretation is running
+    if(!this->machine.isRunning())
+        return;
+
+    // Check if given input variable exists
+    auto it = this->varsInput.find(name);
+    
+    // The input variable exits!
+    if(it != this->varsInput.end())
+    {
+        // Update value
+        this->updateVarInput(name, value);
+
+        // Fire event
+        this->machine.postEvent(new FsmInputEvent(name));
+    }
 }
 
 void FsmModel::registerView(FsmInterface *view)
