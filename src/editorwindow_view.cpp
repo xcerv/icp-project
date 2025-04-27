@@ -102,6 +102,8 @@ void EditorWindow::renameFsm(const QString &name)
 
 void EditorWindow::updateVarInternal(const QString &name, const QVariant &value)
 {
+    QString v = value.toString();
+    updateVar(INTERNALV, name, v);
 }
 
 

@@ -17,6 +17,8 @@
 #include <QFormLayout>
 #include <QSpinBox>
 #include <QDialogButtonBox>
+#include <QComboBox>
+#include <QPointer>
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -85,16 +87,80 @@ void EditorWindow::variableToBeAdded(enum variableType type){
         if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
             model->updateVarOutput(nameInput->text(),"");
         }
-    }else{
+    }else if(type == INPUTV){
         QLineEdit *valueInput = new QLineEdit(&dialog);
         form.addRow("Value:", valueInput);
         form.addRow(&buttonBox);
         if (dialog.exec() == QDialog::Accepted && nameInput->text() != "" && valueInput->text() != "") {
-            if(type == INPUTV){
-                model->updateVarInput(nameInput->text(),valueInput->text());
-            }else{
-                model->updateVarInternal(nameInput->text(),valueInput->text());
+            model->updateVarInput(nameInput->text(),valueInput->text());
+        }
+    }else{
+        // type selection
+        QComboBox *typeSelector = new QComboBox(&dialog);
+        typeSelector->addItem("String");
+        typeSelector->addItem("Bool");
+        typeSelector->addItem("Int");
+        typeSelector->addItem("Float");
+        form.addRow("Type:", typeSelector);
+
+        QPointer<QWidget> valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+
+        // dynamic replacement
+        connect(typeSelector, &QComboBox::currentTextChanged, [&form, &valueInput, &dialog](const QString &text){
+            QWidget *newInput = nullptr;
+
+            if (text == "Bool") {
+                QComboBox *boolCombo = new QComboBox(&dialog);
+                boolCombo->addItem("True");
+                boolCombo->addItem("False");
+                newInput = boolCombo;
+            } else if (text == "Int") {
+                QSpinBox *spin = new QSpinBox(&dialog);
+                spin->setMinimum(INT_MIN);
+                spin->setMaximum(INT_MAX);
+                newInput = spin;
+            } else if (text == "Float") {
+                QDoubleSpinBox *dspin = new QDoubleSpinBox(&dialog);
+                dspin->setMinimum(-9999999);
+                dspin->setMaximum(9999999);
+                dspin->setDecimals(4);
+                newInput = dspin;
+            } else {
+                QLineEdit *line = new QLineEdit(&dialog);
+                newInput = line;
             }
+
+            if (newInput) {
+                if (valueInput) {
+                    form.removeRow(2);  // careful: remove correct row
+                    delete valueInput;
+                }
+                //add waiting here?
+                valueInput = newInput;
+                form.insertRow(2, "Value:", valueInput);
+            }
+        });
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
+            QString type = typeSelector->currentText();
+
+            QVariant value;
+
+            if (type == "Bool") {
+                QComboBox *boolCombo = qobject_cast<QComboBox*>(valueInput);
+                value = (boolCombo->currentText() == "True");
+            } else if (type == "Int") {
+                QSpinBox *spin = qobject_cast<QSpinBox*>(valueInput);
+                value = spin->value();
+            } else if (type == "Float") {
+                QDoubleSpinBox *dspin = qobject_cast<QDoubleSpinBox*>(valueInput);
+                value = dspin->value();
+            } else if (type == "String") {
+                QLineEdit *line = qobject_cast<QLineEdit*>(valueInput);
+                value = line->text();
+            }
+            model->updateVarInternal(nameInput->text(),value);
         }
     }
 }
