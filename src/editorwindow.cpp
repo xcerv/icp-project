@@ -195,6 +195,14 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
     QAction* startProjectionAction = menu.addAction("Start projection");
 
+    QAction* renameFSMAction = menu.addAction("Rename FSM ...");
+    connect(renameFSMAction, &QAction::triggered, this, [=](bool){
+        QString name = renamingWindow("Renaming FSM");
+        if(name != ""){
+            model->renameFsm(name);
+        }
+    });
+
     QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
     connect(resizeWorkareaAction, &QAction::triggered, this, [=](bool){resizeWorkArea();});
 
@@ -272,25 +280,11 @@ void EditorWindow::stateFSMRightClick(){
     QAction* addOutputAction = menu.addAction("Add output ...");
     QAction* renameStateAction = menu.addAction("Rename ...");
     connect(renameStateAction, &QAction::triggered, this, [=](bool){
-        QDialog dialog(this);
-        dialog.setWindowTitle("Add variable");
-
-        QFormLayout form(&dialog);
-
-        QLineEdit *nameInput = new QLineEdit(&dialog);
-        form.addRow("Name:", nameInput);
-
-        // OK + Cancel buttons
-        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
-        connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-        connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-        form.addRow(&buttonBox);
-        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
-            model->updateStateName(stateClicked->getName(),nameInput->text());
+        QString name = renamingWindow("Rename state");
+        if(name != ""){
+            model->updateStateName(stateClicked->getName(),name);
         }
-        ;});
-
+    });
     menu.exec(QCursor::pos());
 }
 
@@ -328,6 +322,29 @@ bool EditorWindow::checkIfFSMFits(QPoint position){
                             );
     }
     return canBeInserted;
+}
+
+
+QString EditorWindow::renamingWindow(QString title){
+        QDialog dialog(this);
+        dialog.setWindowTitle(title);
+
+        QFormLayout form(&dialog);
+
+        QLineEdit *nameInput = new QLineEdit(&dialog);
+        form.addRow("Name:", nameInput);
+
+        // OK + Cancel buttons
+        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+        connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
+            return nameInput->text();
+        }else{
+            return "";
+        }
 }
 
 void EditorWindow::insertFSMState(QPoint position, QString name){

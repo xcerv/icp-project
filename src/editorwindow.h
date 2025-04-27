@@ -103,6 +103,13 @@ private:
     bool checkIfFSMFits(QPoint position);
 
     /**
+     * @brief execute a window for renaming
+     * @param title title of the window
+     * @return new name
+     */
+    QString renamingWindow(QString title);
+
+    /**
      * @brief returns the minimum size the work-area can be based on position of FSM states
      * @return minimum size
      */

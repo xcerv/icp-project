@@ -15,6 +15,7 @@
 #include <QPoint>
 #include <memory>
 #include <QTimer>
+#include <QMessageBox>
 
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
@@ -118,6 +119,7 @@ void EditorWindow::saveFile(const QString &filename)
 
 void EditorWindow::renameFsm(const QString &name)
 {
+    this->setWindowTitle(name);
 }
 
 void EditorWindow::updateVarInternal(const QString &name, const QVariant &value)
@@ -142,6 +144,7 @@ void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 void EditorWindow::outputEvent(const QString &outName)
 {
     // Output msg to some output window
+    QMessageBox::information(this,"Information",outName);
 }
 
 void EditorWindow::inputEvent(const QString &name, const QString &value)
