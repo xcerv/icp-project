@@ -43,6 +43,8 @@ EditorWindow::EditorWindow(QWidget *parent)
     workAreaScrollLayout->setAlignment(Qt::AlignCenter);  // center workArea
     workAreaScrollContainer->setLayout(workAreaScrollLayout);
     ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
+
+    connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
 }
 
 EditorWindow::~EditorWindow()
@@ -58,6 +60,43 @@ EditorWindow::~EditorWindow()
     delete statusBarLabel;
     */
     delete ui;
+}
+
+void EditorWindow::variableToBeAdded(enum variableType type){
+    statusBarLabel->setText("variables Are to be Added");
+    // make dialog for getting neccassary info
+    QDialog dialog(this);
+    //dialog.setStyleSheet("QWidget{background-color: white}");
+    dialog.setWindowTitle("Resize work-area");
+
+    QFormLayout form(&dialog);
+
+    // two spinboxes (width, height)
+    QLineEdit *nameInput = new QLineEdit(&dialog);
+    form.addRow("Name:", nameInput);
+
+    // OK + Cancel buttons
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if(type == OUTPUTV){
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
+            model->updateVarOutput(nameInput->text(),"");
+        }
+    }else{
+        QLineEdit *valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "" && valueInput->text() != "") {
+            if(type == INPUTV){
+                model->updateVarInput(nameInput->text(),valueInput->text());
+            }else{
+                model->updateVarInternal(nameInput->text(),valueInput->text());
+            }
+        }
+    }
 }
 
 void EditorWindow::resizeWorkArea(int width, int height){
@@ -161,7 +200,9 @@ void EditorWindow::stateFSMRightClick(){
     QAction* connectToAction = menu.addAction("Connect to ...");
     QAction* deleteAction = menu.addAction("Delete");
     QAction* setStartAction = menu.addAction("Set as starting");
-    QAction* g = menu.addAction("Add output ...");
+    QAction* addOutputAction = menu.addAction("Add output ...");
+    QAction* renameStateAction = menu.addAction("Rename ...");
+
     menu.exec(QCursor::pos());
 }
 
@@ -206,7 +247,7 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
     s->show();
     connect(s, &StateFSMWidget::rightClick, this, &EditorWindow::stateFSMRightClick);
     connect(s, &StateFSMWidget::leftClick, this, &EditorWindow::stateFSMLeftClick);
-    allStates.push_back(s);
+    allStates.insert(name,s);
 }
 
 void EditorWindow::closeEvent(QCloseEvent *event)

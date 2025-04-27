@@ -41,10 +41,23 @@ void EditorWindow::updateTransition(size_t transitionId, const QString &srcState
 
 void EditorWindow::updateVarInput(const QString &name, const QString &value)
 {
+    updateVar(INPUTV, name, value);
 }
 
 void EditorWindow::updateVarOutput(const QString &name, const QString &value)
 {
+    updateVar(OUTPUTV, name, value);
+}
+
+
+void EditorWindow::updateVar(enum variableType type, const QString &name, const QString &value){
+    if(allVars[type].contains(name)){
+        statusBarLabel->setText("changed value of variable: " + name);
+        FSMVariable toDel = allVars[type][name];
+        delete toDel.name;
+        delete toDel.value;
+    }
+    allVars[type].insert(name, variablesDisplay->insertVariable(type, name, value));
 }
 
 void EditorWindow::destroyState(const QString &name)

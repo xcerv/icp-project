@@ -53,7 +53,7 @@ void VariablesDisplay::hideOrShow(){
     ui->scrollArea->setVisible(shown);
 }
 
-void VariablesDisplay::insertVariable(enum variableType type, QString name, QString value){
+FSMVariable VariablesDisplay::insertVariable(enum variableType type, QString name, QString value){
     QFormLayout *layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
 
     QLabel *newLblName = new QLabel(name, ui->scrollAreaWidgetContents);
@@ -63,38 +63,10 @@ void VariablesDisplay::insertVariable(enum variableType type, QString name, QStr
     layout->getWidgetPosition(typeVar[type], &row, nullptr);
     layout->insertRow(row + 1, newLblName, newLblValue);
     FSMVariable h{newLblName,newLblValue};
-    allVars[type].append(h);
+    return h;
 }
 
 
 void VariablesDisplay::getVariableInfoInsert(enum variableType type){
-    // make dialog for getting neccassary info
-    QDialog dialog(this);
-    dialog.setStyleSheet("QWidget{background-color: white}");
-    dialog.setWindowTitle("Resize work-area");
-
-    QFormLayout form(&dialog);
-
-    // two spinboxes (width, height)
-    QLineEdit *nameInput = new QLineEdit(&dialog);
-    form.addRow("Name:", nameInput);
-
-    // OK + Cancel buttons
-    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
-    connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
-    connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    if(type == OUTPUTV){
-        form.addRow(&buttonBox);
-        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
-            insertVariable(type,nameInput->text(),"");
-        }
-    }else{
-        QLineEdit *valueInput = new QLineEdit(&dialog);
-        form.addRow("Value:", valueInput);
-        form.addRow(&buttonBox);
-        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "" && valueInput->text() != "") {
-            insertVariable(type,nameInput->text(),valueInput->text());
-        }
-    }
+    emit addVariableToDisplay(type);
 }

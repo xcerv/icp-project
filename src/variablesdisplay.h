@@ -3,6 +3,7 @@
 
 #include "qlabel.h"
 #include "qpushbutton.h"
+#include "internal_representations.h"
 #include <QWidget>
 
 namespace Ui {
@@ -15,21 +16,15 @@ class VariablesDisplay : public QWidget
 
 public:
 
-    enum variableType{
-        INPUTV,
-        OUTPUTV,
-        INTERNALV,
-        NUMV
-    };
-
     explicit VariablesDisplay(QWidget *parent = nullptr);
     ~VariablesDisplay();
     void hideOrShow();
     /**
      * @brief inserts a variable
      * @param type under which label the new variable belongs
+     * @return returns a variable that was added (in Qt representation)
      */
-    void insertVariable(enum variableType type, QString name, QString value);
+    FSMVariable insertVariable(enum variableType type, QString name, QString value);
 
     /**
      * @brief gets all necessary info for variables
@@ -37,16 +32,18 @@ public:
      */
     void getVariableInfoInsert(enum variableType type);
 
+signals:
+    /**
+     * @brief user wants to add a variable
+     * @param type if its internal/input/output
+     */
+    void addVariableToDisplay(enum variableType type);
+
 private:
-    struct FSMVariable {
-        QLabel *name;
-        QLabel *value;
-    };
+
 
     Ui::VariablesDisplay *ui;
     bool shown = true;
-
-    QVector<FSMVariable> allVars[3];
     QLabel *typeVar[3];
 };
 
