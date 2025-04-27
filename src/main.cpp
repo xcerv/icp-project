@@ -14,7 +14,7 @@
 #include <QApplication>
 
 
-#include "debug_model/QMachineDebug.h"
+// #include "debug_model/QMachineDebug.h"
 
 int main(int argc, char *argv[])
 {
