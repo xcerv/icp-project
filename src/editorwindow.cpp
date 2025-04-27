@@ -19,6 +19,7 @@
 #include <QDialogButtonBox>
 #include <QComboBox>
 #include <QPointer>
+#include <QFileDialog>
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -205,6 +206,16 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
     QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
     connect(resizeWorkareaAction, &QAction::triggered, this, [=](bool){resizeWorkArea();});
+
+    QAction * loadFileAction = menu.addAction("Load file ...");
+    connect(loadFileAction, &QAction::triggered, this, [this](bool){
+        model->loadFile(QFileDialog::getOpenFileName());
+    });
+
+    QAction * saveFileAction = menu.addAction("Save file as ...");
+    connect(saveFileAction, &QAction::triggered, this, [this](bool){
+        model->saveFile(QFileDialog::getSaveFileName());
+    });
 
     menu.exec(QCursor::pos());
 }
