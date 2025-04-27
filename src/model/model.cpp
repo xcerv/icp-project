@@ -340,9 +340,9 @@ void FsmModel::inputEvent(const QString &name, const QString &value)
 {
 }
 
-void FsmModel::registerView(shared_ptr<FsmInterface> view)
+void FsmModel::registerView(FsmInterface *view)
 {
-    this->view = move(view);
+    this->view = view;
 }
 
 QAbstractState *FsmModel::getActiveState() const
