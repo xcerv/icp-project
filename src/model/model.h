@@ -59,7 +59,7 @@ class FsmModel : public FsmInterface
         QJSEngine engine; ///< Native javascript interpreter for evaluating conditions/actions
         QStateMachine machine; ///< Main FSM machine to be interpreted
 
-        shared_ptr<FsmInterface> view; ///< Reference to view
+        FsmInterface* view = nullptr; ///< Reference to view
 
         QHash<QString,ActionState*> states; ///< List of all states used within the FSM
         QHash<size_t,CombinedTransition*> transitions;
@@ -114,7 +114,7 @@ class FsmModel : public FsmInterface
         void inputEvent(const QString &name, const QString &value) override;
 
         // Model specific
-        void registerView(shared_ptr<FsmInterface> view);
+        void registerView(FsmInterface *view);
         QAbstractState* getActiveState() const;
 
         // Machine getter

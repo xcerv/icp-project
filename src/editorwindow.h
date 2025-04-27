@@ -37,6 +37,13 @@ public:
     EditorWindow(QWidget *parent = nullptr);
     ~EditorWindow();
 
+    
+    /**
+     * @brief Related to MVC interface communication; registers a model to use
+     * @param model The model to use 
+     */
+    void registerModel(FsmInterface *model);
+
     /**
      * @brief resizes workArea
      * @param width
@@ -144,10 +151,6 @@ private:
     void outputEvent(const QString &outName) override;
     void inputEvent(const QString &name, const QString &value) override;
 
-    // MVC Related, but specific to view 
-    void registerModel(std::shared_ptr<FsmInterface> model);
-
-
     // ========================
     //       Attributes 
     // ========================
@@ -159,7 +162,7 @@ private:
     std::vector<StateFSMWidget*> allStates; //vector of all states in the system
     VariablesDisplay * variablesDisplay;
 
-    std::shared_ptr<FsmInterface> model; ///< Reference to model
+    FsmInterface* model = nullptr; ///< Reference to model
 
     // Tady je doporučení, jak to může fungovat, není to závazné (použij místo QString/QVariant ten typ, co potřebuješ. 
     // Ale ten první typ pro indexaci by měla být podle QStringu)
