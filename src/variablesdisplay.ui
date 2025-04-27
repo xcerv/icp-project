@@ -18,16 +18,20 @@
 background-color: rgba(0,255,0,40)
 }
 
-
 QLabel{
 background-color: rgba(0,0,0,0);
-color: balck;
+color: black;
 font:14px &quot;Nimbus Mono PS&quot;;
 }
 
 QPushButton{
 color: black;
 font:14px &quot;Nimbus Mono PS&quot;;
+}
+
+QPushButton#btnRemoveInternalVar,#btnEditInternalVar,#btnAddInternalVar,
+#btnRemoveOutputVar,#btnEditOutputVar,#btnAddOutputVar,
+#btnRemoveInputVar,#btnEditInputVar,#btnAddInputVar{
     min-width: 20px;
     max-width: 20px;
     min-height: 20px;

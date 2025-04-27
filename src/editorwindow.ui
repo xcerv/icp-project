@@ -18,6 +18,10 @@
 background-color: #F0F5FF
 }
 
+QLabel{
+color: navy;
+font:14px &quot;Nimbus Mono PS&quot;;
+}
 
 QScrollArea::corner {
     background: transparent;
