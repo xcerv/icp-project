@@ -14,6 +14,7 @@
 #include <QString>
 #include <QPoint>
 #include <memory>
+#include <QTimer>
 
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
@@ -26,7 +27,10 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
 
 void EditorWindow::updateStateName(const QString &oldName, const QString &newName)
 {
-    allStates[oldName]->setName(newName);
+    StateFSMWidget *w = allStates[oldName];
+    w->setName(newName);
+    allStates.remove(oldName);
+    allStates.insert(newName,w);
 }
 
 void EditorWindow::updateAction(const QString &parentState, const QString &action)
@@ -35,6 +39,7 @@ void EditorWindow::updateAction(const QString &parentState, const QString &actio
 
 void EditorWindow::updateActiveState(const QString &name)
 {
+    allStates[name]->recolor("red","white");
 }
 
 void EditorWindow::updateCondition(size_t transitionId, const QString &condition)
@@ -69,6 +74,14 @@ void EditorWindow::updateVar(enum variableType type, const QString &name, const 
 
 void EditorWindow::destroyState(const QString &name)
 {
+    StateFSMWidget *w = allStates[name];
+    w->blockSignals(true);
+    QObject::disconnect(w, nullptr, nullptr, nullptr);
+    w->setParent(nullptr);
+    allStates.remove(name);
+    QTimer::singleShot(0, this, [=]() {
+        delete w;
+    });
 }
 
 void EditorWindow::destroyAction(const QString &parentState)

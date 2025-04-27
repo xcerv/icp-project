@@ -265,6 +265,9 @@ void EditorWindow::stateFSMRightClick(){
 
     QAction* connectToAction = menu.addAction("Connect to ...");
     QAction* deleteAction = menu.addAction("Delete");
+    connect(deleteAction, &QAction::triggered, this,[=](bool){
+        model->destroyState(stateClicked->getName());
+    });
     QAction* setStartAction = menu.addAction("Set as starting");
     QAction* addOutputAction = menu.addAction("Add output ...");
     QAction* renameStateAction = menu.addAction("Rename ...");
@@ -310,6 +313,9 @@ bool EditorWindow::checkIfFSMFits(QPoint position){
     canBeInserted = canBeInserted && sx < sizeWA.x() && sy < sizeWA.y();
     //check for collision with other states
     for(StateFSMWidget * state: allStates){
+        if(state == nullptr){
+            continue;
+        }
         QPoint fPos = state->getPosition();
         QPoint fSize = state->getSize();
         int fsx = fPos.x() + fSize.x();
