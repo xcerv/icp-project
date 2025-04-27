@@ -111,6 +111,7 @@ class FsmModel : public FsmInterface
         void throwError(FsmErrorType errNum, const QString &errMsg) override;
 
         void outputEvent(const QString &outName) override;
+        void inputEvent(const QString &name, const QString &value) override;
 
         // Model specific
         void registerView(shared_ptr<FsmInterface> view);

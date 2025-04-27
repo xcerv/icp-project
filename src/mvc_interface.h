@@ -83,6 +83,7 @@ class FsmInterface
         virtual void stopInterpretation() = 0;
 
         virtual void outputEvent(const QString &outName) = 0;
+        virtual void inputEvent(const QString &name, const QString &value) = 0;
 
         virtual void cleanup() = 0;
         virtual void throwError(FsmErrorType errNum) = 0;

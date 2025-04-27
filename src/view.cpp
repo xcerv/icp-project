@@ -122,6 +122,10 @@ void FsmView::outputEvent(const QString &outName)
     // Output msg to some output window
 }
 
+void FsmView::inputEvent(const QString &name, const QString &value)
+{
+}
+
 void FsmView::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
 {
 }
