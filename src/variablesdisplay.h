@@ -32,6 +32,13 @@ public:
      */
     void getVariableInfoInsert(enum variableType type);
 
+    /**
+     * @brief activates/deactivates buttons (delete and edit)
+     * @param b true or false based on whether we are acitvating or desactivating them
+     * @param type what type input/output/internal i am acitvating it for
+     */
+    void setActButtons(bool b, enum variableType type);
+
 signals:
     /**
      * @brief user wants to add a variable

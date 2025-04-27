@@ -182,9 +182,12 @@ void EditorWindow::workAreaRightClick(QPoint position){
     QAction* addStateAction = menu.addAction("Add new state ...");
     connect(addStateAction, &QAction::triggered, this, [=]() {
         QString name = QInputDialog::getText(this, "Name of state","Write the name of the state to be inserted state here:");
-        if(name != nullptr){
-            // todo: interaction with other file before...
-            insertFSMState(position, name);
+        if(name != ""){
+            if(allStates.contains(name)){
+                QMessageBox::warning(this,"Cannot insert state","State cannot be insterted because states need to have unique names");
+            }else{
+                model->updateState(name, position);
+            }
         }
     });
     if(!checkIfFSMFits(position)){

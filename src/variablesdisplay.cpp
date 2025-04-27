@@ -70,3 +70,17 @@ FSMVariable VariablesDisplay::insertVariable(enum variableType type, QString nam
 void VariablesDisplay::getVariableInfoInsert(enum variableType type){
     emit addVariableToDisplay(type);
 }
+
+void VariablesDisplay::setActButtons(bool activate, enum variableType type){
+    activate = !activate;
+    if(type == INPUTV){
+        ui->btnRemoveInputVar->setDisabled(activate);
+        ui->btnEditInputVar->setDisabled(activate);
+    }else if(type == OUTPUTV){
+        ui->btnRemoveOutputVar->setDisabled(activate);
+        ui->btnEditOutputVar->setDisabled(activate);
+    }else if(type == INTERNALV){
+        ui->btnRemoveInternalVar->setDisabled(activate);
+        ui->btnEditInternalVar->setDisabled(activate);
+    }
+}

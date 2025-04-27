@@ -17,6 +17,11 @@
 
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
+    if(allStates.contains(name)){
+
+    }else{
+        insertFSMState(pos, name);
+    }
 }
 
 void EditorWindow::updateStateName(const QString &oldName, const QString &newName)
@@ -58,6 +63,7 @@ void EditorWindow::updateVar(enum variableType type, const QString &name, const 
         delete toDel.value;
     }
     allVars[type].insert(name, variablesDisplay->insertVariable(type, name, value));
+    variablesDisplay->setActButtons(true,type);
 }
 
 void EditorWindow::destroyState(const QString &name)
