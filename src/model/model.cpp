@@ -336,6 +336,10 @@ void FsmModel::outputEvent(const QString &outName)
     view->outputEvent(outName);
 }
 
+void FsmModel::inputEvent(const QString &name, const QString &value)
+{
+}
+
 void FsmModel::registerView(shared_ptr<FsmInterface> view)
 {
     this->view = move(view);

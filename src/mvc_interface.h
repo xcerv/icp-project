@@ -203,7 +203,14 @@ class FsmInterface
          * @param outName The output variable to use
          */
         virtual void outputEvent(const QString &outName) = 0;
-        
+
+        /**
+         * @brief Executes input event (used for interpreted fsm - this may lead to transition)
+         * @param name The name of the input event
+         * @param value The value associated with the input
+         */
+        virtual void inputEvent(const QString &name, const QString &value) = 0;
+  
         /**
          * @brief Cleans up and erases the currently loaded fsm
          */
