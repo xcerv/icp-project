@@ -24,6 +24,10 @@ VariablesDisplay::VariablesDisplay(QWidget *parent)
     connect(ui->btnRemoveInputVar, &QPushButton::clicked, this, [this](){getVariableInfoDelete(INPUTV);});
     connect(ui->btnRemoveOutputVar, &QPushButton::clicked, this, [this](){getVariableInfoDelete(OUTPUTV);});
 
+    connect(ui->btnEditInputVar, &QPushButton::clicked, this, [this](){getVariableInfoEdit(INPUTV);});
+    connect(ui->btnEditInternalVar, &QPushButton::clicked, this, [this](){getVariableInfoEdit(INTERNALV);});
+
+
     ui->btnRemoveInputVar->setDisabled(true);
     ui->btnRemoveOutputVar->setDisabled(true);
     ui->btnRemoveInternalVar->setDisabled(true);
@@ -77,6 +81,10 @@ void VariablesDisplay::getVariableInfoInsert(enum variableType type){
 
 void VariablesDisplay::getVariableInfoDelete(enum variableType type){
     emit removeVariableFromDisplay(type);
+}
+
+void VariablesDisplay::getVariableInfoEdit(enum variableType type){
+    emit editVariableInDisplay(type);
 }
 
 void VariablesDisplay::setActButtons(bool activate, enum variableType type){

@@ -49,6 +49,8 @@ EditorWindow::EditorWindow(QWidget *parent)
 
     connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
     connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
+    connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
+
 }
 
 EditorWindow::~EditorWindow()
@@ -64,6 +66,105 @@ EditorWindow::~EditorWindow()
     delete statusBarLabel;
     */
     delete ui;
+}
+
+
+void EditorWindow::variableToBeEdited(enum variableType type){
+    // make dialog for getting neccassary info
+    QDialog dialog(this);
+    dialog.setWindowTitle("Edit variable");
+
+    QFormLayout form(&dialog);
+
+    QComboBox *nameInput = new QComboBox(&dialog);
+    QList<QString> keys = allVars[type].keys();
+    nameInput->addItem("...");
+    for (const QString &key : keys) {
+        nameInput->addItem(key);
+    }
+    form.addRow("Edit:", nameInput);
+
+    // OK + Cancel buttons
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if(type == INPUTV){
+        QLineEdit *valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->currentText() != "..." && valueInput->text() != "") {
+            model->updateVarInput(nameInput->currentText(),valueInput->text());
+        }
+    }else{
+        // type selection
+        QComboBox *typeSelector = new QComboBox(&dialog);
+        typeSelector->addItem("String");
+        typeSelector->addItem("Bool");
+        typeSelector->addItem("Int");
+        typeSelector->addItem("Float");
+        form.addRow("Type:", typeSelector);
+
+        QPointer<QWidget> valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+
+        // dynamic replacement
+        connect(typeSelector, &QComboBox::currentTextChanged, [&form, &valueInput, &dialog](const QString &text){
+            QWidget *newInput = nullptr;
+
+            if (text == "Bool") {
+                QComboBox *boolCombo = new QComboBox(&dialog);
+                boolCombo->addItem("True");
+                boolCombo->addItem("False");
+                newInput = boolCombo;
+            } else if (text == "Int") {
+                QSpinBox *spin = new QSpinBox(&dialog);
+                spin->setMinimum(INT_MIN);
+                spin->setMaximum(INT_MAX);
+                newInput = spin;
+            } else if (text == "Float") {
+                QDoubleSpinBox *dspin = new QDoubleSpinBox(&dialog);
+                dspin->setMinimum(-9999999);
+                dspin->setMaximum(9999999);
+                dspin->setDecimals(4);
+                newInput = dspin;
+            } else {
+                QLineEdit *line = new QLineEdit(&dialog);
+                newInput = line;
+            }
+
+            if (newInput) {
+                if (valueInput) {
+                    form.removeRow(2);  // careful: remove correct row
+                    delete valueInput;
+                }
+                //add waiting here?
+                valueInput = newInput;
+                form.insertRow(2, "Value:", valueInput);
+            }
+        });
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->currentText() != "...") {
+            QString type = typeSelector->currentText();
+
+            QVariant value;
+
+            if (type == "Bool") {
+                QComboBox *boolCombo = qobject_cast<QComboBox*>(valueInput);
+                value = (boolCombo->currentText() == "True");
+            } else if (type == "Int") {
+                QSpinBox *spin = qobject_cast<QSpinBox*>(valueInput);
+                value = spin->value();
+            } else if (type == "Float") {
+                QDoubleSpinBox *dspin = qobject_cast<QDoubleSpinBox*>(valueInput);
+                value = dspin->value();
+            } else if (type == "String") {
+                QLineEdit *line = qobject_cast<QLineEdit*>(valueInput);
+                value = line->text();
+            }
+            model->updateVarInternal(nameInput->currentText(),value);
+        }
+    }
 }
 
 void EditorWindow::variableToBeAdded(enum variableType type){
@@ -388,6 +489,7 @@ void EditorWindow::variableToBeDeleted(enum variableType type){
         }
     }
 }
+
 
 QString EditorWindow::renamingWindow(QString title){
         QDialog dialog(this);

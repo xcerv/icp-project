@@ -39,6 +39,12 @@ public:
     void getVariableInfoDelete(enum variableType type);
 
     /**
+     * @brief gets all necessary info for variables
+     * @param type under which label the edited variable belongs
+     */
+    void getVariableInfoEdit(enum variableType type);
+
+    /**
      * @brief activates/deactivates buttons (delete and edit)
      * @param b true or false based on whether we are acitvating or desactivating them
      * @param type what type input/output/internal i am acitvating it for
@@ -57,6 +63,12 @@ signals:
      * @param type if its internal/input/output
      */
     void removeVariableFromDisplay(enum variableType type);
+
+    /**
+     * @brief user wants to edit a variable
+     * @param type if its internal/input/output
+     */
+    void editVariableInDisplay(enum variableType type);
 
 private:
 

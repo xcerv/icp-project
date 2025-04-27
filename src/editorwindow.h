@@ -90,9 +90,15 @@ public slots:
 
     /**
      * @brief User wants to delete a variable
-     * @param type of variable to be addded
+     * @param type of variable to be deleted
      */
     void variableToBeDeleted(enum variableType type);
+
+    /**
+     * @brief User wants to edit a variable
+     * @param type of variable to be edited
+     */
+    void variableToBeEdited(enum variableType type);
 protected:
     /**
      * @brief overrides the default closeEvent -- asks if saving is wanted
