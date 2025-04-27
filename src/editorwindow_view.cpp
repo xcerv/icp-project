@@ -20,7 +20,7 @@
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
     if(allStates.contains(name)){
-        //TODO..
+        allStates[name]->setPosition(pos);
     }else{
         insertFSMState(pos, name);
     }
@@ -138,7 +138,7 @@ void EditorWindow::throwError(FsmErrorType errNum)
 
 void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 {
-    return; // Nop?
+    QMessageBox::critical(this,"Error",errMsg);
 }
 
 void EditorWindow::outputEvent(const QString &outName)

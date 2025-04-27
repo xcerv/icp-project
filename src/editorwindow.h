@@ -98,9 +98,10 @@ private:
      * @brief checks wheter or not a FSM can be inserted in a provided spot
      * (checking for collision with other states and going out of bounds)
      * @param position position of FSM we want to check if fits
+     * @param skip a state that can be skipped
      * @return true if it would fit
      */
-    bool checkIfFSMFits(QPoint position);
+    bool checkIfFSMFits(QPoint position, StateFSMWidget * skip = nullptr);
 
     /**
      * @brief execute a window for renaming
@@ -180,9 +181,10 @@ private:
     QWidget * workAreaScrollContainer;///< container for scroll area
     QLayout * workAreaScrollLayout; ///< layout for scroll area
     QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
+    StateFSMWidget * movingState = nullptr;///< A state that is being moved at the moment
+    bool isStateMoving = false;///< wheter or not is any state moving
     VariablesDisplay * variablesDisplay;
     QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
-
     FsmInterface* model = nullptr; ///< Reference to model
 
     // Tady je doporučení, jak to může fungovat, není to závazné (použij místo QString/QVariant ten typ, co potřebuješ. 

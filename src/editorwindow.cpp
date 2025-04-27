@@ -170,6 +170,15 @@ void EditorWindow::resizeWorkArea(int width, int height){
 
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
+    if(isStateMoving){
+        if(checkIfFSMFits(position, movingState)){
+            model->updateState(movingState->getName(), position);
+            movingState = nullptr;
+        }else{
+            statusBarLabel->setText("State did not fit");
+        }
+        isStateMoving = false;
+    }
 }
 
 void EditorWindow::workAreaRightClick(QPoint position){
@@ -296,6 +305,11 @@ void EditorWindow::stateFSMRightClick(){
             model->updateStateName(stateClicked->getName(),name);
         }
     });
+    QAction * moveStateAction = menu.addAction("Move this state");
+    connect(moveStateAction, &QAction::triggered, this, [=](bool){
+        isStateMoving = true;
+        movingState = stateClicked;
+    });
     menu.exec(QCursor::pos());
 }
 
@@ -308,7 +322,7 @@ void EditorWindow::stateFSMLeftClick(){
     //stateClicked->setName("right-clicked");
 }
 
-bool EditorWindow::checkIfFSMFits(QPoint position){
+bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
     bool canBeInserted = true;
     QPoint sizeWA = workArea->getSizeWA();
     QPoint sizeS; sizeS.setX(150); sizeS.setY(180); //TODO: fix if states can be multiple sizes
@@ -318,7 +332,7 @@ bool EditorWindow::checkIfFSMFits(QPoint position){
     canBeInserted = canBeInserted && sx < sizeWA.x() && sy < sizeWA.y();
     //check for collision with other states
     for(StateFSMWidget * state: allStates){
-        if(state == nullptr){
+        if(state == nullptr || state == skip){
             continue;
         }
         QPoint fPos = state->getPosition();
