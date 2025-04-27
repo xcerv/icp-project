@@ -20,7 +20,7 @@
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
     if(allStates.contains(name)){
-        //TODO..
+        allStates[name]->setPosition(pos);
     }else{
         insertFSMState(pos, name);
     }
@@ -99,22 +99,42 @@ void EditorWindow::destroyTransition(size_t transitionId)
 
 void EditorWindow::destroyVarInput(const QString &name)
 {
+    destroyVar(INPUTV,name);
 }
+
+void EditorWindow::destroyVar(enum variableType type, const QString &name){
+    FSMVariable v = allVars[type][name];
+    v.name->setParent(nullptr);
+    v.value->setParent(nullptr);
+    allVars[type].remove(name);
+    QTimer::singleShot(0, this, [=]() {
+        delete v.name;
+        delete v.value;
+    });
+    if(allVars[type].isEmpty()){
+        variablesDisplay->setActButtons(false,type);
+    }
+}
+
 
 void EditorWindow::destroyVarOutput(const QString &name)
 {
+    destroyVar(OUTPUTV,name);
 }
 
 void EditorWindow::destroyVarInternal(const QString &name)
 {
+    destroyVar(INTERNALV, name);
 }
 
 void EditorWindow::loadFile(const QString &filename)
 {
+    return;
 }
 
 void EditorWindow::saveFile(const QString &filename)
 {
+    return;
 }
 
 void EditorWindow::renameFsm(const QString &name)
@@ -138,7 +158,7 @@ void EditorWindow::throwError(FsmErrorType errNum)
 
 void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 {
-    return; // Nop?
+    QMessageBox::critical(this,"Error",errMsg);
 }
 
 void EditorWindow::outputEvent(const QString &outName)

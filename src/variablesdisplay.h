@@ -28,9 +28,15 @@ public:
 
     /**
      * @brief gets all necessary info for variables
-     * @param type under which label the new variable belongs
+     * @param type under which type the new variable belongs
      */
     void getVariableInfoInsert(enum variableType type);
+
+    /**
+     * @brief gets all necessary info for variables
+     * @param type under which label the deleting variable belongs
+     */
+    void getVariableInfoDelete(enum variableType type);
 
     /**
      * @brief activates/deactivates buttons (delete and edit)
@@ -45,6 +51,12 @@ signals:
      * @param type if its internal/input/output
      */
     void addVariableToDisplay(enum variableType type);
+
+    /**
+     * @brief user wants to remove a variable
+     * @param type if its internal/input/output
+     */
+    void removeVariableFromDisplay(enum variableType type);
 
 private:
 
