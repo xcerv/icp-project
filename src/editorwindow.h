@@ -87,6 +87,12 @@ public slots:
      * @param type of variable to be added
      */
     void variableToBeAdded(enum variableType type);
+
+    /**
+     * @brief User wants to delete a variable
+     * @param type of variable to be addded
+     */
+    void variableToBeDeleted(enum variableType type);
 protected:
     /**
      * @brief overrides the default closeEvent -- asks if saving is wanted
@@ -149,9 +155,16 @@ private:
     void destroyAction(const QString &parentState) override;
     void destroyCondition(size_t transitionId) override;
     void destroyTransition(size_t transitionId) override;
+
     void destroyVarInput(const QString &name) override;
     void destroyVarOutput(const QString &name) override;
     void destroyVarInternal(const QString &name) override;
+    /**
+     * @brief helper for more efficient deleting
+     * @param type
+     * @param name
+     */
+    void destroyVar(enum variableType type, const QString &name);
 
     void loadFile(const QString &filename) override;
     void saveFile(const QString &filename) override;

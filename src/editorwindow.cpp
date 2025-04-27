@@ -48,6 +48,7 @@ EditorWindow::EditorWindow(QWidget *parent)
     ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
 
     connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
+    connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
 }
 
 EditorWindow::~EditorWindow()
@@ -349,6 +350,44 @@ bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
     return canBeInserted;
 }
 
+void EditorWindow::variableToBeDeleted(enum variableType type){
+    QDialog dialog(this);
+    dialog.setWindowTitle("Deleting variable");
+
+    QFormLayout form(&dialog);
+
+    QComboBox * variableChoice = new QComboBox(&dialog);
+    form.addRow("Delete:",variableChoice);
+    QList<QString> keys = allVars[type].keys();
+    variableChoice->addItem("...");
+    for (const QString &key : keys) {
+        variableChoice->addItem(key);
+    }
+
+    // OK + Cancel buttons
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    form.addRow(&buttonBox);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        QString name = variableChoice->currentText();
+        if(name == "...")return;
+        switch(type){
+            case INPUTV:
+                model->destroyVarInput(name);
+                break;
+            case OUTPUTV:
+                model->destroyVarOutput(name);
+                break;
+            case INTERNALV:
+                model->destroyVarInternal(name);
+                break;
+            default:
+                break;
+        }
+    }
+}
 
 QString EditorWindow::renamingWindow(QString title){
         QDialog dialog(this);
@@ -363,8 +402,8 @@ QString EditorWindow::renamingWindow(QString title){
         QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
         connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
         connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
         form.addRow(&buttonBox);
+
         if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
             return nameInput->text();
         }else{

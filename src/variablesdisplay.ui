@@ -152,16 +152,6 @@ QPushButton#btnHide{
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnEditOutputVar">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset theme="tools-check-spelling"/>
-           </property>
-          </widget>
-         </item>
-         <item>
           <spacer name="horizontalSpacer_3">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
