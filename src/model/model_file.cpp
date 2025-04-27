@@ -12,6 +12,7 @@
 #include <QString>
 #include <QFile>
 #include <QRegularExpression>
+#include <QPoint>
 #include <QDebug>
 
 #include "mvc_interface.h"
