@@ -266,7 +266,6 @@ void EditorWindow::variableToBeAdded(enum variableType type){
 }
 
 void EditorWindow::resizeWorkArea(int width, int height){
-    //TODO: check for potentional states going out of widget
     workArea->setSizeWA(width, height);
 }
 
@@ -290,10 +289,10 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
     QAction* addStateAction = menu.addAction("Add new state ...");
     connect(addStateAction, &QAction::triggered, this, [=]() {
-        QString name = QInputDialog::getText(this, "Name of state","Write the name of the state to be inserted state here:");
+        QString name = renamingWindow("Insert state");
         if(name != ""){
             if(allStates.contains(name)){
-                QMessageBox::warning(this,"Cannot insert state","State cannot be insterted because states need to have unique names");
+                QMessageBox::warning(this,"Cannot insert state","State cannot be insterted, because states need to have unique names.");
             }else{
                 model->updateState(name, position);
             }
@@ -385,7 +384,6 @@ QPoint EditorWindow::getMinWorkAreaSize(){
 }
 
 void EditorWindow::stateFSMRightClick(){
-    statusBarLabel->setText("DEBUG: right-clicked on state");
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
     //debug
@@ -526,7 +524,35 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
 
 void EditorWindow::closeEvent(QCloseEvent *event)
 {
-    QMessageBox::information(this, "Goodbye", "Program is closing");
-    event->accept();
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Closing program");
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setText("Do you want to save before closing program?");
+    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel | QMessageBox::Close);
+
+    /*
+    QAbstractButton *closeButton = msgBox.button(QMessageBox::Close);
+    if (closeButton) closeButton->setIcon(QIcon());
+    */
+    QAbstractButton *cancelButton = msgBox.button(QMessageBox::Cancel);
+    if (cancelButton) cancelButton->setIcon(QIcon());
+
+    msgBox.setDefaultButton(QMessageBox::Save);
+
+    int ret = msgBox.exec();
+
+    if (ret == QMessageBox::Save) {
+        QString file = QFileDialog::getSaveFileName();
+        if(file != ""){
+            model->saveFile(file);
+            event->accept();
+        }else{
+            event->ignore();
+        }
+    } else if (ret == QMessageBox::Close) {
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
