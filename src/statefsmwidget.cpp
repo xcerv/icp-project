@@ -26,6 +26,10 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
     scrollLayout = new QVBoxLayout(scrollContainer);
     scrollContainer->setLayout(scrollLayout);
     ui->scrollArea->setWidget(scrollContainer);  // add container to scroll area
+    output = new QLabel;
+    output->setText("");
+    output->setWordWrap(true);
+    scrollLayout->addWidget(output);
 }
 
 StateFSMWidget::~StateFSMWidget()
@@ -58,11 +62,12 @@ void StateFSMWidget::setName(QString name){
 QString StateFSMWidget::getName(){
     return ui->name->text();
 }
-void StateFSMWidget::addOutput(QString cond){
-    QLabel * l = new QLabel;
-    l->setText(cond);
-    scrollLayout->addWidget(l);
-    allOutputs.push_back(l);
+void StateFSMWidget::setOutput(QString cond){
+    output->setText(cond);
+}
+
+QString StateFSMWidget::getOutput(){
+    return output->text();
 }
 
 QPoint StateFSMWidget::getSize(){

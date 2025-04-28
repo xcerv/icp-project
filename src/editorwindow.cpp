@@ -20,6 +20,7 @@
 #include <QComboBox>
 #include <QPointer>
 #include <QFileDialog>
+#include <QTextEdit>
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -386,9 +387,6 @@ QPoint EditorWindow::getMinWorkAreaSize(){
 void EditorWindow::stateFSMRightClick(){
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
-    //debug
-    //stateClicked->recolor("#b3d1ff","navy");
-    //stateClicked->addOutput("condition");
     QMenu menu(this);  // create a QMenu
 
     QAction* connectToAction = menu.addAction("Connect to ...");
@@ -397,7 +395,28 @@ void EditorWindow::stateFSMRightClick(){
         model->destroyState(stateClicked->getName());
     });
     QAction* setStartAction = menu.addAction("Set as starting");
-    QAction* addOutputAction = menu.addAction("Add output ...");
+    QAction* editOutputAction = menu.addAction("Edit output ...");
+    connect(editOutputAction, &QAction::triggered, this, [=](bool){
+        QDialog dialog(this);
+        dialog.setWindowTitle("Editing output");
+
+        QTextEdit *outputEdit = new QTextEdit(&dialog);
+        outputEdit->setText(stateClicked->getOutput());
+
+        // OK + Cancel buttons
+        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+        connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+        QVBoxLayout *layout = new QVBoxLayout(&dialog);
+        layout->addWidget(outputEdit);      // first the QTextEdit
+        layout->addWidget(&buttonBox);
+
+        if (dialog.exec() == QDialog::Accepted) {
+            model->updateAction(stateClicked->getName(),outputEdit->toPlainText());
+        }
+
+    });
     QAction* renameStateAction = menu.addAction("Rename ...");
     connect(renameStateAction, &QAction::triggered, this, [=](bool){
         QString name = renamingWindow("Rename state");

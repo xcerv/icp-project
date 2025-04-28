@@ -57,10 +57,15 @@ public:
      */
     void setPosition(QPoint positon);
     /**
-     * @brief adds a output into the state
-     * @param cond output to be added and displayed
+     * @brief set the output of the state
+     * @param cond output to be displayed
      */
-    void addOutput(QString cond);
+    void setOutput(QString cond);
+    /**
+     * @brief get the output of the state
+     * @return output of state
+     */
+    QString getOutput();
     /**
      * @brief recolors the state
      * @param c1 primary color (of body)
@@ -80,7 +85,7 @@ private:
     Ui::StateFSMWidget *ui;
     QLayout * scrollLayout; //layout for scroll area
     QWidget * scrollContainer; //container for scroll area
-    std::vector<QLabel*> allOutputs; //vector of all outputs of state
+    QLabel* output; //outputs of state
     QPoint position; //position of state wothin workArea
     QPoint size; //size of state
 };

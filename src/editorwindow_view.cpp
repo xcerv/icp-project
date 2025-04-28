@@ -36,6 +36,7 @@ void EditorWindow::updateStateName(const QString &oldName, const QString &newNam
 
 void EditorWindow::updateAction(const QString &parentState, const QString &action)
 {
+    allStates[parentState]->setOutput(action);
 }
 
 void EditorWindow::updateActiveState(const QString &name)
