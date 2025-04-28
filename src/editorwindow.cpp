@@ -414,7 +414,6 @@ void EditorWindow::stateFSMRightClick(){
 }
 
 void EditorWindow::stateFSMLeftClick(){
-    statusBarLabel->setText("DEBUG: left-clicked on state");
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
     //debug
@@ -545,11 +544,13 @@ void EditorWindow::closeEvent(QCloseEvent *event)
         QString file = QFileDialog::getSaveFileName();
         if(file != ""){
             model->saveFile(file);
+            model->cleanup();
             event->accept();
         }else{
             event->ignore();
         }
     } else if (ret == QMessageBox::Close) {
+        model->cleanup();
         event->accept();
     } else {
         event->ignore();

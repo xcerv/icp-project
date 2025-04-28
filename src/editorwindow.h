@@ -201,6 +201,7 @@ private:
     QLayout * workAreaScrollLayout; ///< layout for scroll area
     QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
     StateFSMWidget * movingState = nullptr;///< A state that is being moved at the moment
+    StateFSMWidget * activeState = nullptr;///< A state that is active at the moment
     bool isStateMoving = false;///< wheter or not is any state moving
     VariablesDisplay * variablesDisplay;
     QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM

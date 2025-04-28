@@ -40,7 +40,11 @@ void EditorWindow::updateAction(const QString &parentState, const QString &actio
 
 void EditorWindow::updateActiveState(const QString &name)
 {
-    allStates[name]->recolor("red","white");
+    if(activeState != nullptr){
+        activeState->recolor("#b3d1ff","navy");
+    }
+    activeState = allStates[name];
+    activeState->recolor("red","white");
 }
 
 void EditorWindow::updateCondition(size_t transitionId, const QString &condition)
@@ -76,6 +80,9 @@ void EditorWindow::updateVar(enum variableType type, const QString &name, const 
 void EditorWindow::destroyState(const QString &name)
 {
     StateFSMWidget *w = allStates[name];
+    if(w == activeState){
+        activeState = nullptr;
+    }
     w->blockSignals(true);
     QObject::disconnect(w, nullptr, nullptr, nullptr);
     w->setParent(nullptr);
@@ -158,7 +165,7 @@ void EditorWindow::throwError(FsmErrorType errNum)
 
 void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 {
-    QMessageBox::critical(this,"Error",errMsg);
+    QMessageBox::critical(this,"Error","Err(" + QString::number(errNum) + "): "+errMsg);
 }
 
 void EditorWindow::outputEvent(const QString &outName)
