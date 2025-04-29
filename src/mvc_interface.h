@@ -14,6 +14,9 @@
 #include <QObject>
 #include <QString>
 
+/**
+ * @brief Enumeration of error types
+ */
 enum FsmErrorType : int
 {
     ERROR_GENERIC,
@@ -30,17 +33,26 @@ enum FsmErrorType : int
     
 };
 
+/**
+ * @brief Structure for passing error type and its message by pointer
+ */
 struct FsmError
 {
     FsmErrorType errNum = ERROR_GENERIC;
     const char *errMsg = "";
 };
 
+/**
+ * @brief Deprecated enum for variable types
+ */
 enum varType : int
 {
 
 };
 
+/**
+ * @brief Enumeration for type of a state
+ */
 enum stateType : int
 {
     NORMAL,

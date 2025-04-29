@@ -1,4 +1,17 @@
+/**
+ * Project name: ICP Project 2024/2025
+ *
+ * @file variabledisplay.cpp
+ * @author  xkadlet00
+ *
+ * @brief Defines the disply of input/output/internal variables
+ *
+ */
+
 #include "variablesdisplay.h"
+#include <qdialog.h>
+#include <qlineedit.h>
+#include <qdialogbuttonbox.h>
 #include "ui_variablesdisplay.h"
 
 VariablesDisplay::VariablesDisplay(QWidget *parent)
@@ -6,21 +19,40 @@ VariablesDisplay::VariablesDisplay(QWidget *parent)
     , ui(new Ui::VariablesDisplay)
 {
     ui->setupUi(this);
+
+    typeVar[INPUTV] = ui->lblInputVar;
+    typeVar[OUTPUTV] = ui->lblOutputVar;
+    typeVar[INTERNALV] = ui->lblInternalVar;
+
     connect(ui->btnHide, &QPushButton::clicked,this, &VariablesDisplay::hideOrShow);
-    connect(ui->btnAddOutputVar, &QPushButton::clicked, this, [this](){insertVariable(ui->lblOutputVar);});
-    connect(ui->btnAddInputVar, &QPushButton::clicked, this, [this](){insertVariable(ui->lblInputVar);});
-    connect(ui->btnAddInternalVar, &QPushButton::clicked, this, [this](){insertVariable(ui->lblInternalVar);});
+
+    connect(ui->btnAddOutputVar, &QPushButton::clicked, this, [this](){getVariableInfoInsert(OUTPUTV);});
+    connect(ui->btnAddInputVar, &QPushButton::clicked, this, [this](){getVariableInfoInsert(INPUTV);});
+    connect(ui->btnAddInternalVar, &QPushButton::clicked, this, [this](){getVariableInfoInsert(INTERNALV);});
+
+    connect(ui->btnRemoveInternalVar, &QPushButton::clicked, this, [this](){getVariableInfoDelete(INTERNALV);});
+    connect(ui->btnRemoveInputVar, &QPushButton::clicked, this, [this](){getVariableInfoDelete(INPUTV);});
+    connect(ui->btnRemoveOutputVar, &QPushButton::clicked, this, [this](){getVariableInfoDelete(OUTPUTV);});
+
     ui->btnRemoveInputVar->setDisabled(true);
     ui->btnRemoveOutputVar->setDisabled(true);
     ui->btnRemoveInternalVar->setDisabled(true);
+
     ui->btnEditInputVar->setDisabled(true);
-    ui->btnEditOutputVar->setDisabled(true);
     ui->btnEditInternalVar->setDisabled(true);
 }
 
 VariablesDisplay::~VariablesDisplay()
 {
     delete ui;
+    /*
+    for(int i = 0; i < NUMV; i++){
+        for(FSMVariable v : allVars[i]){
+            delete v.name;
+            delete v.value;
+        }
+    }
+    */
 }
 
 void VariablesDisplay::hideOrShow(){
@@ -35,17 +67,37 @@ void VariablesDisplay::hideOrShow(){
     ui->scrollArea->setVisible(shown);
 }
 
-void VariablesDisplay::insertVariable(QLabel *type){
-    QString name = "name";
-    QString value = "value";
+FSMVariable VariablesDisplay::insertVariable(enum variableType type, QString name, QString value){
     QFormLayout *layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
 
     QLabel *newLblName = new QLabel(name, ui->scrollAreaWidgetContents);
     QLabel *newLblValue = new QLabel(value, ui->scrollAreaWidgetContents);
 
     int row;
-    layout->getWidgetPosition(type, &row, nullptr);
+    layout->getWidgetPosition(typeVar[type], &row, nullptr);
     layout->insertRow(row + 1, newLblName, newLblValue);
-
+    FSMVariable h{newLblName,newLblValue};
+    return h;
 }
 
+
+void VariablesDisplay::getVariableInfoInsert(enum variableType type){
+    emit addVariableToDisplay(type);
+}
+
+void VariablesDisplay::getVariableInfoDelete(enum variableType type){
+    emit removeVariableFromDisplay(type);
+}
+
+void VariablesDisplay::setActButtons(bool activate, enum variableType type){
+    activate = !activate;
+    if(type == INPUTV){
+        ui->btnRemoveInputVar->setDisabled(activate);
+        ui->btnEditInputVar->setDisabled(activate);
+    }else if(type == OUTPUTV){
+        ui->btnRemoveOutputVar->setDisabled(activate);
+    }else if(type == INTERNALV){
+        ui->btnRemoveInternalVar->setDisabled(activate);
+        ui->btnEditInternalVar->setDisabled(activate);
+    }
+}

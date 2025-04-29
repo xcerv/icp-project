@@ -1,4 +1,4 @@
-QT       += core gui qml
+QT       += core gui qml network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,6 +17,7 @@ INCLUDEPATH += $$PWD/exceptions
 SOURCES += $$files($$PWD/*.cpp, true) \
 
 HEADERS += $$files($$PWD/*.h, true) \
+    internal_representations.h
 
 FORMS += $$files($$PWD/*.ui, true)
 

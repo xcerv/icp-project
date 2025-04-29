@@ -18,16 +18,20 @@
 background-color: rgba(0,255,0,40)
 }
 
-
 QLabel{
 background-color: rgba(0,0,0,0);
-color: balck;
+color: black;
 font:14px &quot;Nimbus Mono PS&quot;;
 }
 
 QPushButton{
 color: black;
 font:14px &quot;Nimbus Mono PS&quot;;
+}
+
+QPushButton#btnRemoveInternalVar,#btnEditInternalVar,#btnAddInternalVar,
+#btnRemoveOutputVar,#btnEditOutputVar,#btnAddOutputVar,
+#btnRemoveInputVar,#btnEditInputVar,#btnAddInputVar{
     min-width: 20px;
     max-width: 20px;
     min-height: 20px;
@@ -144,16 +148,6 @@ QPushButton#btnHide{
           <widget class="QPushButton" name="btnRemoveOutputVar">
            <property name="text">
             <string>-</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="btnEditOutputVar">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset theme="tools-check-spelling"/>
            </property>
           </widget>
          </item>

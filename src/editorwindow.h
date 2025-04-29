@@ -16,11 +16,10 @@
 #include <QHash>
 #include "statefsmwidget.h"
 #include "workarea.h"
-#include <vector>
 #include <memory>
 #include <QCloseEvent>
 #include "variablesdisplay.h"
-
+#include "internal_representations.h"
 #include "mvc_interface.h"
 
 QT_BEGIN_NAMESPACE
@@ -34,6 +33,7 @@ class EditorWindow: public QMainWindow, public FsmInterface
     Q_OBJECT
 
 public:
+
     EditorWindow(QWidget *parent = nullptr);
     ~EditorWindow();
 
@@ -82,6 +82,17 @@ public slots:
      * @todo should work only for connecting, maybe opening detailed info about state??
      */
     void stateFSMLeftClick();
+    /**
+     * @brief User wants to add a variable
+     * @param type of variable to be added
+     */
+    void variableToBeAdded(enum variableType type);
+
+    /**
+     * @brief User wants to delete a variable
+     * @param type of variable to be addded
+     */
+    void variableToBeDeleted(enum variableType type);
 protected:
     /**
      * @brief overrides the default closeEvent -- asks if saving is wanted
@@ -93,9 +104,17 @@ private:
      * @brief checks wheter or not a FSM can be inserted in a provided spot
      * (checking for collision with other states and going out of bounds)
      * @param position position of FSM we want to check if fits
+     * @param skip a state that can be skipped
      * @return true if it would fit
      */
-    bool checkIfFSMFits(QPoint position);
+    bool checkIfFSMFits(QPoint position, StateFSMWidget * skip = nullptr);
+
+    /**
+     * @brief execute a window for renaming
+     * @param title title of the window
+     * @return new name
+     */
+    QString renamingWindow(QString title);
 
     /**
      * @brief returns the minimum size the work-area can be based on position of FSM states
@@ -120,17 +139,32 @@ private:
 
     void updateCondition(size_t transitionId, const QString &condition) override;
     void updateTransition(size_t transitionId, const QString &srcState, const QString &destState) override;
+
     void updateVarInput(const QString &name, const QString &value) override;
     void updateVarOutput(const QString &name, const QString &value) override;
     void updateVarInternal(const QString &name, const QVariant &value) override;
+    /**
+     * @brief helper for more efficient updating
+     * @param type
+     * @param name
+     * @param value
+     */
+    void updateVar(enum variableType type, const QString &name, const QString &value);
 
     void destroyState(const QString &name) override;
     void destroyAction(const QString &parentState) override;
     void destroyCondition(size_t transitionId) override;
     void destroyTransition(size_t transitionId) override;
+
     void destroyVarInput(const QString &name) override;
     void destroyVarOutput(const QString &name) override;
     void destroyVarInternal(const QString &name) override;
+    /**
+     * @brief helper for more efficient deleting
+     * @param type
+     * @param name
+     */
+    void destroyVar(enum variableType type, const QString &name);
 
     void loadFile(const QString &filename) override;
     void saveFile(const QString &filename) override;
@@ -155,13 +189,15 @@ private:
     //       Attributes 
     // ========================
     Ui::EditorWindow *ui;
-    QLabel * statusBarLabel;//label on status bar
-    WorkArea * workArea;// work area widget
-    QWidget * workAreaScrollContainer;// container for scroll area
-    QLayout * workAreaScrollLayout; // layout for scroll area
-    std::vector<StateFSMWidget*> allStates; //vector of all states in the system
+    QLabel * statusBarLabel;///< label on status bar
+    WorkArea * workArea;///< work area widget
+    QWidget * workAreaScrollContainer;///< container for scroll area
+    QLayout * workAreaScrollLayout; ///< layout for scroll area
+    QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
+    StateFSMWidget * movingState = nullptr;///< A state that is being moved at the moment
+    bool isStateMoving = false;///< wheter or not is any state moving
     VariablesDisplay * variablesDisplay;
-
+    QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
     FsmInterface* model = nullptr; ///< Reference to model
 
     // Tady je doporučení, jak to může fungovat, není to závazné (použij místo QString/QVariant ten typ, co potřebuješ. 
@@ -169,7 +205,6 @@ private:
     //QHash<QString,QVariant> varsInternal; ///< Internal variable - may be of variable type
     //QHash<QString,QString> varsInput; ///< Input variable - only string format
     //QHash<QString,QString> varsOutput; ///< Output variable - only string format
-    // QHash<QString,StateFSMWidget*> states; ///< List of all states used within the FSM
     // QHash<size_t,...*> transitions; // Nevim co za typ pouzijes pro toto
 };
 #endif // EDITORWINDOW_H

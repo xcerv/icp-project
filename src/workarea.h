@@ -60,6 +60,7 @@ protected:
      * @param event
      */
     void paintEvent(QPaintEvent *event) override;
+
 private:
     QPoint size;//current size of work area
 };

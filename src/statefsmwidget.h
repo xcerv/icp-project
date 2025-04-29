@@ -19,6 +19,9 @@ namespace Ui {
 class StateFSMWidget;
 }
 
+/**
+ * @brief Widget for displaying a FSM state
+ */
 class StateFSMWidget : public QWidget
 {
     Q_OBJECT
@@ -37,6 +40,11 @@ public:
      */
     void setName(QString name);
     /**
+     * @brief gets name of state
+     * @return name of state
+     */
+    QString getName();
+    /**
      * @brief returns size of state
      * @return size
      */
@@ -46,6 +54,11 @@ public:
      * @return position
      */
     QPoint getPosition();
+    /**
+     * @brief sets new position of state
+     * @param pos new position (move there)
+     */
+    void setPosition(QPoint positon);
     /**
      * @brief adds a output into the state
      * @param cond output to be added and displayed
