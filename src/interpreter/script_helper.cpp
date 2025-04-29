@@ -115,6 +115,7 @@ void ScriptHelper::set(const QString &name, const QJSValue &value)
 
 QJSValue ScriptHelper::get(const QString &name)
 {
+    /** @todo should this not be internal?? */
     return this->getInput(name);
 }
 

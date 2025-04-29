@@ -54,7 +54,9 @@ struct ContextBackup
     QAbstractState* initialState; ///< Original initial state
 };
 
-/* Classes */
+/**
+ * @brief Implementation of the Model part of the MVC pattern; handles internal representation of the FSM and interpretation
+ */
 class FsmModel : public FsmInterface
 {
     friend class ScriptHelper;
@@ -85,6 +87,7 @@ class FsmModel : public FsmInterface
          =   Interface methods
          =========================
         */
+       
         void updateState(const QString &name, const QPoint &pos) override;
         void updateStateName(const QString &oldName, const QString &newName) override;
         void updateAction(const QString &parentState, const QString &action) override;
