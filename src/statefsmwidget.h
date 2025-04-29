@@ -19,6 +19,9 @@ namespace Ui {
 class StateFSMWidget;
 }
 
+/**
+ * @brief Widget for displaying a FSM state
+ */
 class StateFSMWidget : public QWidget
 {
     Q_OBJECT
