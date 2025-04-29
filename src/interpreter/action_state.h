@@ -26,13 +26,13 @@ class ActionState : public QState
     Q_OBJECT
 
     protected:
-        QString m_action;
-        QPoint m_position;
+        QString m_action; ///< The actions that will be executed when the state is entered; in form of JS script
+        QPoint m_position; ///< The current position of the state in editor
 
         static QPointer<ActionState> m_lastState; ///< last visited state
         QElapsedTimer m_timeVisited; ///< Time the state was entered
         
-        void onEntry(QEvent *event) override;
+        void onEntry(QEvent *event) override; ///< Method that is executed when state is entered 
 
     public:
         /**

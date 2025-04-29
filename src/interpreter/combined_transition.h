@@ -15,6 +15,7 @@
 #include <QStateMachine>
 #include <QAbstractTransition>
 
+// Regex to parse the condition by
 #define REGEX_TRANSITION_CONDITION "^ *([a-zA-Z_-]+)? *(\\[([\\x00-\\x7F]+)\\])? *(@ *([\\x00-\\x7F]+))? *$"
 
 /**

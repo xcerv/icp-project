@@ -59,7 +59,7 @@ struct ContextBackup
  */
 class FsmModel : public FsmInterface
 {
-    friend class ScriptHelper;
+    friend class ScriptHelper; ///< ScriptHelper here works as an interface for communication with the interpreter QJSEngine
 
     protected:
         QJSEngine engine; ///< Native javascript interpreter for evaluating conditions/actions
@@ -79,7 +79,13 @@ class FsmModel : public FsmInterface
         size_t uniqueTransId = 0; ///< Automatically generated unique id for transitions
 
     public:
+        /**
+         * @brief Constructor of the Model
+         */
         FsmModel();
+        /**
+         * @brief Destructor of the model
+         */
         virtual ~FsmModel();
 
         /* 
