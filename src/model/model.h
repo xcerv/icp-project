@@ -99,6 +99,10 @@ class FsmModel : public FsmInterface
 
         void renameFsm(const QString &name) override;
 
+        void parseVariableLine(const QString &line);
+        void parseStateLine(const QString &line);
+        void parseTransitionLine(const QString &line, size_t id);
+
         // This may be used only one-way
         void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const override;
         void log() const override; // Request log
