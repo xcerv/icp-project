@@ -67,6 +67,7 @@ void FsmModel::updateState(const QString &name, const QPoint &pos)
             },
             // New
             [&]() -> ActionState* {
+                FORMAT_CHECK_EXCEPTION("MODEL: Invalid state name format", FORMAT_STATE, name);
                 auto tmp = new ActionState("", pos);
                 tmp->setObjectName(name);
                 this->machine.addState(tmp);
@@ -80,6 +81,8 @@ void FsmModel::updateState(const QString &name, const QPoint &pos)
 
 void FsmModel::updateStateName(const QString &oldName, const QString &newName)
 {
+    FORMAT_CHECK("MODEL: Invalid rename state name format", FORMAT_STATE, newName);
+
     // The state with the new name already exists - ignore this action
     if(this->states.contains(newName))
     {
@@ -105,6 +108,8 @@ void FsmModel::updateStateName(const QString &oldName, const QString &newName)
 
 void FsmModel::updateAction(const QString &parentState, const QString &action)
 {
+    // FORMAT_CHECK("MODEL: Invalid updated state name format", FORMAT_ACTION, action); // We just allow everything
+
     CATCH_MODEL(
         safeUpdate(
             this->states, 
@@ -187,18 +192,21 @@ void FsmModel::updateTransition(size_t transitionId, const QString &srcState, co
 
 void FsmModel::updateVarInput(const QString &name, const QString &value)
 {
+    FORMAT_CHECK("MODEL: Invalid Input variable name", FORMAT_VARIABLE, name);
     varsInput.insert(name, value);
     view->updateVarInput(name, value);
 }
 
 void FsmModel::updateVarOutput(const QString &name, const QString &value)
 {
+    FORMAT_CHECK("MODEL: Invalid Input variable name", FORMAT_VARIABLE, name);
     varsOutput.insert(name, value);
     view->updateVarOutput(name, value);
 }
 
 void FsmModel::updateVarInternal(const QString &name, const QVariant &value)
 {
+    FORMAT_CHECK("MODEL: Invalid Input variable name", FORMAT_VARIABLE, name);
     varsInternal.insert(name, value);
     view->updateVarInternal(name, value);
 }
@@ -282,109 +290,4 @@ void FsmModel::destroyVarInternal(const QString &name)
 {
     this->varsInternal.remove(name);
     view->destroyVarInternal(name);
-}
-
-void FsmModel::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
-{
-    (void)time;
-    (void)state;
-    (void)varInputs;
-    (void)varOutputs;
-    (void)varInternals;
-
-    return; // Null operation for model?
-}
-
-void FsmModel::log() const
-{
-    // Deprecate this below: Just let view take its internal representation rather than pass ours
-    // view->log(QDateTime::currentDateTime().toString(), (*this->machine.configuration().begin())->objectName(),
-    view->log();
-}
-
-void FsmModel::cleanup()
-{
-    // Unlink states from FSM
-    for (ActionState* st : states.values()) {
-        if (st != nullptr) {
-            machine.removeState(st);
-        }
-    }
-
-    /** @todo Check that the removal here is correct; state should have ownership of its transition and will delete them too... probably */
-    qDeleteAll(states);
-    states.clear();
-    transitions.clear();
-
-    varsInternal.clear();
-    varsInput.clear();
-    varsOutput.clear();
-
-    // Reset transition unique id;
-    this->uniqueTransId = 0;
-
-    view->cleanup();
-}
-
-void FsmModel::throwError(FsmErrorType errNum)
-{
-    // Some internal handling prior?
-    view->throwError(errNum);
-}
-
-void FsmModel::throwError(FsmErrorType errNum, const QString &errMsg)
-{
-    qDebug() << "ERRNUM:" << errNum << "ERRMSG:" << errMsg;
-    view->throwError(errNum, errMsg);
-}
-
-void FsmModel::outputEvent(const QString &outName)
-{
-    qDebug() << outName << ": " << this->varsOutput.value(outName);
-    view->outputEvent(outName);
-}
-
-void FsmModel::inputEvent(const QString &name, const QString &value)
-{
-    // Accept events only if interpretation is running
-    if(!this->machine.isRunning())
-        return;
-
-    // Check if given input variable exists
-    auto it = this->varsInput.find(name);
-    
-    // The input variable exits!
-    if(it != this->varsInput.end())
-    {
-        // Update value
-        this->updateVarInput(name, value);
-
-        // Fire event
-        this->machine.postEvent(new FsmInputEvent(name));
-    }
-}
-
-void FsmModel::registerView(FsmInterface *view)
-{
-    this->view = view;
-}
-
-QAbstractState *FsmModel::getActiveState() const
-{
-    return (*this->machine.configuration().begin());
-}
-
-size_t FsmModel::getUniqueTransitionId()
-{
-    return ++(this->uniqueTransId);
-}
-
-size_t FsmModel::getUniqueTransitionId(size_t id)
-{
-    return id == 0 ? this->getUniqueTransitionId() : id;
-}
-
-QStateMachine *FsmModel::getMachine()
-{
-    return &this->machine;
 }

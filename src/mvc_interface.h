@@ -14,6 +14,14 @@
 #include <QObject>
 #include <QString>
 
+namespace FsmFormats
+{
+    constexpr const char *FORMAT_STATE = R"([a-zA-Z0-9_-]{1,256})";
+    constexpr const char *FORMAT_VARIABLE = R"([a-zA-Z0-9_-]{1,256})";
+    constexpr const char *FORMAT_ACTION = R"(.+)";
+    constexpr const char *FORMAT_VARIABLE_TYPE = R"((int|float|bool|string))";
+}
+
 /**
  * @brief Enumeration of error types
  */
@@ -25,6 +33,8 @@ enum FsmErrorType : int
     ERROR_UNDEFINED_STATE,
     ERROR_UNDEFINED_TRANSITION,
     ERROR_CONDITION_FORMAT,
+
+    ERROR_INVALID_NAMING_FORMAT,
 
     ERROR_RENAME_EXISTING,
 
