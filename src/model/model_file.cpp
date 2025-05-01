@@ -84,6 +84,8 @@ bool FsmModel::parseVariableLine(const QString &line) {
     else{
         return false;
     }
+
+    return true;
 }
 
 bool FsmModel::parseStateLine(const QString &line) {
@@ -111,6 +113,8 @@ bool FsmModel::parseStateLine(const QString &line) {
     // Set Action (if not blank)
     if(!action.isEmpty())
         updateAction(name, action);
+
+    return true;
 }
 
 bool FsmModel::parseTransitionLine(const QString &line) {
@@ -133,12 +137,14 @@ bool FsmModel::parseTransitionLine(const QString &line) {
     // Update condition
     if(!condition.isEmpty())
         updateCondition(id, condition);
+
+    return true;
 }
 
 void FsmModel::loadFile(const QString &filename)
 {
     // Clear current FSM data before loading a new one
-    cleanup();
+    this->cleanup();
 
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -160,9 +166,6 @@ void FsmModel::loadFile(const QString &filename)
         TRANSITIONS 
     } 
     currentSection = NONE;
-
-    // Used to assign unique IDs to transitions
-    size_t transitionIdCounter = 0;
 
     // Read the file line by line
     while (!in.atEnd()) {
@@ -227,7 +230,7 @@ void FsmModel::loadFile(const QString &filename)
                 break;
 
             case TRANSITIONS:
-                if (parseTransitionLine(line)){
+                if (parseTransitionLine(line) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse transition from file");
                 }
                 break;
