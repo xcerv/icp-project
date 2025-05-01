@@ -8,7 +8,7 @@
  *
  */
 
-#include "editorwindow.h"
+#include "view/editorwindow.h"
 #include "ui_editorwindow.h"
 #include "view/state_fsm_widget/statefsmwidget.h"
 #include "view/logging_window/loggingwindow.h"
@@ -30,7 +30,6 @@ EditorWindow::EditorWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
     statusBarLabel = new QLabel("nothing");
     statusBar()->addWidget(statusBarLabel);
 
@@ -39,23 +38,31 @@ EditorWindow::EditorWindow(QWidget *parent)
     variablesDisplay->move(5, 5); // top-left corner
     variablesDisplay->raise(); // appearing above other widgets
 
+    connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
+    connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
+    connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
+
+    // WorkAreaContrainer
+    workAreaScrollContainer = new QWidget();
+    workAreaScrollLayout = new QVBoxLayout(workAreaScrollContainer);  // layout for centering
+    workAreaScrollContainer->setLayout(workAreaScrollLayout);
+    ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
+    ui->workAreaScroll->setWidgetResizable(true);
+
     // Workarea
     workArea = new WorkArea;
     connect(workArea, &WorkArea::leftClick, this, &EditorWindow::workAreaLeftClick);
     connect(workArea, &WorkArea::rightClick, this, &EditorWindow::workAreaRightClick);
     resizeWorkArea(1000,500);
-
-    // WorkAreaContrainer
-    workAreaScrollContainer = new QWidget();
-    workAreaScrollLayout = new QVBoxLayout(workAreaScrollContainer);  // layout for centering
     workAreaScrollLayout->addWidget(workArea);
-    workAreaScrollLayout->setAlignment(Qt::AlignCenter);  // center workArea
-    workAreaScrollContainer->setLayout(workAreaScrollLayout);
-    ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
-
-    connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
-    connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
-    connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
+    workAreaScrollLayout->setAlignment(workArea, Qt::AlignHCenter);
+    
+    // Logging Window
+    loggingWindow = new LoggingWindow(this);
+    loggingWindow->setMinimumWidth(1000);
+    loggingWindow->setMaximumHeight(workArea->height()/2);
+    workAreaScrollLayout->addWidget(loggingWindow);
+    workAreaScrollLayout->setAlignment(loggingWindow, Qt::AlignHCenter);
 }
 
 EditorWindow::~EditorWindow()
@@ -541,6 +548,8 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
     s->show();
     connect(s, &StateFSMWidget::rightClick, this, &EditorWindow::stateFSMRightClick);
     connect(s, &StateFSMWidget::leftClick, this, &EditorWindow::stateFSMLeftClick);
+
+    qInfo() << "Editor: Created new state: " << name;
     allStates.insert(name,s);
 }
 
