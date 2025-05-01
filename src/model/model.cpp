@@ -161,7 +161,7 @@ void FsmModel::updateCondition(size_t transitionId, const QString &condition)
 void FsmModel::updateTransition(size_t transitionId, const QString &srcState, const QString &destState)
 {
     // If transition id is 0, generate a unique id
-    transitionId = this->getUniqueTransitionId();
+    transitionId = this->getUniqueTransitionId(transitionId);
 
     CATCH_MODEL(
         updateOrInsert(
