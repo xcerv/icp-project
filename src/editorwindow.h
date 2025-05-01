@@ -19,8 +19,11 @@
 #include <memory>
 #include <QCloseEvent>
 #include "variablesdisplay.h"
+#include "loggingwindow.h"
 #include "internal_representations.h"
+
 #include "mvc_interface.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -194,18 +197,27 @@ private:
     // ========================
     //       Attributes 
     // ========================
+    
+    // UI elements
     Ui::EditorWindow *ui;
     QLabel * statusBarLabel;///< label on status bar
     WorkArea * workArea;///< work area widget
     QWidget * workAreaScrollContainer;///< container for scroll area
     QLayout * workAreaScrollLayout; ///< layout for scroll area
-    QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
+    VariablesDisplay * variablesDisplay;
+    LoggingWindow * loggingWindow;
+
+    // State Helpers
     StateFSMWidget * movingState = nullptr;///< A state that is being moved at the moment
     StateFSMWidget * activeState = nullptr;///< A state that is active at the moment
     bool isStateMoving = false;///< wheter or not is any state moving
-    VariablesDisplay * variablesDisplay;
-    QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
+
+    // Model-link
     FsmInterface* model = nullptr; ///< Reference to model
+    
+    // Entity storage
+    QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
+    QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
 
     // Tady je doporučení, jak to může fungovat, není to závazné (použij místo QString/QVariant ten typ, co potřebuješ. 
     // Ale ten první typ pro indexaci by měla být podle QStringu)

@@ -11,6 +11,7 @@
 #include "editorwindow.h"
 #include "ui_editorwindow.h"
 #include "statefsmwidget.h"
+#include "loggingwindow.h"
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QInputDialog>
@@ -21,6 +22,7 @@
 #include <QPointer>
 #include <QFileDialog>
 #include <QTextEdit>
+#include <QDebug>
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -32,15 +34,18 @@ EditorWindow::EditorWindow(QWidget *parent)
     statusBarLabel = new QLabel("nothing");
     statusBar()->addWidget(statusBarLabel);
 
+    // Variable display
     variablesDisplay = new VariablesDisplay(this);
     variablesDisplay->move(5, 5); // top-left corner
     variablesDisplay->raise(); // appearing above other widgets
 
+    // Workarea
     workArea = new WorkArea;
     connect(workArea, &WorkArea::leftClick, this, &EditorWindow::workAreaLeftClick);
     connect(workArea, &WorkArea::rightClick, this, &EditorWindow::workAreaRightClick);
     resizeWorkArea(1000,500);
 
+    // WorkAreaContrainer
     workAreaScrollContainer = new QWidget();
     workAreaScrollLayout = new QVBoxLayout(workAreaScrollContainer);  // layout for centering
     workAreaScrollLayout->addWidget(workArea);
@@ -51,7 +56,6 @@ EditorWindow::EditorWindow(QWidget *parent)
     connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
     connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
     connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
-
 }
 
 EditorWindow::~EditorWindow()

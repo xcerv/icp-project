@@ -14,10 +14,9 @@ INCLUDEPATH += $$PWD/model
 INCLUDEPATH += $$PWD/interpreter
 INCLUDEPATH += $$PWD/exceptions
 
-SOURCES += $$files($$PWD/*.cpp, true) \
+SOURCES += $$files($$PWD/*.cpp, true)
 
-HEADERS += $$files($$PWD/*.h, true) \
-    internal_representations.h
+HEADERS += $$files($$PWD/*.h, true)
 
 FORMS += $$files($$PWD/*.ui, true)
 
