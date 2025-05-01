@@ -400,13 +400,25 @@ void EditorWindow::stateFSMRightClick(){
 
     QMenu menu(this);  // create a QMenu
 
+    // Connect state to another state with transition
     QAction* connectToAction = menu.addAction("Connect to ...");
+
+    // Destroying state
     QAction* deleteAction = menu.addAction("Delete");
     connect(deleteAction, &QAction::triggered, this,[=](bool){
         model->destroyState(stateClicked->getName());
     });
+
+    // Setting initial state
     QAction* setStartAction = menu.addAction("Set as starting");
-    QAction* editOutputAction = menu.addAction("Edit output ...");
+    connect(setStartAction, &QAction::triggered, this, 
+            [=](bool){
+                model->updateActiveState(stateClicked->getName());
+            }
+        );
+
+    // Edit state action
+    QAction* editOutputAction = menu.addAction("Edit state action ...");
     connect(editOutputAction, &QAction::triggered, this, [=](bool){
         QDialog dialog(this);
         dialog.setWindowTitle("Editing output");
@@ -428,6 +440,8 @@ void EditorWindow::stateFSMRightClick(){
         }
 
     });
+
+    // Rename a state
     QAction* renameStateAction = menu.addAction("Rename ...");
     connect(renameStateAction, &QAction::triggered, this, [=](bool){
         QString name = renamingWindow("Rename state");
@@ -435,6 +449,8 @@ void EditorWindow::stateFSMRightClick(){
             model->updateStateName(stateClicked->getName(),name);
         }
     });
+
+    // Move the state
     QAction * moveStateAction = menu.addAction("Move this state");
     connect(moveStateAction, &QAction::triggered, this, [=](bool){
         isStateMoving = true;

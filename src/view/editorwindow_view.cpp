@@ -96,6 +96,7 @@ void EditorWindow::destroyState(const QString &name)
 
 void EditorWindow::destroyAction(const QString &parentState)
 {
+    allStates[parentState]->setOutput("");
 }
 
 void EditorWindow::destroyCondition(size_t transitionId)
@@ -112,9 +113,11 @@ void EditorWindow::destroyVarInput(const QString &name)
 }
 
 void EditorWindow::destroyVar(enum variableType type, const QString &name){
+    // Find variable
     FSMVariable v = allVars[type][name];
     v.name->setParent(nullptr);
     v.value->setParent(nullptr);
+
     allVars[type].remove(name);
     QTimer::singleShot(0, this, [=]() {
         delete v.name;
@@ -138,11 +141,13 @@ void EditorWindow::destroyVarInternal(const QString &name)
 
 void EditorWindow::loadFile(const QString &filename)
 {
+    // Nop
     return;
 }
 
 void EditorWindow::saveFile(const QString &filename)
 {
+    // Nop
     return;
 }
 
@@ -190,7 +195,7 @@ void EditorWindow::log(const QString &time, const QString &state, const QString 
 
 void EditorWindow::log() const
 {
-    // Here will be the the visualisation of the state handled
+    // Probably nop
     return;
 }
 
@@ -206,5 +211,5 @@ void EditorWindow::stopInterpretation()
 
 void EditorWindow::registerModel(FsmInterface *model)
 {
-    this->model = model; // todo: can own each other?
+    this->model = model;
 }
