@@ -25,115 +25,116 @@ using namespace std;
 // Variable regexes
 
 // Generic regex for variables ==> name and 
-#define REGEX_VARIABLE QRegularExpression(R"((int|float|double|bool|string|char)\s+(\w+)\s*=\s*(.+))")
+#define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+(\w+)\s*=\s*(\w+)$)"
 // Internal variable regex ==> type and 
 #define REGEX_VARIABLE_INTERNAL "" REGEX_VARIABLE ""
 #define REGEX_VARIABLE_INPUT REGEX_VARIABLE
 #define REGEX_VARIABLE_OUTPUT REGEX_VARIABLE
 
 // Regex for states
-#define REGEX_STATE QRegularExpression(R"((\w+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\})")
+#define REGEX_STATE R"(^\s*(\w+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}$)"
 
 // Regex for transitions
-#define REGEX_TRANSITION QRegularExpression(R"((\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\})")
+#define REGEX_TRANSITION R"(^\s*(\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\}$)"
 
 
-/**
- * @brief Parses a line describing a variable and updates the internal model
- * @param line The file to load
- */
-void FsmModel::parseVariableLine(const QString &line) {
+bool FsmModel::parseVariableLine(const QString &line) {
 
-    auto match = REGEX_VARIABLE.match(line);
-    if (!match.hasMatch()) return;
+    auto match = QRegularExpression(REGEX_VARIABLE).match(line);
+    if (!match.hasMatch()){
+        return false;
+    }
 
-    // Extract variable type (e.g., int, bool, etc.)
+    // Extract variable type
     QString type = match.captured(1);
     // Extract variable name
     QString name = match.captured(2);
     // Extract variable value as string
     QString value = match.captured(3);
 
+    bool ok;
     // Convert value to the correct type and update internal variable
     if (type == "int") {
-        QRegularExpression re("^-?\\d+$");
-        auto t = re.match(type);
-        if (!match.hasMatch()) return;
-            updateVarInternal(name, QVariant(value.toInt()));
+        auto t = value.toInt(&ok, 10);
+        if(!ok) 
+        {
+            return false;
+        }
+        
+        updateVarInternal(name, QVariant(t));
     } 
     else if (type == "float") {
-        QRegularExpression re("^-?\\d*\\.\\d+$");
-        auto t = re.match(type);
-        if (!match.hasMatch()) return;
-        updateVarInternal(name, QVariant(value.toFloat()));
-    } 
-    else if (type == "double") {
-        QRegularExpression re("^-?\\d*\\.\\d+$");
-        auto t = re.match(type);
-        if (!match.hasMatch()) return;
-        updateVarInternal(name, QVariant(value.toDouble()));
+        auto t = value.toFloat(&ok);
+        if(!ok) 
+        {
+            return false;
+        }
+        updateVarInternal(name, QVariant(t));
     } 
     else if (type == "bool") {
-        QRegularExpression re("^(true|false)$");
-        auto t = re.match(type);
-        if (!match.hasMatch()) return;
+        if(value != "true" && value != "false")
+        {
+            return false;
+        }
         updateVarInternal(name, QVariant(value == "true"));
     } 
-    else if (type == "char") {
-        QRegularExpression re("^'.'$");
-        auto t = re.match(type);
-        if (!match.hasMatch()) return;
-        updateVarInternal(name, QVariant(value.at(0)));
-    } 
     else if (type == "string") {
-        QRegularExpression re("^\".*\"$");
-        auto t = re.match(type);
-        if (!match.hasMatch()) return;
         updateVarInternal(name, QVariant(value));
+    }
+    else{
+        return false;
     }
 }
 
-/**
- * @brief Parses a line describing a state and updates the model with its position and action
- * @param line The file to load
- */
-void FsmModel::parseStateLine(const QString &line) {
+bool FsmModel::parseStateLine(const QString &line) {
 
-    auto match = REGEX_STATE.match(line);
-    if (!match.hasMatch()) return;
+    auto match = QRegularExpression(REGEX_STATE).match(line);
+    if (!match.hasMatch()) return false;
 
+    // State name
     QString name = match.captured(1);
-    int x = match.captured(2).toInt();
-    int y = match.captured(3).toInt();
+
+    bool ok;
+    // X coordinate
+    int x = match.captured(2).toInt(&ok, 10);
+    if(!ok) return false;
+
+    // Y coordinate
+    int y = match.captured(3).toInt(&ok, 10);
+    if(!ok) return false;
+
+    // Action value
     QString action = match.captured(4);
 
+    // Set state
     updateState(name, QPoint(x, y));
-    updateAction(name, action);
+    // Set Action (if not blank)
+    if(!action.isEmpty())
+        updateAction(name, action);
 }
 
-/**
- * @brief Parses a line describing a transition and updates the model with its connection and condition
- * @param line The file to load
- * @param id The file to load
- */
-void FsmModel::parseTransitionLine(const QString &line, size_t id) {
+bool FsmModel::parseTransitionLine(const QString &line) {
 
-    auto match = REGEX_TRANSITION.match(line);
-    if (!match.hasMatch()) return;
+    auto match = QRegularExpression(REGEX_TRANSITION).match(line);
+    if (!match.hasMatch()) return false;
 
     QString src = match.captured(1);
     QString dst = match.captured(2);
     QString condition = match.captured(3);
 
+    // Source or destination don't exist
+    if(!this->states.contains(src) || !this->states.contains(dst))
+        return false;
+
+    auto id = this->getUniqueTransitionId();
+
+    // Create transition
     updateTransition(id, src, dst);
-    updateCondition(id, condition);
+    // Update condition
+    if(!condition.isEmpty())
+        updateCondition(id, condition);
 }
 
-
-/**
- * @brief Loads a FSM from the given file
- * @param filename The file to load
- */
 void FsmModel::loadFile(const QString &filename)
 {
     // Clear current FSM data before loading a new one
@@ -204,23 +205,31 @@ void FsmModel::loadFile(const QString &filename)
                 break;
 
             case INPUT:
+                /** @todo Support initialized/implicit values */
                 updateVarInput(line, "0");
                 break;
 
             case OUTPUT:
+                /** @todo Support initialized/implicit values */
                 updateVarOutput(line, "0");
                 break;
 
             case VARIABLES:
-                parseVariableLine(line);
+                if(parseVariableLine(line) == false){
+                    this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
+                }
                 break;
 
             case STATES:
-                parseStateLine(line);
+                if(parseStateLine(line) == false){
+                    this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse state from file");
+                }
                 break;
 
             case TRANSITIONS:
-                parseTransitionLine(line, this->getUniqueTransitionId());
+                if (parseTransitionLine(line)){
+                    this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse transition from file");
+                }
                 break;
 
             default:
@@ -231,10 +240,6 @@ void FsmModel::loadFile(const QString &filename)
     file.close();
 }
 
-/**
- * @brief 
- * @param filename 
- */
 void FsmModel::saveFile(const QString &filename)
 {
 
