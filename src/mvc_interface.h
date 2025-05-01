@@ -30,7 +30,8 @@ enum FsmErrorType : int
 
     // Interpreter specific, probably
     ERROR_INTERPRETATION_EVALUATION,
-    
+
+    ERROR_FILE_INVALID_FORMAT,    
 };
 
 /**
