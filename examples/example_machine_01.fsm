@@ -9,9 +9,9 @@ Output:
 Variables:
     int timeout = 5000
 States:
-    IDLE (0,0):                 { icp.output("out", 0) }
-    ACTIVE (1,2):               { icp.output("out", 1) }
-    TIMING (5,4):               { }
+    IDLE (250,100):                 { icp.output("out", 0) }
+    ACTIVE (750,100):               { icp.output("out", 1) }
+    TIMING (500,250):               { }
 Transitions:
     IDLE -> ACTIVE:             { in [ Number(valueof("in")) == 1  ] }
     ACTIVE -> TIMING:           { in [ Number(valueof("in")) == 0  ] }
