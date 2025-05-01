@@ -14,13 +14,14 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QHash>
-#include "statefsmwidget.h"
-#include "workarea.h"
 #include <memory>
 #include <QCloseEvent>
-#include "variablesdisplay.h"
-#include "loggingwindow.h"
-#include "internal_representations.h"
+
+#include "view/work_area/workarea.h"
+#include "view/state_fsm_widget/statefsmwidget.h"
+#include "view/variable_display/variablesdisplay.h"
+#include "view/logging_window/loggingwindow.h"
+#include "view/internal_representations.h"
 
 #include "mvc_interface.h"
 

@@ -10,8 +10,8 @@
 
 #include "editorwindow.h"
 #include "ui_editorwindow.h"
-#include "statefsmwidget.h"
-#include "loggingwindow.h"
+#include "view/state_fsm_widget/statefsmwidget.h"
+#include "view/logging_window/loggingwindow.h"
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QInputDialog>

@@ -13,6 +13,7 @@ TARGET = icp_fsm_interpreter
 INCLUDEPATH += $$PWD/model
 INCLUDEPATH += $$PWD/interpreter
 INCLUDEPATH += $$PWD/exceptions
+INCLUDEPATH += $$PWD/view
 
 SOURCES += $$files($$PWD/*.cpp, true)
 

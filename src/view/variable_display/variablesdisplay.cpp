@@ -8,7 +8,7 @@
  *
  */
 
-#include "variablesdisplay.h"
+#include "view/variable_display/variablesdisplay.h"
 #include <qdialog.h>
 #include <qlineedit.h>
 #include <qdialogbuttonbox.h>

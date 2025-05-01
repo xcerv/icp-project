@@ -13,7 +13,7 @@
 
 #include "qlabel.h"
 #include "qpushbutton.h"
-#include "internal_representations.h"
+#include "view/internal_representations.h"
 #include <QWidget>
 
 namespace Ui {

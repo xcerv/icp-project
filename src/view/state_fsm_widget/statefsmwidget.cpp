@@ -8,7 +8,7 @@
  *
  */
 
-#include "statefsmwidget.h"
+#include "view/state_fsm_widget/statefsmwidget.h"
 #include "ui_statefsmwidget.h"
 #include <QMouseEvent>
 

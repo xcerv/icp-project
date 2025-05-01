@@ -8,7 +8,7 @@
  *
  */
 
-#include "loggingwindow.h"
+#include "view/logging_window/loggingwindow.h"
 #include "ui_loggingwindow.h"
 
 LoggingWindow::LoggingWindow(QWidget *parent)
