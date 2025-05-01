@@ -118,10 +118,6 @@ class FsmModel : public FsmInterface
 
         void renameFsm(const QString &name) override;
 
-        void parseVariableLine(const QString &line);
-        void parseStateLine(const QString &line);
-        void parseTransitionLine(const QString &line, size_t id);
-
         // This may be used only one-way
         void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const override;
         void log() const override; // Request log
@@ -237,6 +233,23 @@ class FsmModel : public FsmInterface
             }
         }
 
+
+        /**
+         * @brief Parses given line into its variable interpretation
+         * @param line The line to be parsed
+         */
+        void parseVariableLine(const QString &line);
+        /**
+         * @brief Parses the given line into its state representation
+         * @param line Input line to be parsed
+         */
+        void parseStateLine(const QString &line);
+        /**
+         * @brief Parses given line into its transition interpretation
+         * @param line The line to be parsed
+         * @param id The identifier of the transition
+         */
+        void parseTransitionLine(const QString &line, size_t id);
 };
 
 #endif
