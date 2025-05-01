@@ -107,7 +107,6 @@ bool FsmModel::parseStateLine(const QString &line) {
 
     // Action value
     QString action = match.captured(4);
-
     // Set state
     updateState(name, QPoint(x, y));
     // Set Action (if not blank)
@@ -209,12 +208,12 @@ void FsmModel::loadFile(const QString &filename)
 
             case INPUT:
                 /** @todo Support initialized/implicit values */
-                updateVarInput(line, "0");
+                updateVarInput(line, "");
                 break;
 
             case OUTPUT:
                 /** @todo Support initialized/implicit values */
-                updateVarOutput(line, "0");
+                updateVarOutput(line, "");
                 break;
 
             case VARIABLES:
@@ -260,14 +259,14 @@ void FsmModel::saveFile(const QString &filename)
     // Inputs
     out << "Input:\n";
     for (auto input = varsInput.begin(); input != varsInput.end(); input++) {
-        out << input.key() << "\n";
+        out << input.key() <<  " = " << (input.value().isEmpty() ? "" : input.value()) << "\n";
     }
     out << "\n";
 
     // Outputs
     out << "Output:\n";
     for (auto output = varsOutput.begin(); output != varsOutput.end(); output++) {
-        out << output.key() << "\n";
+        out << output.key() << " = " << (output.value().isEmpty() ? "" : output.value()) << "\n";
     }
     out << "\n";
 
