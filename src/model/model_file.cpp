@@ -242,5 +242,32 @@ void FsmModel::loadFile(const QString &filename)
 
 void FsmModel::saveFile(const QString &filename)
 {
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        throwError(ERROR_GENERIC, "Couldn't open the file for writing");
+        return;
+    }
+
+    QTextStream out(&file);
+
+    // Name
+    out << "Name:\n";
+    out << machine.objectName() << "\n\n";
+
+    // Inputs
+    out << "Input:\n";
+    for (auto input = varsInput.begin(); input != varsInput.end(); input++) {
+        out << input.key() << "\n";
+    }
+    out << "\n";
+
+    // Outputs
+    out << "Output:\n";
+    for (auto output = varsOutput.begin(); output != varsOutput.end(); output++) {
+        out << output.key() << "\n";
+    }
+    out << "\n";
+
 
 }
+ 
