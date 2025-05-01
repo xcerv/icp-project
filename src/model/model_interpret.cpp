@@ -34,6 +34,9 @@ void FsmModel::renameFsm(const QString &name)
 
 void FsmModel::startInterpretation()
 {
+    // Log before interpretation
+    this->log();
+
     // Backup 
     backup.vInternal = this->varsInternal;
     backup.vInput = this->varsInput;

@@ -8,20 +8,41 @@
  *
  */
 
- #include <stdexcept>
+#include <stdexcept>
 
- #include <QtAlgorithms>
- #include <QVariant>
- #include <QDateTime>
- #include <QRegularExpression>
- #include <QDebug>
- 
- #include "mvc_interface.h"
- #include "model.h"
- #include "combined_event.h"
- 
- using namespace std;
- 
+#include <QtAlgorithms>
+#include <QVariant>
+#include <QDateTime>
+#include <QRegularExpression>
+#include <QDebug>
+
+#include "mvc_interface.h"
+#include "model.h"
+#include "combined_event.h"
+
+using namespace std;
+
+
+template <typename Key, typename Value>
+void hashmapToString(const QHash<Key, Value> &container, const QString &containerName, QString &out)
+{
+    QTextStream stream(&out);
+
+    stream << containerName << ":\n";
+    for (auto it = (container).constBegin(); it != (container).constEnd(); it++)
+    {
+        stream << QStringLiteral("\t") << it.key() << QStringLiteral("\t=");
+
+        if constexpr (std::is_same_v<Value, QVariant>) {
+            stream << it.value().toString();
+        }
+        else {
+            stream << it.value();
+        } 
+        
+        stream << "\n";
+    }
+}
 
 void FsmModel::registerView(FsmInterface *view)
 {
@@ -51,23 +72,38 @@ QStateMachine *FsmModel::getMachine()
 void FsmModel::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
 {
     (void)time;
-    (void)state;
-    (void)varInputs;
-    (void)varOutputs;
-    (void)varInternals;
+    qInfo() << "\nActive State: " << state << "\n" 
+            << "Inputs: " << varInputs << "\n"
+            << "Outputs: " << varOutputs << "\n"
+            << "Internals: " << varInternals << "\n";
 
     return; // Null operation for model?
 }
 
 void FsmModel::log() const
 {
-    // Deprecate this below: Just let view take its internal representation rather than pass ours
-    // view->log(QDateTime::currentDateTime().toString(), (*this->machine.configuration().begin())->objectName(),
-    view->log();
+    
+    QString inputs;
+    QString outputs;
+    QString internals;
+    QVariant test;
+    
+    hashmapToString(this->varsInput, "Input Variables:", inputs);
+    hashmapToString(this->varsOutput, "Output Variables:", outputs);
+    hashmapToString(this->varsInternal, "Internal Variables:", internals);
+
+    this->log("",
+            (*this->machine.configuration().begin())->objectName(),
+            inputs,
+            outputs,
+            internals
+            );
 }
 
 void FsmModel::cleanup()
 {
+    qWarning() << "Performing cleanup...";
+
     // Unlink states from FSM
     for (ActionState* st : states.values()) {
         if (st != nullptr) {
@@ -98,13 +134,12 @@ void FsmModel::throwError(FsmErrorType errNum)
 
 void FsmModel::throwError(FsmErrorType errNum, const QString &errMsg)
 {
-    qDebug() << "ERRNUM:" << errNum << "ERRMSG:" << errMsg;
     view->throwError(errNum, errMsg);
 }
 
 void FsmModel::outputEvent(const QString &outName)
 {
-    qDebug() << outName << ": " << this->varsOutput.value(outName);
+    qInfo() << "Fired output event " << outName << ": " << this->varsOutput.value(outName);
     view->outputEvent(outName);
 }
 
@@ -120,6 +155,8 @@ void FsmModel::inputEvent(const QString &name, const QString &value)
     // The input variable exits!
     if(it != this->varsInput.end())
     {
+        qInfo() << "Caught input event \"" << name << "\" of value: " << this->varsInput.value(name);
+
         // Update value
         this->updateVarInput(name, value);
 
