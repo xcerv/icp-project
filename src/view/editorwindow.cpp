@@ -548,8 +548,6 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
     s->show();
     connect(s, &StateFSMWidget::rightClick, this, &EditorWindow::stateFSMRightClick);
     connect(s, &StateFSMWidget::leftClick, this, &EditorWindow::stateFSMLeftClick);
-
-    qInfo() << "Editor: Created new state: " << name;
     allStates.insert(name,s);
 }
 

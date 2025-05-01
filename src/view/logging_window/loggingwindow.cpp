@@ -45,7 +45,7 @@ void LoggingWindow::loggingMessageHandler(QtMsgType type, const QMessageLogConte
             loggingInstance->logMessage(msg, Qt::black);
             break;
         case QtWarningMsg:
-            loggingInstance->logMessage(msg, Qt::yellow);
+            loggingInstance->logMessage(msg, Qt::darkYellow);
             break;
         case QtCriticalMsg:
             loggingInstance->logMessage(msg, Qt::red);

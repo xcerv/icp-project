@@ -76,6 +76,7 @@ void FsmModel::updateState(const QString &name, const QPoint &pos)
         );
     )
 
+    qInfo() << "MODEL: Updated state " << name << " at position (" << pos.x() << ", " << pos.y() << ")";
     view->updateState(name, pos);
 }
 
@@ -103,6 +104,7 @@ void FsmModel::updateStateName(const QString &oldName, const QString &newName)
         return;
     }
 
+    qInfo() << "MODEL: Renamed state " << oldName << " to " << newName;
     view->updateStateName(oldName, newName);
 }
 
@@ -123,6 +125,7 @@ void FsmModel::updateAction(const QString &parentState, const QString &action)
         );
     )
 
+    qInfo() << "MODEL: Updated action of state " << parentState;
     view->updateAction(parentState, action);
 }
 
@@ -141,6 +144,7 @@ void FsmModel::updateActiveState(const QString &name)
         );
     )
 
+    qInfo() << "MODEL: Set state " << name << " to ACTIVE";
     view->updateActiveState(name);
 }
 
@@ -160,6 +164,7 @@ void FsmModel::updateCondition(size_t transitionId, const QString &condition)
         );
     )
 
+    qInfo() << "MODEL: Updated condition of transition " << transitionId;
     view->updateCondition(transitionId, condition);
 }
 
@@ -187,6 +192,7 @@ void FsmModel::updateTransition(size_t transitionId, const QString &srcState, co
         );
     )
 
+    qInfo() << "MODEL: Updated transition " << transitionId << " from " << srcState << " to " << destState;
     view->updateTransition(transitionId, srcState, destState);
 }
 
@@ -194,20 +200,26 @@ void FsmModel::updateVarInput(const QString &name, const QString &value)
 {
     FORMAT_CHECK("MODEL: Invalid Input variable name", FORMAT_VARIABLE, name);
     varsInput.insert(name, value);
+
+    qInfo() << "MODEL: Set input variable " << name << " to " << value;
     view->updateVarInput(name, value);
 }
 
 void FsmModel::updateVarOutput(const QString &name, const QString &value)
 {
-    FORMAT_CHECK("MODEL: Invalid Input variable name", FORMAT_VARIABLE, name);
+    FORMAT_CHECK("MODEL: Invalid Output variable name", FORMAT_VARIABLE, name);
     varsOutput.insert(name, value);
+
+    qInfo() << "MODEL: Set ouput variable " << name << " to " << value;
     view->updateVarOutput(name, value);
 }
 
 void FsmModel::updateVarInternal(const QString &name, const QVariant &value)
 {
-    FORMAT_CHECK("MODEL: Invalid Input variable name", FORMAT_VARIABLE, name);
+    FORMAT_CHECK("MODEL: Invalid Internal variable name", FORMAT_VARIABLE, name);
     varsInternal.insert(name, value);
+
+    qInfo() << "MODEL: Set internal variable " << name << " to " << value.toString();
     view->updateVarInternal(name, value);
 }
 
@@ -233,6 +245,7 @@ void FsmModel::destroyState(const QString &name)
         it = nullptr;
     )
 
+    qInfo() << "MODEL: Destroyed state" << name;
     view->destroyState(name);
 }
 
@@ -241,6 +254,8 @@ void FsmModel::destroyAction(const QString &parentState)
     CATCH_MODEL(
         safeGetter(this->states, parentState, {ERROR_UNDEFINED_STATE, "MODEL: Failed to obtain parent state of action to destroy"})->setAction("");
     )
+
+    qInfo() << "MODEL: Destroyed action of state " << parentState;
     view->destroyAction(parentState);
 }
 
@@ -251,6 +266,8 @@ void FsmModel::destroyCondition(size_t transitionId)
         safeGetter(this->transitions, transitionId, {ERROR_UNDEFINED_TRANSITION,
                  "MODEL: Failed to obtain parent transition of condition to destroy"})->setCondition("");
     )
+
+    qInfo() << "MODEL: Destroyed condition of transition " << transitionId;
     view->destroyCondition(transitionId);
 }
 
@@ -271,23 +288,30 @@ void FsmModel::destroyTransition(size_t transitionId)
         it = nullptr;
     )
 
+    qInfo() << "MODEL: Destroyed transition " << transitionId;
     view->destroyTransition(transitionId);
 }
 
 void FsmModel::destroyVarInput(const QString &name)
 {
     this->varsInput.remove(name);
+
+    qInfo() << "MODEL: Destroyed input variable " << name;
     view->destroyVarInput(name);
 }
 
 void FsmModel::destroyVarOutput(const QString &name)
 {
     this->varsOutput.remove(name);
+
+    qInfo() << "MODEL: Destroyed output variable " << name;
     view->destroyVarOutput(name);
 }
 
 void FsmModel::destroyVarInternal(const QString &name)
 {
     this->varsInternal.remove(name);
+
+    qInfo() << "MODEL: Destroyed internal variable " << name;
     view->destroyVarInternal(name);
 }
