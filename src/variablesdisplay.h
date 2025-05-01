@@ -1,3 +1,13 @@
+/**
+ * Project name: ICP Project 2024/2025
+ *
+ * @file variabledisplay.h
+ * @author  xkadlet00
+ *
+ * @brief Defines the interface of display of input/output/internal variables
+ *
+ */
+
 #ifndef VARIABLESDISPLAY_H
 #define VARIABLESDISPLAY_H
 

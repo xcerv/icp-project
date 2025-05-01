@@ -17,6 +17,7 @@
 
 #include "mvc_interface.h"
 #include "model.h"
+#include "combined_event.h"
 
 using namespace std;
 
@@ -41,7 +42,8 @@ FsmModel::FsmModel()
     engine{},
     machine{static_cast<QObject*>(&engine)},
     view{nullptr},
-    scriptHelper{this, nullptr}
+    scriptHelper{this, nullptr},
+    uniqueTransId{0}
 {
     // Link model to QJSEngine
     QJSValue helperEngine = engine.newQObject(&this->scriptHelper);
@@ -158,6 +160,9 @@ void FsmModel::updateCondition(size_t transitionId, const QString &condition)
 
 void FsmModel::updateTransition(size_t transitionId, const QString &srcState, const QString &destState)
 {
+    // If transition id is 0, generate a unique id
+    transitionId = this->getUniqueTransitionId();
+
     CATCH_MODEL(
         updateOrInsert(
             this->transitions, 
@@ -315,6 +320,9 @@ void FsmModel::cleanup()
     varsInput.clear();
     varsOutput.clear();
 
+    // Reset transition unique id;
+    this->uniqueTransId = 0;
+
     view->cleanup();
 }
 
@@ -338,6 +346,22 @@ void FsmModel::outputEvent(const QString &outName)
 
 void FsmModel::inputEvent(const QString &name, const QString &value)
 {
+    // Accept events only if interpretation is running
+    if(!this->machine.isRunning())
+        return;
+
+    // Check if given input variable exists
+    auto it = this->varsInput.find(name);
+    
+    // The input variable exits!
+    if(it != this->varsInput.end())
+    {
+        // Update value
+        this->updateVarInput(name, value);
+
+        // Fire event
+        this->machine.postEvent(new FsmInputEvent(name));
+    }
 }
 
 void FsmModel::registerView(FsmInterface *view)
@@ -348,6 +372,16 @@ void FsmModel::registerView(FsmInterface *view)
 QAbstractState *FsmModel::getActiveState() const
 {
     return (*this->machine.configuration().begin());
+}
+
+size_t FsmModel::getUniqueTransitionId()
+{
+    return ++(this->uniqueTransId);
+}
+
+size_t FsmModel::getUniqueTransitionId(size_t id)
+{
+    return id == 0 ? this->getUniqueTransitionId() : id;
 }
 
 QStateMachine *FsmModel::getMachine()

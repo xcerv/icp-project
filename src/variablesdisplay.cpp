@@ -1,3 +1,13 @@
+/**
+ * Project name: ICP Project 2024/2025
+ *
+ * @file variabledisplay.cpp
+ * @author  xkadlet00
+ *
+ * @brief Defines the disply of input/output/internal variables
+ *
+ */
+
 #include "variablesdisplay.h"
 #include <qdialog.h>
 #include <qlineedit.h>

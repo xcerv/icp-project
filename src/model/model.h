@@ -32,6 +32,7 @@
 
 using namespace std;
 
+// Macro for exception handling within model
 #define CATCH_MODEL(code)                                                           \
                             try{                                                    \
                                 code                                                \
@@ -42,18 +43,23 @@ using namespace std;
                             }                                                        
 
 
+/**
+ * @brief Structure for holding a backup of all internal structures 
+ */
 struct ContextBackup
 {
-    QHash<QString,QVariant> vInternal;
-    QHash<QString,QString> vInput;
-    QHash<QString,QString> vOutput;
-    QAbstractState* initialState; 
+    QHash<QString,QVariant> vInternal; ///< Internal variable backup
+    QHash<QString,QString> vInput; ///< Input variable backup
+    QHash<QString,QString> vOutput; ///< Output variable backup
+    QAbstractState* initialState; ///< Original initial state
 };
 
-/* Classes */
+/**
+ * @brief Implementation of the Model part of the MVC pattern; handles internal representation of the FSM and interpretation
+ */
 class FsmModel : public FsmInterface
 {
-    friend class ScriptHelper;
+    friend class ScriptHelper; ///< ScriptHelper here works as an interface for communication with the interpreter QJSEngine
 
     protected:
         QJSEngine engine; ///< Native javascript interpreter for evaluating conditions/actions
@@ -70,11 +76,24 @@ class FsmModel : public FsmInterface
         ContextBackup backup; ///< Backup of machine state prior to interpretation
         ScriptHelper scriptHelper; ///< Separate interface for communication with QJSEngine
 
+        size_t uniqueTransId = 0; ///< Automatically generated unique id for transitions
+
     public:
+        /**
+         * @brief Constructor of the Model
+         */
         FsmModel();
+        /**
+         * @brief Destructor of the model
+         */
         virtual ~FsmModel();
 
-        // Interface methods
+        /* 
+         =========================
+         =   Interface methods
+         =========================
+        */
+       
         void updateState(const QString &name, const QPoint &pos) override;
         void updateStateName(const QString &oldName, const QString &newName) override;
         void updateAction(const QString &parentState, const QString &action) override;
@@ -117,15 +136,55 @@ class FsmModel : public FsmInterface
         void outputEvent(const QString &outName) override;
         void inputEvent(const QString &name, const QString &value) override;
 
-        // Model specific
+        /* 
+         ======================
+         =   Model specific
+         ======================
+        */
+
+        /**
+         * @brief Registers view entity
+         * @param view Pointer to entity supporting 
+         */
         void registerView(FsmInterface *view);
+        /**
+         * @brief Returns pointer to the currently active state
+         * @return Pointer to active state
+         */
         QAbstractState* getActiveState() const;
 
+        /**
+         * @brief Generates unique id for transition
+         * @return Unique numerical id
+         */
+        size_t getUniqueTransitionId();
+        /**
+         * @brief If parameter is zero, generate new id; otherwise return it unchanged
+         * @param id The unique id; if it is 0 then new id is generated
+         * @return Unique id or the parameter value unchanged
+         */
+        size_t getUniqueTransitionId(size_t id);
+
         // Machine getter
+
+        /**
+         * @brief QStateMachine getter
+         * @return Returns the pointer to QStateMachine
+         */
         QStateMachine *getMachine();
 
         // Interpretation error
+
+        /**
+         * @brief Error that occured during code evaluation
+         * @param errNum The error number associated with the error
+         */
         void interpretationError(FsmErrorType errNum);
+        /**
+         * @brief Error that occured during code evaluation
+         * @param errNum The error number associated with the error
+         * @param errMsg The custom error message
+         */
         void interpretationError(FsmErrorType errNum, const QString &errMsg);
 
     /* Template getters/setters */

@@ -115,7 +115,7 @@ void ScriptHelper::set(const QString &name, const QJSValue &value)
 
 QJSValue ScriptHelper::get(const QString &name)
 {
-    return this->getInput(name);
+    return this->getInternal(name);
 }
 
 QJSValue ScriptHelper::valueof(const QString &name)

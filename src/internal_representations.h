@@ -1,3 +1,13 @@
+/**
+ * Project name: ICP Project 2024/2025
+ *
+ * @file internal_repressentations.h
+ * @author  xkadlet00
+ *
+ * @brief Helper header for enumerations, etc.
+ *
+ */
+
 #ifndef INTERNAL_REPRESENTATIONS_H
 #define INTERNAL_REPRESENTATIONS_H
 
