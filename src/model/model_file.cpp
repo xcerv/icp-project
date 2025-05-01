@@ -38,36 +38,65 @@ using namespace std;
 #define REGEX_TRANSITION QRegularExpression(R"((\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\})")
 
 
+/**
+ * @brief Parses a line describing a variable and updates the internal model
+ * @param line The file to load
+ */
 void FsmModel::parseVariableLine(const QString &line) {
 
     auto match = REGEX_VARIABLE.match(line);
     if (!match.hasMatch()) return;
 
+    // Extract variable type (e.g., int, bool, etc.)
     QString type = match.captured(1);
+    // Extract variable name
     QString name = match.captured(2);
+    // Extract variable value as string
     QString value = match.captured(3);
 
+    // Convert value to the correct type and update internal variable
     if (type == "int") {
-        updateVarInternal(name, QVariant(value.toInt()));
+        QRegularExpression re("^-?\\d+$");
+        auto t = re.match(type);
+        if (!match.hasMatch()) return;
+            updateVarInternal(name, QVariant(value.toInt()));
     } 
     else if (type == "float") {
+        QRegularExpression re("^-?\\d*\\.\\d+$");
+        auto t = re.match(type);
+        if (!match.hasMatch()) return;
         updateVarInternal(name, QVariant(value.toFloat()));
     } 
     else if (type == "double") {
+        QRegularExpression re("^-?\\d*\\.\\d+$");
+        auto t = re.match(type);
+        if (!match.hasMatch()) return;
         updateVarInternal(name, QVariant(value.toDouble()));
     } 
     else if (type == "bool") {
+        QRegularExpression re("^(true|false)$");
+        auto t = re.match(type);
+        if (!match.hasMatch()) return;
         updateVarInternal(name, QVariant(value == "true"));
     } 
     else if (type == "char") {
+        QRegularExpression re("^'.'$");
+        auto t = re.match(type);
+        if (!match.hasMatch()) return;
         updateVarInternal(name, QVariant(value.at(0)));
     } 
     else if (type == "string") {
+        QRegularExpression re("^\".*\"$");
+        auto t = re.match(type);
+        if (!match.hasMatch()) return;
         updateVarInternal(name, QVariant(value));
     }
 }
 
-
+/**
+ * @brief Parses a line describing a state and updates the model with its position and action
+ * @param line The file to load
+ */
 void FsmModel::parseStateLine(const QString &line) {
 
     auto match = REGEX_STATE.match(line);
@@ -82,7 +111,11 @@ void FsmModel::parseStateLine(const QString &line) {
     updateAction(name, action);
 }
 
-
+/**
+ * @brief Parses a line describing a transition and updates the model with its connection and condition
+ * @param line The file to load
+ * @param id The file to load
+ */
 void FsmModel::parseTransitionLine(const QString &line, size_t id) {
 
     auto match = REGEX_TRANSITION.match(line);
@@ -98,11 +131,12 @@ void FsmModel::parseTransitionLine(const QString &line, size_t id) {
 
 
 /**
- * @brief 
- * @param filename 
+ * @brief Loads a FSM from the given file
+ * @param filename The file to load
  */
 void FsmModel::loadFile(const QString &filename)
 {
+    // Clear current FSM data before loading a new one
     cleanup();
 
     QFile file(filename);
@@ -111,6 +145,7 @@ void FsmModel::loadFile(const QString &filename)
         return;
     }
 
+     // Section tracking for which part of the file is being parsed
     QTextStream in(&file);
     QString line;
     enum Section { 
@@ -125,8 +160,10 @@ void FsmModel::loadFile(const QString &filename)
     } 
     currentSection = NONE;
 
+    // Used to assign unique IDs to transitions
     size_t transitionIdCounter = 0;
 
+    // Read the file line by line
     while (!in.atEnd()) {
         line = in.readLine().trimmed();
         if (line.isEmpty()) continue;
@@ -160,6 +197,7 @@ void FsmModel::loadFile(const QString &filename)
             continue;
         }
 
+         // Parse the content according to the current section
         switch (currentSection) {
             case NAME:
                 renameFsm(line);
