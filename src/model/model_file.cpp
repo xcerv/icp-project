@@ -220,7 +220,7 @@ void FsmModel::loadFile(const QString &filename)
                 break;
 
             case TRANSITIONS:
-                parseTransitionLine(line, transitionIdCounter++);
+                parseTransitionLine(line, this->getUniqueTransitionId());
                 break;
 
             default:
