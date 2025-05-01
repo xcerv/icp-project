@@ -42,7 +42,13 @@ void LoggingWindow::loggingMessageHandler(QtMsgType type, const QMessageLogConte
 {
     switch (type) {
         case QtInfoMsg:
-            loggingInstance->ui->logDisplay->setPlainText(msg);
+            loggingInstance->logMessage(msg, Qt::black);
+            break;
+        case QtWarningMsg:
+            loggingInstance->logMessage(msg, Qt::yellow);
+            break;
+        case QtCriticalMsg:
+            loggingInstance->logMessage(msg, Qt::red);
             break;
         default:
             loggingInstance->originalHandler(type, context, msg);
@@ -66,6 +72,16 @@ void LoggingWindow::stopLogging()
 void LoggingWindow::clearLog()
 {
     ui->logDisplay->clear();
+}
+
+void LoggingWindow::logMessage(const QString &msg, Qt::GlobalColor color)
+{
+    QColor textColor = color;
+    QString htmlMessage = QStringLiteral("<font color=\"%1\">%2</font>")
+        .arg(textColor.name())
+        .arg(Qt::convertFromPlainText(QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz") + " - " + msg));
+
+    this->ui->logDisplay->appendHtml(htmlMessage);
 }
 
 // By default there is no logging instance

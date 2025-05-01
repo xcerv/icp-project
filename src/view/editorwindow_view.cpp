@@ -15,6 +15,7 @@
 #include <QPoint>
 #include <memory>
 #include <QTimer>
+#include <QDebug>
 #include <QMessageBox>
 
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
@@ -161,11 +162,14 @@ void EditorWindow::cleanup(){} // Clear the class entirely
 
 void EditorWindow::throwError(FsmErrorType errNum)
 {
+    qCritical() << "Error " << errNum << " occured";
+    QMessageBox::critical(this,"Error","Err(" + QString::number(errNum) + ")");
     return; // Nop?
 }
 
 void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 {
+    qCritical() << "Error " << errNum << " is " << errMsg;
     QMessageBox::critical(this,"Error","Err(" + QString::number(errNum) + "): "+errMsg);
 }
 
