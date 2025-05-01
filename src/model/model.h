@@ -233,7 +233,11 @@ class FsmModel : public FsmInterface
             }
         }
 
-
+        /**
+         * @brief Parses given line into its Input and Output variables interpretation
+         * @param line The line to be parsed
+         */
+        bool parseInOutVariableLine(const QString &line);
         /**
          * @brief Parses given line into its variable interpretation
          * @param line The line to be parsed

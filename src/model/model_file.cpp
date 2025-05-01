@@ -38,6 +38,21 @@ using namespace std;
 #define REGEX_TRANSITION R"(^\s*(\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\}$)"
 
 
+bool FsmModel::parseInOutVariableLine(const QString &line) {
+ 
+    auto match = QRegularExpression(REGEX_VARIABLE_INPUT).match(line);
+    if (!match.hasMatch()){
+        return false;
+    }
+    QString name = match.captured(1);
+    QString value = match.captured(2);
+    if (value.isEmpty()) value = "0";
+    updateVarInput(name, value);
+
+    return true;
+}
+
+
 bool FsmModel::parseVariableLine(const QString &line) {
 
     auto match = QRegularExpression(REGEX_VARIABLE).match(line);
@@ -207,14 +222,16 @@ void FsmModel::loadFile(const QString &filename)
                 break;
 
             case INPUT:
-                /** @todo Support initialized/implicit values */
-                updateVarInput(line, "");
-                break;
-
+                if(parseInOutVariableLine(line) == false){
+                    this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
+                }
+                    break;
+    
             case OUTPUT:
-                /** @todo Support initialized/implicit values */
-                updateVarOutput(line, "");
-                break;
+                if(parseInOutVariableLine(line) == false){
+                    this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
+                }
+                    break;
 
             case VARIABLES:
                 if(parseVariableLine(line) == false){
@@ -270,6 +287,47 @@ void FsmModel::saveFile(const QString &filename)
     }
     out << "\n";
 
-
+    // Internal variables
+    out << "Variables:\n";
+     for (auto variable = varsInternal.begin(); variable != varsInternal.end(); variable++) {
+         QString type;
+         const QVariant &val = variable.value();
+ 
+         switch (val.type()) {
+             case QVariant::Int:
+                 type = "int";
+                 break;
+             case QVariant::Double:
+                 type = "double";
+                 break;
+             case QVariant::Bool:
+                 type = "bool";
+                 break;
+             case QVariant::String: {
+                 QString str = val.toString();
+                 if (str.length() == 1) {
+                     type = "char";
+                 } 
+                 else {
+                     type = "string";
+                 }
+                 break;
+             }
+             default:
+                 continue;
+         }
+     
+ 
+         out << type << " " << variable.key() << " = " << val.toString() << "\n";
+     }
+     out << "\n";
+ 
+     // States
+     out << "States:\n";
+     for (auto state = states.begin(); state != states.end(); state++) {
+         QPoint position = state.value()->getPosition();
+         out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
+     }
+     out << "\n";
 }
  
