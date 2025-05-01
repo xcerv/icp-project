@@ -17,6 +17,10 @@
 #include <QFormLayout>
 #include <QSpinBox>
 #include <QDialogButtonBox>
+#include <QComboBox>
+#include <QPointer>
+#include <QFileDialog>
+#include <QTextEdit>
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -43,10 +47,16 @@ EditorWindow::EditorWindow(QWidget *parent)
     workAreaScrollLayout->setAlignment(Qt::AlignCenter);  // center workArea
     workAreaScrollContainer->setLayout(workAreaScrollLayout);
     ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
+
+    connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
+    connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
+    connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
+
 }
 
 EditorWindow::~EditorWindow()
 {
+    /*
     for (StateFSMWidget* state : allStates) {
         delete state;  // free all condition labels
     }
@@ -55,16 +65,222 @@ EditorWindow::~EditorWindow()
     delete workAreaScrollLayout;
     delete workArea;
     delete statusBarLabel;
+    */
     delete ui;
 }
 
+
+void EditorWindow::variableToBeEdited(enum variableType type){
+    // make dialog for getting neccassary info
+    QDialog dialog(this);
+    dialog.setWindowTitle("Edit variable");
+
+    QFormLayout form(&dialog);
+
+    QComboBox *nameInput = new QComboBox(&dialog);
+    QList<QString> keys = allVars[type].keys();
+    nameInput->addItem("...");
+    for (const QString &key : keys) {
+        nameInput->addItem(key);
+    }
+    form.addRow("Edit:", nameInput);
+
+    // OK + Cancel buttons
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if(type == INPUTV){
+        QLineEdit *valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->currentText() != "..." && valueInput->text() != "") {
+            model->updateVarInput(nameInput->currentText(),valueInput->text());
+        }
+    }else{
+        // type selection
+        QComboBox *typeSelector = new QComboBox(&dialog);
+        typeSelector->addItem("String");
+        typeSelector->addItem("Bool");
+        typeSelector->addItem("Int");
+        typeSelector->addItem("Float");
+        form.addRow("Type:", typeSelector);
+
+        QPointer<QWidget> valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+
+        // dynamic replacement
+        connect(typeSelector, &QComboBox::currentTextChanged, [&form, &valueInput, &dialog](const QString &text){
+            QWidget *newInput = nullptr;
+
+            if (text == "Bool") {
+                QComboBox *boolCombo = new QComboBox(&dialog);
+                boolCombo->addItem("True");
+                boolCombo->addItem("False");
+                newInput = boolCombo;
+            } else if (text == "Int") {
+                QSpinBox *spin = new QSpinBox(&dialog);
+                spin->setMinimum(INT_MIN);
+                spin->setMaximum(INT_MAX);
+                newInput = spin;
+            } else if (text == "Float") {
+                QDoubleSpinBox *dspin = new QDoubleSpinBox(&dialog);
+                dspin->setMinimum(-9999999);
+                dspin->setMaximum(9999999);
+                dspin->setDecimals(4);
+                newInput = dspin;
+            } else {
+                QLineEdit *line = new QLineEdit(&dialog);
+                newInput = line;
+            }
+
+            if (newInput) {
+                if (valueInput) {
+                    form.removeRow(2);  // careful: remove correct row
+                    delete valueInput;
+                }
+                //add waiting here?
+                valueInput = newInput;
+                form.insertRow(2, "Value:", valueInput);
+            }
+        });
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->currentText() != "...") {
+            QString type = typeSelector->currentText();
+
+            QVariant value;
+
+            if (type == "Bool") {
+                QComboBox *boolCombo = qobject_cast<QComboBox*>(valueInput);
+                value = (boolCombo->currentText() == "True");
+            } else if (type == "Int") {
+                QSpinBox *spin = qobject_cast<QSpinBox*>(valueInput);
+                value = spin->value();
+            } else if (type == "Float") {
+                QDoubleSpinBox *dspin = qobject_cast<QDoubleSpinBox*>(valueInput);
+                value = dspin->value();
+            } else if (type == "String") {
+                QLineEdit *line = qobject_cast<QLineEdit*>(valueInput);
+                value = line->text();
+            }
+            model->updateVarInternal(nameInput->currentText(),value);
+        }
+    }
+}
+
+void EditorWindow::variableToBeAdded(enum variableType type){
+    // make dialog for getting neccassary info
+    QDialog dialog(this);
+    dialog.setWindowTitle("Add variable");
+
+    QFormLayout form(&dialog);
+
+    QLineEdit *nameInput = new QLineEdit(&dialog);
+    form.addRow("Name:", nameInput);
+
+    // OK + Cancel buttons
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    if(type == OUTPUTV){
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
+            model->updateVarOutput(nameInput->text(),"");
+        }
+    }else if(type == INPUTV){
+        QLineEdit *valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "" && valueInput->text() != "") {
+            model->updateVarInput(nameInput->text(),valueInput->text());
+        }
+    }else{
+        // type selection
+        QComboBox *typeSelector = new QComboBox(&dialog);
+        typeSelector->addItem("String");
+        typeSelector->addItem("Bool");
+        typeSelector->addItem("Int");
+        typeSelector->addItem("Float");
+        form.addRow("Type:", typeSelector);
+
+        QPointer<QWidget> valueInput = new QLineEdit(&dialog);
+        form.addRow("Value:", valueInput);
+
+        // dynamic replacement
+        connect(typeSelector, &QComboBox::currentTextChanged, [&form, &valueInput, &dialog](const QString &text){
+            QWidget *newInput = nullptr;
+
+            if (text == "Bool") {
+                QComboBox *boolCombo = new QComboBox(&dialog);
+                boolCombo->addItem("True");
+                boolCombo->addItem("False");
+                newInput = boolCombo;
+            } else if (text == "Int") {
+                QSpinBox *spin = new QSpinBox(&dialog);
+                spin->setMinimum(INT_MIN);
+                spin->setMaximum(INT_MAX);
+                newInput = spin;
+            } else if (text == "Float") {
+                QDoubleSpinBox *dspin = new QDoubleSpinBox(&dialog);
+                dspin->setMinimum(-9999999);
+                dspin->setMaximum(9999999);
+                dspin->setDecimals(4);
+                newInput = dspin;
+            } else {
+                QLineEdit *line = new QLineEdit(&dialog);
+                newInput = line;
+            }
+
+            if (newInput) {
+                if (valueInput) {
+                    form.removeRow(2);  // careful: remove correct row
+                    delete valueInput;
+                }
+                //add waiting here?
+                valueInput = newInput;
+                form.insertRow(2, "Value:", valueInput);
+            }
+        });
+        form.addRow(&buttonBox);
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
+            QString type = typeSelector->currentText();
+
+            QVariant value;
+
+            if (type == "Bool") {
+                QComboBox *boolCombo = qobject_cast<QComboBox*>(valueInput);
+                value = (boolCombo->currentText() == "True");
+            } else if (type == "Int") {
+                QSpinBox *spin = qobject_cast<QSpinBox*>(valueInput);
+                value = spin->value();
+            } else if (type == "Float") {
+                QDoubleSpinBox *dspin = qobject_cast<QDoubleSpinBox*>(valueInput);
+                value = dspin->value();
+            } else if (type == "String") {
+                QLineEdit *line = qobject_cast<QLineEdit*>(valueInput);
+                value = line->text();
+            }
+            model->updateVarInternal(nameInput->text(),value);
+        }
+    }
+}
+
 void EditorWindow::resizeWorkArea(int width, int height){
-    //TODO: check for potentional states going out of widget
     workArea->setSizeWA(width, height);
 }
 
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
+    if(isStateMoving){
+        if(checkIfFSMFits(position, movingState)){
+            model->updateState(movingState->getName(), position);
+            movingState = nullptr;
+        }else{
+            statusBarLabel->setText("State did not fit");
+        }
+        isStateMoving = false;
+    }
 }
 
 void EditorWindow::workAreaRightClick(QPoint position){
@@ -74,10 +290,13 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
     QAction* addStateAction = menu.addAction("Add new state ...");
     connect(addStateAction, &QAction::triggered, this, [=]() {
-        QString name = QInputDialog::getText(this, "Name of state","Write the name of the state to be inserted state here:");
-        if(name != nullptr){
-            // todo: interaction with other file before...
-            insertFSMState(position, name);
+        QString name = renamingWindow("Insert state");
+        if(name != ""){
+            if(allStates.contains(name)){
+                QMessageBox::warning(this,"Cannot insert state","State cannot be insterted, because states need to have unique names.");
+            }else{
+                model->updateState(name, position);
+            }
         }
     });
     if(!checkIfFSMFits(position)){
@@ -88,8 +307,26 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
     QAction* startProjectionAction = menu.addAction("Start projection");
 
+    QAction* renameFSMAction = menu.addAction("Rename FSM ...");
+    connect(renameFSMAction, &QAction::triggered, this, [=](bool){
+        QString name = renamingWindow("Renaming FSM");
+        if(name != ""){
+            model->renameFsm(name);
+        }
+    });
+
     QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
     connect(resizeWorkareaAction, &QAction::triggered, this, [=](bool){resizeWorkArea();});
+
+    QAction * loadFileAction = menu.addAction("Load file ...");
+    connect(loadFileAction, &QAction::triggered, this, [this](bool){
+        model->loadFile(QFileDialog::getOpenFileName());
+    });
+
+    QAction * saveFileAction = menu.addAction("Save file as ...");
+    connect(saveFileAction, &QAction::triggered, this, [this](bool){
+        model->saveFile(QFileDialog::getSaveFileName());
+    });
 
     menu.exec(QCursor::pos());
 }
@@ -148,23 +385,54 @@ QPoint EditorWindow::getMinWorkAreaSize(){
 }
 
 void EditorWindow::stateFSMRightClick(){
-    statusBarLabel->setText("DEBUG: right-clicked on state");
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
-    //debug
-    //stateClicked->recolor("#b3d1ff","navy");
-    //stateClicked->addOutput("condition");
     QMenu menu(this);  // create a QMenu
 
     QAction* connectToAction = menu.addAction("Connect to ...");
     QAction* deleteAction = menu.addAction("Delete");
+    connect(deleteAction, &QAction::triggered, this,[=](bool){
+        model->destroyState(stateClicked->getName());
+    });
     QAction* setStartAction = menu.addAction("Set as starting");
-    QAction* g = menu.addAction("Add output ...");
+    QAction* editOutputAction = menu.addAction("Edit output ...");
+    connect(editOutputAction, &QAction::triggered, this, [=](bool){
+        QDialog dialog(this);
+        dialog.setWindowTitle("Editing output");
+
+        QTextEdit *outputEdit = new QTextEdit(&dialog);
+        outputEdit->setText(stateClicked->getOutput());
+
+        // OK + Cancel buttons
+        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+        connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+        QVBoxLayout *layout = new QVBoxLayout(&dialog);
+        layout->addWidget(outputEdit);      // first the QTextEdit
+        layout->addWidget(&buttonBox);
+
+        if (dialog.exec() == QDialog::Accepted) {
+            model->updateAction(stateClicked->getName(),outputEdit->toPlainText());
+        }
+
+    });
+    QAction* renameStateAction = menu.addAction("Rename ...");
+    connect(renameStateAction, &QAction::triggered, this, [=](bool){
+        QString name = renamingWindow("Rename state");
+        if(name != ""){
+            model->updateStateName(stateClicked->getName(),name);
+        }
+    });
+    QAction * moveStateAction = menu.addAction("Move this state");
+    connect(moveStateAction, &QAction::triggered, this, [=](bool){
+        isStateMoving = true;
+        movingState = stateClicked;
+    });
     menu.exec(QCursor::pos());
 }
 
 void EditorWindow::stateFSMLeftClick(){
-    statusBarLabel->setText("DEBUG: left-clicked on state");
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
     //debug
@@ -172,7 +440,7 @@ void EditorWindow::stateFSMLeftClick(){
     //stateClicked->setName("right-clicked");
 }
 
-bool EditorWindow::checkIfFSMFits(QPoint position){
+bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
     bool canBeInserted = true;
     QPoint sizeWA = workArea->getSizeWA();
     QPoint sizeS; sizeS.setX(150); sizeS.setY(180); //TODO: fix if states can be multiple sizes
@@ -182,6 +450,9 @@ bool EditorWindow::checkIfFSMFits(QPoint position){
     canBeInserted = canBeInserted && sx < sizeWA.x() && sy < sizeWA.y();
     //check for collision with other states
     for(StateFSMWidget * state: allStates){
+        if(state == nullptr || state == skip){
+            continue;
+        }
         QPoint fPos = state->getPosition();
         QPoint fSize = state->getSize();
         int fsx = fPos.x() + fSize.x();
@@ -196,6 +467,68 @@ bool EditorWindow::checkIfFSMFits(QPoint position){
     return canBeInserted;
 }
 
+void EditorWindow::variableToBeDeleted(enum variableType type){
+    QDialog dialog(this);
+    dialog.setWindowTitle("Deleting variable");
+
+    QFormLayout form(&dialog);
+
+    QComboBox * variableChoice = new QComboBox(&dialog);
+    form.addRow("Delete:",variableChoice);
+    QList<QString> keys = allVars[type].keys();
+    variableChoice->addItem("...");
+    for (const QString &key : keys) {
+        variableChoice->addItem(key);
+    }
+
+    // OK + Cancel buttons
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    form.addRow(&buttonBox);
+
+    if (dialog.exec() == QDialog::Accepted) {
+        QString name = variableChoice->currentText();
+        if(name == "...")return;
+        switch(type){
+            case INPUTV:
+                model->destroyVarInput(name);
+                break;
+            case OUTPUTV:
+                model->destroyVarOutput(name);
+                break;
+            case INTERNALV:
+                model->destroyVarInternal(name);
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+
+QString EditorWindow::renamingWindow(QString title){
+        QDialog dialog(this);
+        dialog.setWindowTitle(title);
+
+        QFormLayout form(&dialog);
+
+        QLineEdit *nameInput = new QLineEdit(&dialog);
+        form.addRow("Name:", nameInput);
+
+        // OK + Cancel buttons
+        QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+        connect(&buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+        connect(&buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+        form.addRow(&buttonBox);
+
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
+            return nameInput->text();
+        }else{
+            return "";
+        }
+}
+
 void EditorWindow::insertFSMState(QPoint position, QString name){
     StateFSMWidget * s = new StateFSMWidget(position,this);
     s->setParent(workArea);
@@ -204,12 +537,42 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
     s->show();
     connect(s, &StateFSMWidget::rightClick, this, &EditorWindow::stateFSMRightClick);
     connect(s, &StateFSMWidget::leftClick, this, &EditorWindow::stateFSMLeftClick);
-    allStates.push_back(s);
+    allStates.insert(name,s);
 }
 
 void EditorWindow::closeEvent(QCloseEvent *event)
 {
-    QMessageBox::information(this, "Goodbye", "Program is closing");
-    event->accept();
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Closing program");
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setText("Do you want to save before closing program?");
+    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel | QMessageBox::Close);
+
+    /*
+    QAbstractButton *closeButton = msgBox.button(QMessageBox::Close);
+    if (closeButton) closeButton->setIcon(QIcon());
+    */
+    QAbstractButton *cancelButton = msgBox.button(QMessageBox::Cancel);
+    if (cancelButton) cancelButton->setIcon(QIcon());
+
+    msgBox.setDefaultButton(QMessageBox::Save);
+
+    int ret = msgBox.exec();
+
+    if (ret == QMessageBox::Save) {
+        QString file = QFileDialog::getSaveFileName();
+        if(file != ""){
+            model->saveFile(file);
+            model->cleanup();
+            event->accept();
+        }else{
+            event->ignore();
+        }
+    } else if (ret == QMessageBox::Close) {
+        model->cleanup();
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 

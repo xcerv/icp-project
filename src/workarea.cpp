@@ -42,3 +42,4 @@ void WorkArea::setSizeWA(int x, int y){
     size.setY(y);
     setFixedSize(x,y);
 }
+

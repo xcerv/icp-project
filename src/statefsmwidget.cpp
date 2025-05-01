@@ -26,16 +26,22 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
     scrollLayout = new QVBoxLayout(scrollContainer);
     scrollContainer->setLayout(scrollLayout);
     ui->scrollArea->setWidget(scrollContainer);  // add container to scroll area
+    output = new QLabel;
+    output->setText("");
+    output->setWordWrap(true);
+    scrollLayout->addWidget(output);
 }
 
 StateFSMWidget::~StateFSMWidget()
 {
+    /*
     for (QLabel* label : allOutputs) {
         delete label;  // free all output labels
     }
     allOutputs.clear();  // ensure the vector is empty
     delete scrollContainer;
     delete scrollLayout;
+    */
     delete ui;
 }
 
@@ -53,12 +59,15 @@ void StateFSMWidget::setName(QString name){
     ui->name->setText(name);
 }
 
+QString StateFSMWidget::getName(){
+    return ui->name->text();
+}
+void StateFSMWidget::setOutput(QString cond){
+    output->setText(cond);
+}
 
-void StateFSMWidget::addOutput(QString cond){
-    QLabel * l = new QLabel;
-    l->setText(cond);
-    scrollLayout->addWidget(l);
-    allOutputs.push_back(l);
+QString StateFSMWidget::getOutput(){
+    return output->text();
 }
 
 QPoint StateFSMWidget::getSize(){
@@ -69,6 +78,10 @@ QPoint StateFSMWidget::getPosition(){
     return position;
 }
 
+void StateFSMWidget::setPosition(QPoint pos){
+    position = pos;
+    move(pos);
+}
 
 void StateFSMWidget::recolor(const QString& c1, const QString& c2) {
     QString style = QString(

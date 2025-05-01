@@ -17,6 +17,7 @@ INCLUDEPATH += $$PWD/exceptions
 SOURCES += $$files($$PWD/*.cpp, true) \
 
 HEADERS += $$files($$PWD/*.h, true) \
+    internal_representations.h
 
 FORMS += $$files($$PWD/*.ui, true)
 

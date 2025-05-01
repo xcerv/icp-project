@@ -37,6 +37,11 @@ public:
      */
     void setName(QString name);
     /**
+     * @brief gets name of state
+     * @return name of state
+     */
+    QString getName();
+    /**
      * @brief returns size of state
      * @return size
      */
@@ -47,10 +52,20 @@ public:
      */
     QPoint getPosition();
     /**
-     * @brief adds a output into the state
-     * @param cond output to be added and displayed
+     * @brief sets new position of state
+     * @param pos new position (move there)
      */
-    void addOutput(QString cond);
+    void setPosition(QPoint positon);
+    /**
+     * @brief set the output of the state
+     * @param cond output to be displayed
+     */
+    void setOutput(QString cond);
+    /**
+     * @brief get the output of the state
+     * @return output of state
+     */
+    QString getOutput();
     /**
      * @brief recolors the state
      * @param c1 primary color (of body)
@@ -70,7 +85,7 @@ private:
     Ui::StateFSMWidget *ui;
     QLayout * scrollLayout; //layout for scroll area
     QWidget * scrollContainer; //container for scroll area
-    std::vector<QLabel*> allOutputs; //vector of all outputs of state
+    QLabel* output; //outputs of state
     QPoint position; //position of state wothin workArea
     QPoint size; //size of state
 };
