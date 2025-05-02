@@ -59,10 +59,9 @@ EditorWindow::EditorWindow(QWidget *parent)
     
     // Logging Window
     loggingWindow = new LoggingWindow(this);
-    loggingWindow->setMinimumWidth(1000);
+    loggingWindow->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     loggingWindow->setMaximumHeight(workArea->height()/2);
-    workAreaScrollLayout->addWidget(loggingWindow);
-    workAreaScrollLayout->setAlignment(loggingWindow, Qt::AlignHCenter);
+    ui->verticalLayout->addWidget(loggingWindow);
 }
 
 EditorWindow::~EditorWindow()
