@@ -283,6 +283,13 @@ void EditorWindow::resizeWorkArea(int width, int height){
 
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
+    //debug
+    /*
+    FSMTransition * arrow = new FSMTransition(workArea);
+    arrow->setGeometry(workArea->rect()); // cover entire area
+    arrow->show();
+    */
+    //end of debug
     if(isStateMoving){
         if(checkIfFSMFits(position, movingState)){
             model->updateState(movingState->getName(), position);

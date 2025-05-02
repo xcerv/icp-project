@@ -102,8 +102,8 @@ QTextEdit, QListView {
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
      <widget class="QScrollArea" name="workAreaScroll">
       <property name="frameShape">
        <enum>QFrame::NoFrame</enum>
