@@ -292,13 +292,17 @@ void EditorWindow::workAreaLeftClick(QPoint position){
     */
     //end of debug
     if(isStateMoving){
-        if(checkIfFSMFits(position, movingState)){
-            model->updateState(movingState->getName(), position);
-            movingState = nullptr;
+        if(checkIfFSMFits(position, allStates[manipulatedState])){
+            model->updateState(manipulatedState, position);
+            allStates[manipulatedState] = nullptr;
         }else{
             statusBarLabel->setText("State did not fit");
         }
         isStateMoving = false;
+    }
+
+    if(isStateConnecting){
+        isStateConnecting = false;
     }
 }
 
@@ -410,6 +414,10 @@ void EditorWindow::stateFSMRightClick(){
 
     // Connect state to another state with transition
     QAction* connectToAction = menu.addAction("Connect to ...");
+    connect(connectToAction, &QAction::triggered, this, [=](bool){
+        isStateConnecting = true;
+        manipulatedState = stateClicked->getName();
+    });
 
     // Destroying state
     QAction* deleteAction = menu.addAction("Delete");
@@ -462,7 +470,7 @@ void EditorWindow::stateFSMRightClick(){
     QAction * moveStateAction = menu.addAction("Move this state");
     connect(moveStateAction, &QAction::triggered, this, [=](bool){
         isStateMoving = true;
-        movingState = stateClicked;
+        manipulatedState = stateClicked->getName();
     });
     menu.exec(QCursor::pos());
 }
@@ -473,6 +481,10 @@ void EditorWindow::stateFSMLeftClick(){
     //debug
     //stateClicked->recolor("pink","teal");
     //stateClicked->setName("right-clicked");
+    if(isStateConnecting){
+        model->updateTransition(0,manipulatedState,stateClicked->getName());
+        isStateConnecting = false;
+    }
 }
 
 bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){

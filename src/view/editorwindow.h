@@ -210,9 +210,10 @@ private:
     LoggingWindow * loggingWindow;
 
     // State Helpers
-    StateFSMWidget * movingState = nullptr;///< A state that is being moved at the moment
+    QString manipulatedState;///< A state that is being moved at the moment
     StateFSMWidget * activeState = nullptr;///< A state that is active at the moment
     bool isStateMoving = false;///< wheter or not is any state moving
+    bool isStateConnecting = false;
 
     // Model-link
     FsmInterface* model = nullptr; ///< Reference to model
@@ -220,6 +221,7 @@ private:
     // Entity storage
     QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
     QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
+    QHash<size_t,FSMTransition *> allTransitions;
 
     // Tady je doporučení, jak to může fungovat, není to závazné (použij místo QString/QVariant ten typ, co potřebuješ. 
     // Ale ten první typ pro indexaci by měla být podle QStringu)

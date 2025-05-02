@@ -8,19 +8,33 @@ class FSMTransition : public QWidget
     Q_OBJECT
 public:
     explicit FSMTransition(QWidget *parent = nullptr);
+    /**
+     * @brief relocateTransition
+     * @param startPoint
+     * @param startSize
+     * @param finPoint
+     * @param finSize
+     */
+    void relocateTransition(QPoint startPoint, QPoint startSize, QPoint finPoint, QPoint finSize);
+
+    void setSrc(QString nsrc);
+    void setDst(QString ndst);
 protected:
     /**
      * @brief paints the transition
      */
     void paintEvent(QPaintEvent *) override;
 
-    void relocateTransition(QPoint startPoint, QPoint startSize, QPoint finPoint, QPoint finSize);
+
 
 signals:
 
 private:
     QPoint startPos;
     QPoint finPos;
+
+    QString src;
+    QString dst;
 
 };
 

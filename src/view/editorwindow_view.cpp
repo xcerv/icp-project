@@ -55,6 +55,12 @@ void EditorWindow::updateCondition(size_t transitionId, const QString &condition
 
 void EditorWindow::updateTransition(size_t transitionId, const QString &srcState, const QString &destState)
 {
+    FSMTransition* g = new FSMTransition(workArea);
+    g->relocateTransition(allStates[srcState]->getPosition(),allStates[srcState]->getSize(), allStates[destState]->getPosition(), allStates[destState]->getSize());
+    g->setDst(destState);
+    g->setSrc(srcState);
+    g->move(0,0);
+    allTransitions[transitionId] = g;
 }
 
 void EditorWindow::updateVarInput(const QString &name, const QString &value)
