@@ -122,8 +122,6 @@ void EditorWindow::updateTransition(size_t transitionId, const QString &srcState
     }else {
         FSMTransition* g = new FSMTransition(workArea);
         g->relocateTransition(allStates[srcState]->getPosition(),allStates[srcState]->getSize(), allStates[destState]->getPosition(), allStates[destState]->getSize());
-        g->setDst(destState);
-        g->setSrc(srcState);
         g->move(0,0);
         connect(g,&FSMTransition::editTransition, this, &EditorWindow::editTransitionHanling);
         allTransitionsUI[key] = g;

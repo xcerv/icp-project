@@ -21,9 +21,6 @@ public:
 
     ~FSMTransition();
 
-    void setSrc(QString nsrc);
-    void setDst(QString ndst);
-
     void addTransition(size_t num);
     void subTransition(size_t num);
     QSet<size_t> getTransitions();
@@ -43,13 +40,12 @@ private:
     QPoint startPos;
     QPoint finPos;
 
-    QString src;
-    QString dst;
-
     QSet<size_t> individualTransitions;
 
     QPushButton * editTransitionBtn = nullptr;
     QPoint btnSize;
+
+    bool isLoop = false;
 
 };
 
