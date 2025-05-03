@@ -720,7 +720,57 @@ void EditorWindow::closeEvent(QCloseEvent *event)
 }
 
 
-void EditorWindow::editTransitionHanling(QSet<size_t>){
+void EditorWindow::editTransitionHanling(FSMTransition * transition){
+    QDialog dialog(this);
+    dialog.setWindowTitle("Edit conditions");
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+    QComboBox *idComboBox = new QComboBox(&dialog);
+    auto c = transition->getTransitions();
+    QList<size_t> idList = c.values();
+    for (size_t tId : idList) {
+        idComboBox->addItem(QString::number(tId), QVariant::fromValue(tId));
+    }
+    mainLayout->addWidget(idComboBox);
 
+    QLabel *infoLabel = new QLabel(&dialog);
+    mainLayout->addWidget(infoLabel);
+
+    QLineEdit *conditionEdit = new QLineEdit(&dialog);
+    mainLayout->addWidget(conditionEdit);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    QPushButton *deleteButton = new QPushButton("Delete", &dialog);
+    buttonBox->addButton(deleteButton, QDialogButtonBox::DestructiveRole);
+    mainLayout->addWidget(buttonBox);
+
+    // change fields when a different ID is selected
+    auto updateFields = [=]() {
+        size_t selectedId = idComboBox->currentData().toULongLong(); // convert QVariant to size_t
+        const auto &cond = allTransitionsConditions[selectedId];
+        infoLabel->setText(cond.src + " -> " + cond.dest);
+        conditionEdit->setText(cond.condition);
+    };
+    updateFields();
+    connect(idComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), updateFields);
+
+    // OK
+    connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
+        size_t selectedId = idComboBox->currentData().toULongLong();
+        model->updateCondition(selectedId, conditionEdit->text());
+        dialog.accept();
+    });
+
+    // Cancel
+    connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    // Delete
+    connect(deleteButton, &QPushButton::clicked, [&]() {
+        size_t selectedId = idComboBox->currentData().toULongLong();
+        transition->subTransition(selectedId);
+        model->destroyTransition(selectedId);
+        dialog.accept();
+    });
+
+    dialog.exec();
 }
 

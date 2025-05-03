@@ -19,6 +19,8 @@ public:
      */
     void relocateTransition(QPoint startPoint, QPoint startSize, QPoint finPoint, QPoint finSize);
 
+    ~FSMTransition();
+
     void setSrc(QString nsrc);
     void setDst(QString ndst);
 
@@ -26,7 +28,7 @@ public:
     void subTransition(size_t num);
     QSet<size_t> getTransitions();
 signals:
-    void editTransition(QSet<size_t>);
+    void editTransition(FSMTransition *);
 protected:
     /**
      * @brief paints the transition

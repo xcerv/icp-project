@@ -141,7 +141,10 @@ void EditorWindow::destroyCondition(size_t transitionId)
 
 void EditorWindow::destroyTransition(size_t transitionId)
 {
+
     auto help = allTransitionsConditions[transitionId];
+    //statusBarLabel->setText(allTransitionsConditions[transitionId].dest + "...");
+
     QPair<QString, QString> key  = {help.src, help.dest};
     QPair<QString, QString> keyR = {help.dest, help.src};
 
@@ -155,12 +158,18 @@ void EditorWindow::destroyTransition(size_t transitionId)
         delTr = allTransitionsUI[keyR];
         key = keyR;
     }else{
+        statusBarLabel->setText(allTransitionsConditions[transitionId].dest + "...");
+
+        //for (auto key : allTransitionsUI.keys()) {
+        //statusBarLabel->setText("i am deytrying" + key.first + " " + key.second + "----" + help.src + " " + help.dest);
+        //}
         //throwError(99,"Internal error occured");
         return;
     }
     delTr->subTransition(transitionId);
     auto num = delTr->getTransitions();
     if (num.isEmpty()){
+        statusBarLabel->setText("destroy and conquer");
         delTr->blockSignals(true);
         QObject::disconnect(delTr, nullptr, nullptr, nullptr);
         delTr->setParent(nullptr);
@@ -168,7 +177,10 @@ void EditorWindow::destroyTransition(size_t transitionId)
         QTimer::singleShot(0, this, [=]() {
             delete delTr;
         });
+    }else{
+        statusBarLabel->setText("size:"+ QString::number(num.size()));
     }
+
 }
 
 void EditorWindow::destroyVarInput(const QString &name)

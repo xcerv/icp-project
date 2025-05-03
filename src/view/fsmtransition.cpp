@@ -14,6 +14,11 @@ FSMTransition::FSMTransition(QWidget *parent)
     connect(editTransitionBtn, &QPushButton::clicked, this, &FSMTransition::clickedEdit);
 }
 
+
+FSMTransition::~FSMTransition(){
+    delete editTransitionBtn;
+}
+
 void FSMTransition::paintEvent(QPaintEvent *event){
     QPainter p(this);
     Q_UNUSED(event);
@@ -130,7 +135,7 @@ void FSMTransition::setSrc(QString nsrc){
 }
 
 void FSMTransition::clickedEdit(){
-    emit editTransition(individualTransitions);
+    emit editTransition(this);
 }
 
 

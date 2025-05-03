@@ -135,9 +135,9 @@ public slots:
 
     /**
      * @brief handles the signal of clicking on the edit button of a transition
-     * @param c all conditions in one transition
+     * @param transition the transition I just interacted with
      */
-    void editTransitionHanling(QSet<size_t> c);
+    void editTransitionHanling(FSMTransition * transition);
 protected:
     /**
      * @brief overrides the default closeEvent -- asks if saving is wanted
