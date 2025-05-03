@@ -16,6 +16,9 @@
 #include <QHash>
 #include <memory>
 #include <QCloseEvent>
+#include <QTextEdit>
+#include <QComboBox>
+#include <QPlainTextEdit>
 
 #include "view/work_area/workarea.h"
 #include "view/state_fsm_widget/statefsmwidget.h"
@@ -33,6 +36,9 @@ class EditorWindow;
 }
 QT_END_NAMESPACE
 
+/**
+ * @brief 
+ */
 class EditorWindow: public QMainWindow, public FsmInterface
 {
     Q_OBJECT
@@ -66,6 +72,23 @@ public:
     void insertFSMState(QPoint position, QString name);
 
 public slots:
+
+
+    /* Interpreter UI elements */
+    /**
+     * @brief Action triggered when interpretation stop button is clicked
+     */
+    void stopButtonClick();
+    /**
+     * @brief Action triggered when interpretation start button is clicked
+     */
+    void startButtonClick();
+    /**
+     * @brief Action triggered when interpretation start button is clicked
+     */
+    void submitInputClick();
+
+    /* Work Area UI Elements */
     /**
      * @brief what happens after workArea is left clicked (no action)
      * @param position
@@ -138,7 +161,6 @@ private:
      */
     void resizeWorkArea();
 
-
     // ========================
     //       MVC INTERFACE 
     // ========================
@@ -202,12 +224,21 @@ private:
     
     // UI elements
     Ui::EditorWindow *ui;
-    QLabel * statusBarLabel;///< label on status bar
-    WorkArea * workArea;///< work area widget
-    QWidget * workAreaScrollContainer;///< container for scroll area
-    QLayout * workAreaScrollLayout; ///< layout for scroll area
-    VariablesDisplay * variablesDisplay;
-    LoggingWindow * loggingWindow;
+    QLabel * statusBarLabel = nullptr;///< label on status bar
+    WorkArea * workArea = nullptr;///< work area widget
+    QWidget * workAreaScrollContainer = nullptr;///< container for scroll area
+    QLayout * workAreaScrollLayout = nullptr; ///< layout for scroll area
+    VariablesDisplay * variablesDisplay = nullptr;/// Variable display
+    LoggingWindow * loggingWindow = nullptr;///< Logging window
+
+    // Interpreter buttons
+    QPushButton * stopButton = nullptr;
+    QPushButton * startButton = nullptr;
+    QPushButton * inputSubmitButton = nullptr;
+
+    QLineEdit * inputEventField = nullptr;
+    QComboBox * inputEventCombox = nullptr;
+    QPlainTextEdit * outputEventField = nullptr;
 
     // State Helpers
     QString manipulatedState;///< A state that is being moved at the moment

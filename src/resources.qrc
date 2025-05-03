@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/arrows">
+        <file>img/down.svg</file>
+        <file>img/up.svg</file>
+        <file>img/right.svg</file>
+        <file>img/left.svg</file>
+    </qresource>
+    <qresource prefix="/buttons">
+        <file>img/buttons/play.png</file>
+        <file>img/buttons/play_hover.png</file>
+        <file>img/buttons/play_press.png</file>
+        <file>img/buttons/play_disabled.png</file>
+
+        <file>img/buttons/stop.png</file>
+        <file>img/buttons/stop_hover.png</file>
+        <file>img/buttons/stop_press.png</file>
+        <file>img/buttons/stop_disabled.png</file>
+    </qresource>
+</RCC>

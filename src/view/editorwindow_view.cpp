@@ -104,6 +104,12 @@ void EditorWindow::destroyState(const QString &name)
     QTimer::singleShot(0, this, [=]() {
         delete w;
     });
+
+    // Disable interpretation if there are no states
+    if(allStates.isEmpty())
+    {
+        this->startButton->setEnabled(false);
+    }
 }
 
 void EditorWindow::destroyAction(const QString &parentState)
@@ -193,7 +199,7 @@ void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 void EditorWindow::outputEvent(const QString &outName)
 {
     // Output msg to some output window
-    QMessageBox::information(this,"Information",outName);
+    this->outputEventField->appendPlainText(outName);
 }
 
 void EditorWindow::inputEvent(const QString &name, const QString &value)
@@ -203,6 +209,11 @@ void EditorWindow::inputEvent(const QString &name, const QString &value)
 
 void EditorWindow::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
 {
+    (void)time;
+    (void)state;
+    (void)varInputs;
+    (void)varOutputs;
+    (void)varInternals;
 }
 
 void EditorWindow::log() const
@@ -218,7 +229,8 @@ void EditorWindow::startInterpretation()
 
 void EditorWindow::stopInterpretation()
 {
-    return; // NOP?
+    this->stopButtonClick();
+    return;
 }
 
 void EditorWindow::registerModel(FsmInterface *model)

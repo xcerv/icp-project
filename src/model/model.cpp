@@ -57,6 +57,9 @@ FsmModel::~FsmModel()
 
 void FsmModel::updateState(const QString &name, const QPoint &pos)
 {
+    bool firstStateAdded = false;
+    if(this->states.isEmpty()){firstStateAdded = true;}
+
     CATCH_MODEL(
         updateOrInsert(
             this->states, 
@@ -78,6 +81,12 @@ void FsmModel::updateState(const QString &name, const QPoint &pos)
 
     qInfo() << "MODEL: Updated state " << name << " at position (" << pos.x() << ", " << pos.y() << ")";
     view->updateState(name, pos);
+
+    // Set first state to be initial
+    if(firstStateAdded)
+    {
+        this->updateActiveState(name);
+    }
 }
 
 void FsmModel::updateStateName(const QString &oldName, const QString &newName)

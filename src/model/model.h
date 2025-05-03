@@ -153,6 +153,18 @@ class FsmModel : public FsmInterface
         */
 
         /**
+         * @brief Returns the name of the active state
+         * @return String value of the active state
+         */
+        const QString getActiveName() const;
+
+        /**
+         * @brief Checks whether any states are defined
+         * @return True if any states exist, otherwise false
+         */
+        bool emptyStates() const;
+
+        /**
          * @brief Registers view entity
          * @param view Pointer to entity supporting 
          */

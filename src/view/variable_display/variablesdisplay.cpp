@@ -13,6 +13,7 @@
 #include <qlineedit.h>
 #include <qdialogbuttonbox.h>
 #include "ui_variablesdisplay.h"
+#include "variablesdisplay.h"
 
 VariablesDisplay::VariablesDisplay(QWidget *parent)
     : QWidget(parent)
@@ -80,7 +81,7 @@ FSMVariable VariablesDisplay::insertVariable(enum variableType type, QString nam
     int row;
     layout->getWidgetPosition(typeVar[type], &row, nullptr);
     layout->insertRow(row + 1, newLblName, newLblValue);
-    FSMVariable h{newLblName,newLblValue};
+    FSMVariable h{.name = newLblName, .value = newLblValue};
     return h;
 }
 

@@ -23,6 +23,7 @@
 #include <QFileDialog>
 #include <QTextEdit>
 #include <QDebug>
+#include "editorwindow.h"
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -49,15 +50,29 @@ EditorWindow::EditorWindow(QWidget *parent)
     ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
     ui->workAreaScroll->setWidgetResizable(true);
 
-    // Workarea
+    // === Workarea ===
     workArea = new WorkArea;
     connect(workArea, &WorkArea::leftClick, this, &EditorWindow::workAreaLeftClick);
     connect(workArea, &WorkArea::rightClick, this, &EditorWindow::workAreaRightClick);
-    resizeWorkArea(1000,500);
+    resizeWorkArea(1500,700);
     workAreaScrollLayout->addWidget(workArea);
     workAreaScrollLayout->setAlignment(workArea, Qt::AlignHCenter);
-    
-    // Logging Window
+
+    // === Interpreter window ===
+    // Link important elements to attributes
+    stopButton = this->findChild<QPushButton*>("stopBtn");
+    startButton = this->findChild<QPushButton*>("startBtn");
+    inputSubmitButton = this->findChild<QPushButton*>("submitBtn");
+
+    inputEventField = this->findChild<QLineEdit*>("inputField");
+    inputEventCombox = this->findChild<QComboBox*>("inputSelect");
+    outputEventField = this->findChild<QPlainTextEdit*>("outputField");
+
+    connect(startButton, &QPushButton::clicked, this, &EditorWindow::startButtonClick);
+    connect(stopButton, &QPushButton::clicked, this, &EditorWindow::stopButtonClick);
+    connect(inputSubmitButton, &QPushButton::clicked, this, &EditorWindow::submitInputClick);
+
+    // === Logging Window ===
     loggingWindow = new LoggingWindow(this);
     loggingWindow->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
     loggingWindow->setMinimumHeight(150);
@@ -81,6 +96,60 @@ EditorWindow::~EditorWindow()
     delete ui;
 }
 
+
+/*
+===========================
+     INTERPRETER RELATED 
+===========================
+*/
+
+void EditorWindow::startButtonClick()
+{
+    // Allow only variables set prior to interpretation
+    QList<QString> keys = allVars[INPUTV].keys();
+    for (const QString &key : keys) {
+        this->inputEventCombox->addItem(key);
+    }
+
+    this->inputEventCombox->setEnabled(true);
+    this->inputSubmitButton->setEnabled(true);
+
+    this->stopButton->setEnabled(true);
+    this->startButton->setEnabled(false);
+
+    this->model->startInterpretation();
+}
+
+void EditorWindow::stopButtonClick()
+{
+    // Remove all input events after interpretation ended
+    this->model->stopInterpretation();
+
+    // Reset Input Combox/Submit button to disabled
+    this->inputEventCombox->setEnabled(false);
+    this->inputSubmitButton->setEnabled(false);
+    this->stopButton->setEnabled(false);
+    this->startButton->setEnabled(true);
+
+    this->inputEventCombox->clear();
+    this->inputEventCombox->addItem("..."); // Add just ... by default
+}
+
+void EditorWindow::submitInputClick()
+{
+    // Don't allow empty inputs
+    if(this->inputEventField->text().isEmpty() || this->inputEventCombox->currentText() == "...")
+        return;
+
+    this->model->inputEvent(this->inputEventCombox->currentText(), this->inputEventField->text());
+    this->inputEventField->clear();
+}
+
+/*
+===========================
+     VARIABLE RELATED 
+===========================
+*/
 
 void EditorWindow::variableToBeEdited(enum variableType type){
     // make dialog for getting neccassary info
@@ -577,6 +646,9 @@ QString EditorWindow::renamingWindow(QString title){
 }
 
 void EditorWindow::insertFSMState(QPoint position, QString name){
+    // Enable interpretation only once at least one state exits
+    this->startButton->setEnabled(true);
+
     StateFSMWidget * s = new StateFSMWidget(position,this);
     s->setParent(workArea);
     s->move(position);

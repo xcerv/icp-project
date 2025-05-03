@@ -1,8 +1,0 @@
-<RCC>
-    <qresource prefix="/arrows">
-        <file>img/down.svg</file>
-        <file>img/up.svg</file>
-        <file>img/right.svg</file>
-        <file>img/left.svg</file>
-    </qresource>
-</RCC>

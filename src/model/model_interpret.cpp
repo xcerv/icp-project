@@ -17,6 +17,7 @@
 #include "model.h"
 
 #include <QtGlobal>
+#include <QDebug>
 
 using namespace std;
 
@@ -34,6 +35,12 @@ void FsmModel::renameFsm(const QString &name)
 
 void FsmModel::startInterpretation()
 {
+    if(this->emptyStates()){
+        qCritical() << "INTERPRETATION: Attempt to interpret empty state machine";
+        this->view->stopInterpretation();
+        return;
+    }
+
     // Log before interpretation
     this->log();
 
@@ -65,6 +72,10 @@ void FsmModel::interpretationError(FsmErrorType errNum, const QString &errMsg)
 
 void FsmModel::stopInterpretation()
 {
+    if(!machine.isRunning()){
+        return;
+    }
+
     this->machine.stop();
 
     // On full stop restore original values (maybe add another button for restoring?)

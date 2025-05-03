@@ -24,11 +24,9 @@ using namespace std;
 
 
 template <typename Key, typename Value>
-void hashmapToString(const QHash<Key, Value> &container, const QString &containerName, QString &out)
+void hashmapToString(const QHash<Key, Value> &container, QString &out)
 {
     QTextStream stream(&out);
-
-    stream << containerName << ":\n";
     for (auto it = (container).constBegin(); it != (container).constEnd(); it++)
     {
         stream << QStringLiteral("\t") << it.key() << QStringLiteral("\t=");
@@ -51,7 +49,7 @@ void FsmModel::registerView(FsmInterface *view)
 
 QAbstractState *FsmModel::getActiveState() const
 {
-    return (*this->machine.configuration().begin());
+    return this->machine.initialState();
 }
 
 size_t FsmModel::getUniqueTransitionId()
@@ -88,12 +86,12 @@ void FsmModel::log() const
     QString internals;
     QVariant test;
     
-    hashmapToString(this->varsInput, "Input Variables:", inputs);
-    hashmapToString(this->varsOutput, "Output Variables:", outputs);
-    hashmapToString(this->varsInternal, "Internal Variables:", internals);
+    hashmapToString(this->varsInput, inputs);
+    hashmapToString(this->varsOutput, outputs);
+    hashmapToString(this->varsInternal, internals);
 
     this->log("",
-            (*this->machine.configuration().begin())->objectName(),
+            this->getActiveName(),
             inputs,
             outputs,
             internals
@@ -140,14 +138,16 @@ void FsmModel::throwError(FsmErrorType errNum, const QString &errMsg)
 void FsmModel::outputEvent(const QString &outName)
 {
     qInfo() << "Fired output event " << outName << ": " << this->varsOutput.value(outName);
-    view->outputEvent(outName);
+    view->outputEvent(this->varsOutput.value(outName));
 }
 
 void FsmModel::inputEvent(const QString &name, const QString &value)
 {
     // Accept events only if interpretation is running
-    if(!this->machine.isRunning())
+    if(!this->machine.isRunning()){
+        qWarning() << "Caught input event \"" << name << "\" of value: " << value << " while FSM is inactive";
         return;
+    }
 
     // Check if given input variable exists
     auto it = this->varsInput.find(name);
@@ -155,7 +155,7 @@ void FsmModel::inputEvent(const QString &name, const QString &value)
     // The input variable exits!
     if(it != this->varsInput.end())
     {
-        qInfo() << "Caught input event \"" << name << "\" of value: " << this->varsInput.value(name);
+        qInfo() << "Caught input event \"" << name << "\" of value: " << value;
 
         // Update value
         this->updateVarInput(name, value);
@@ -168,4 +168,20 @@ void FsmModel::inputEvent(const QString &name, const QString &value)
 bool FsmModel::checkValidFormat(const QString &str, const char *regex)
 {
     return QRegularExpression(regex).match(str).hasMatch();
+}
+
+const QString FsmModel::getActiveName() const
+{
+    auto active = this->getActiveState();
+
+    // No states yet
+    if(active == nullptr) 
+        return "No Active State";
+
+    return active->objectName();
+}
+
+bool FsmModel::emptyStates() const
+{
+    return this->getActiveState() == nullptr;
 }
