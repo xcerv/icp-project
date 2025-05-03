@@ -265,6 +265,7 @@ class FsmModel : public FsmInterface
          */
         bool parseInOutVariableLine(const QString &line);
         
+        /**
          * @brief Template that checks if all arguments match given regex
          * @tparam ...Args The type arguments pased
          * @param regexPattern The regex to check by
