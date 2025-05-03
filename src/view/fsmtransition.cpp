@@ -6,8 +6,13 @@ FSMTransition::FSMTransition(QWidget *parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setAttribute(Qt::WA_NoSystemBackground);
+    editTransitionBtn = new QPushButton("Edit", parent);
+    editTransitionBtn->raise();
+    editTransitionBtn->show();
+    btnSize = QPoint(40, 20);
+    editTransitionBtn->setFixedSize(btnSize.x(),btnSize.y());
+    connect(editTransitionBtn, &QPushButton::clicked, this, &FSMTransition::clickedEdit);
 }
-
 
 void FSMTransition::paintEvent(QPaintEvent *event){
     QPainter p(this);
@@ -15,6 +20,7 @@ void FSMTransition::paintEvent(QPaintEvent *event){
     p.setRenderHint(QPainter::Antialiasing);
     QPen pen(Qt::black, 2);
     p.drawLine(startPos,finPos);
+    editTransitionBtn->raise();
 }
 
 void FSMTransition::relocateTransition(QPoint startPoint, QPoint startSize, QPoint finPoint, QPoint finSize){
@@ -105,7 +111,9 @@ void FSMTransition::relocateTransition(QPoint startPoint, QPoint startSize, QPoi
     //QRect bounds = QRect(st, fn).normalized().adjusted(-10, -10, 10, 10); // with padding
     QRect bounds = QRect(st, fn).normalized(); // with padding
     setGeometry(bounds);
-
+    QPoint center = (startPos + finPos) / 2;
+    center -= (btnSize/2);
+    editTransitionBtn->move(center);
     raise();
     show();
     setVisible(true);
@@ -121,3 +129,17 @@ void FSMTransition::setSrc(QString nsrc){
     src = nsrc;
 }
 
+void FSMTransition::clickedEdit(){
+    emit editTransition(individualTransitions);
+}
+
+
+void FSMTransition::addTransition(size_t num){
+    individualTransitions.insert(num);
+}
+void FSMTransition::subTransition(size_t num){
+    individualTransitions.remove(num);
+}
+QSet<size_t> FSMTransition::getTransitions(){
+    return individualTransitions;
+}

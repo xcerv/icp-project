@@ -132,6 +132,12 @@ public slots:
      * @param type of variable to be edited
      */
     void variableToBeEdited(enum variableType type);
+
+    /**
+     * @brief handles the signal of clicking on the edit button of a transition
+     * @param c all conditions in one transition
+     */
+    void editTransitionHanling(QSet<size_t> c);
 protected:
     /**
      * @brief overrides the default closeEvent -- asks if saving is wanted
@@ -249,7 +255,9 @@ private:
     QString manipulatedState;///< A state that is being moved at the moment
     StateFSMWidget * activeState = nullptr;///< A state that is active at the moment
     bool isStateMoving = false;///< wheter or not is any state moving
-    bool isStateConnecting = false;
+    bool isStateConnecting = false;///< whether or not is any state connecting to another -- via transition
+    bool isInterpreting = false;///< the system is running
+
 
     // Model-link
     FsmInterface* model = nullptr; ///< Reference to model
@@ -257,13 +265,15 @@ private:
     // Entity storage
     QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
     QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
-    QHash<size_t,FSMTransition *> allTransitions;
 
-    // Tady je doporučení, jak to může fungovat, není to závazné (použij místo QString/QVariant ten typ, co potřebuješ. 
-    // Ale ten první typ pro indexaci by měla být podle QStringu)
-    //QHash<QString,QVariant> varsInternal; ///< Internal variable - may be of variable type
-    //QHash<QString,QString> varsInput; ///< Input variable - only string format
-    //QHash<QString,QString> varsOutput; ///< Output variable - only string format
-    // QHash<size_t,...*> transitions; // Nevim co za typ pouzijes pro toto
+    QHash<QPair<QString,QString>,FSMTransition *> allTransitionsUI;
+    struct reprCondTr {
+        QString src;
+        QString dest;
+        QString condition;
+    };
+
+    QHash<size_t,reprCondTr> allTransitionsConditions;
+
 };
 #endif // EDITORWINDOW_H

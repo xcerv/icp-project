@@ -23,6 +23,10 @@ color: navy;
 font:14px &quot;Nimbus Mono PS&quot;;
 }
 
+QPushButton{
+font:14px &quot;Nimbus Mono PS&quot;;
+}
+
 QScrollArea::corner {
     background: transparent;
 }
@@ -125,7 +129,7 @@ QTextEdit, QListView {
            <x>0</x>
            <y>0</y>
            <width>228</width>
-           <height>322</height>
+           <height>318</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout"/>
@@ -292,7 +296,7 @@ QPushButton:disabled {
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>20</height>
+     <height>23</height>
     </rect>
    </property>
   </widget>

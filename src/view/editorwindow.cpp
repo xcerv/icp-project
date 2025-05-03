@@ -381,13 +381,6 @@ void EditorWindow::resizeWorkArea(int width, int height){
 
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
-    //debug
-    /*
-    FSMTransition * arrow = new FSMTransition(workArea);
-    arrow->setGeometry(workArea->rect()); // cover entire area
-    arrow->show();
-    */
-    //end of debug
     if(isStateMoving){
         if(checkIfFSMFits(position, allStates[manipulatedState])){
             model->updateState(manipulatedState, position);
@@ -404,11 +397,17 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 }
 
 void EditorWindow::workAreaRightClick(QPoint position){
-    statusBarLabel->setText("right: " + QString::number(position.x()) + ", " + QString::number(position.y()));
-
     QMenu menu(this);  // create a QMenu
 
     QAction* addStateAction = menu.addAction("Add new state ...");
+    QAction* closeWindowAction = menu.addAction("Close program");
+    QAction* startProjectionAction = menu.addAction("Start projection");
+    QAction* renameFSMAction = menu.addAction("Rename FSM ...");
+    QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
+    QAction * loadFileAction = menu.addAction("Load file ...");
+    QAction * saveFileAction = menu.addAction("Save file as ...");
+
+    // adds new state
     connect(addStateAction, &QAction::triggered, this, [=]() {
         QString name = renamingWindow("Insert state");
         if(name != ""){
@@ -422,12 +421,12 @@ void EditorWindow::workAreaRightClick(QPoint position){
     if(!checkIfFSMFits(position)){
         addStateAction->setEnabled(false);
     }
-    QAction* closeWindowAction = menu.addAction("Close program");
+
+    // closes out of program
     connect(closeWindowAction, &QAction::triggered, this, &EditorWindow::close);
 
-    QAction* startProjectionAction = menu.addAction("Start projection");
 
-    QAction* renameFSMAction = menu.addAction("Rename FSM ...");
+    // rename whole FSM
     connect(renameFSMAction, &QAction::triggered, this, [=](bool){
         QString name = renamingWindow("Renaming FSM");
         if(name != ""){
@@ -435,15 +434,15 @@ void EditorWindow::workAreaRightClick(QPoint position){
         }
     });
 
-    QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
+    // resize work area
     connect(resizeWorkareaAction, &QAction::triggered, this, [=](bool){resizeWorkArea();});
 
-    QAction * loadFileAction = menu.addAction("Load file ...");
+    // load file
     connect(loadFileAction, &QAction::triggered, this, [this](bool){
         model->loadFile(QFileDialog::getOpenFileName());
     });
 
-    QAction * saveFileAction = menu.addAction("Save file as ...");
+    // save file
     connect(saveFileAction, &QAction::triggered, this, [this](bool){
         model->saveFile(QFileDialog::getSaveFileName());
     });
@@ -509,21 +508,25 @@ void EditorWindow::stateFSMRightClick(){
 
     QMenu menu(this);  // create a QMenu
 
-    // Connect state to another state with transition
+    QAction* renameStateAction = menu.addAction("Rename ...");
+    QAction* editOutputAction = menu.addAction("Edit state action ...");
     QAction* connectToAction = menu.addAction("Connect to ...");
+    QAction* setStartAction = menu.addAction("Set as starting");
+    QAction* moveStateAction = menu.addAction("Move state");
+    QAction* deleteAction = menu.addAction("Delete");
+
+    // Connect state to another state with transition
     connect(connectToAction, &QAction::triggered, this, [=](bool){
         isStateConnecting = true;
         manipulatedState = stateClicked->getName();
     });
 
     // Destroying state
-    QAction* deleteAction = menu.addAction("Delete");
     connect(deleteAction, &QAction::triggered, this,[=](bool){
         model->destroyState(stateClicked->getName());
     });
 
     // Setting initial state
-    QAction* setStartAction = menu.addAction("Set as starting");
     connect(setStartAction, &QAction::triggered, this, 
             [=](bool){
                 model->updateActiveState(stateClicked->getName());
@@ -531,7 +534,6 @@ void EditorWindow::stateFSMRightClick(){
         );
 
     // Edit state action
-    QAction* editOutputAction = menu.addAction("Edit state action ...");
     connect(editOutputAction, &QAction::triggered, this, [=](bool){
         QDialog dialog(this);
         dialog.setWindowTitle("Editing output");
@@ -555,7 +557,6 @@ void EditorWindow::stateFSMRightClick(){
     });
 
     // Rename a state
-    QAction* renameStateAction = menu.addAction("Rename ...");
     connect(renameStateAction, &QAction::triggered, this, [=](bool){
         QString name = renamingWindow("Rename state");
         if(name != ""){
@@ -564,7 +565,6 @@ void EditorWindow::stateFSMRightClick(){
     });
 
     // Move the state
-    QAction * moveStateAction = menu.addAction("Move this state");
     connect(moveStateAction, &QAction::triggered, this, [=](bool){
         isStateMoving = true;
         manipulatedState = stateClicked->getName();
@@ -574,10 +574,6 @@ void EditorWindow::stateFSMRightClick(){
 
 void EditorWindow::stateFSMLeftClick(){
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
-
-    //debug
-    //stateClicked->recolor("pink","teal");
-    //stateClicked->setName("right-clicked");
     if(isStateConnecting){
         model->updateTransition(0,manipulatedState,stateClicked->getName());
         isStateConnecting = false;
@@ -721,5 +717,10 @@ void EditorWindow::closeEvent(QCloseEvent *event)
     } else {
         event->ignore();
     }
+}
+
+
+void EditorWindow::editTransitionHanling(QSet<size_t>){
+
 }
 
