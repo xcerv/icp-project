@@ -271,62 +271,57 @@ void FsmModel::saveFile(const QString &filename)
 
     // Name
     out << "Name:\n";
-    out << machine.objectName() << "\n\n";
+    out << machine.objectName() << "\n";
 
     // Inputs
     out << "Input:\n";
     for (auto input = varsInput.begin(); input != varsInput.end(); input++) {
-        out << input.key() <<  " = " << (input.value().isEmpty() ? "" : input.value()) << "\n";
+        out << input.key() << (input.value().isEmpty() ? "" : QStringLiteral(" = ") + input.value()) << "\n";
     }
     out << "\n";
 
     // Outputs
     out << "Output:\n";
     for (auto output = varsOutput.begin(); output != varsOutput.end(); output++) {
-        out << output.key() << " = " << (output.value().isEmpty() ? "" : output.value()) << "\n";
+        out << output.key() << (output.value().isEmpty() ? "" : QStringLiteral(" = ") + output.value()) << "\n";
     }
     out << "\n";
 
     // Internal variables
     out << "Variables:\n";
      for (auto variable = varsInternal.begin(); variable != varsInternal.end(); variable++) {
-         QString type;
-         const QVariant &val = variable.value();
- 
-         switch (val.type()) {
-             case QVariant::Int:
-                 type = "int";
-                 break;
-             case QVariant::Double:
-                 type = "double";
-                 break;
-             case QVariant::Bool:
-                 type = "bool";
-                 break;
-             case QVariant::String: {
-                 QString str = val.toString();
-                 if (str.length() == 1) {
-                     type = "char";
-                 } 
-                 else {
-                     type = "string";
-                 }
-                 break;
-             }
-             default:
-                 continue;
-         }
+        QString type;
+        const QVariant &val = variable.value();
+
+        switch (val.type()) {
+            case QVariant::Int:
+                type = "int";
+                break;
+            case QVariant::Double:
+                type = "double";
+                break;
+            case QVariant::Bool:
+                type = "bool";
+                break;
+            case QVariant::String: {
+                QString str = val.toString();
+                type = "string";
+                break;
+            }
+            default:
+                continue;
+        }
      
  
-         out << type << " " << variable.key() << " = " << val.toString() << "\n";
+        out << type << " " << variable.key() << " = " << val.toString() << "\n";
      }
      out << "\n";
  
      // States
      out << "States:\n";
      for (auto state = states.begin(); state != states.end(); state++) {
-         QPoint position = state.value()->getPosition();
-         out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
+        auto position = state.value()->getPosition();
+        out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
      }
      out << "\n";
 }
