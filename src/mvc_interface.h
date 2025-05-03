@@ -53,13 +53,6 @@ struct FsmError
     const char *errMsg = "";
 };
 
-/**
- * @brief Deprecated enum for variable types
- */
-enum varType : int
-{
-
-};
 
 /**
  * @brief Enumeration for type of a state

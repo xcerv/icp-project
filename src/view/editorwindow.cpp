@@ -119,6 +119,9 @@ void EditorWindow::startButtonClick()
     this->stopButton->setEnabled(true);
     this->startButton->setEnabled(false);
 
+    // Disable variable editing
+    this->variablesDisplay->setActButtonsAll(false);
+
     this->model->startInterpretation();
 }
 
@@ -135,6 +138,11 @@ void EditorWindow::stopButtonClick()
 
     this->inputEventCombox->clear();
     this->inputEventCombox->addItem("..."); // Add just ... by default
+
+    // Enable variable editing
+    for(int i = 0; i < NUMV; i++){
+        this->variablesDisplay->setActButtonsAdding(!allVars[i].isEmpty(), (variableType)i);
+    }
 }
 
 void EditorWindow::submitInputClick()
