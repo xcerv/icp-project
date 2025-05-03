@@ -72,6 +72,18 @@ void VariablesDisplay::hideOrShow(){
     ui->scrollArea->setVisible(shown);
 }
 
+void VariablesDisplay::setDisplayVisibility(bool visibility){
+    shown = visibility;
+    if(!shown){
+        ui->btnHide->setText("show");
+        setFixedSize(42,22);
+    }else{
+        ui->btnHide->setText("hide");
+        setFixedSize(400,300);
+    }
+    ui->scrollArea->setVisible(shown);
+}
+
 FSMVariable VariablesDisplay::insertVariable(enum variableType type, QString name, QString value){
     QFormLayout *layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
 

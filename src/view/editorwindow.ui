@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>343</height>
+    <width>512</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -124,8 +124,8 @@ QTextEdit, QListView {
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>232</width>
-           <height>281</height>
+           <width>228</width>
+           <height>322</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout"/>
@@ -291,7 +291,7 @@ QPushButton:disabled {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>516</width>
+     <width>512</width>
      <height>20</height>
     </rect>
    </property>

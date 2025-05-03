@@ -39,6 +39,9 @@ EditorWindow::EditorWindow(QWidget *parent)
     variablesDisplay->move(5, 5); // top-left corner
     variablesDisplay->raise(); // appearing above other widgets
 
+    if(variablesDisplay->size().width() > this->size().width()/2)
+        variablesDisplay->setDisplayVisibility(false);
+
     connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
     connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
     connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
@@ -80,7 +83,10 @@ EditorWindow::EditorWindow(QWidget *parent)
     loggingWindow->setMinimumHeight(150);
     ui->verticalLayout->addWidget(loggingWindow);
     ui->verticalLayout->setStretch(0, 4);
-    ui->verticalLayout->setStretch(1,1);
+    ui->verticalLayout->setStretch(1, 1);
+
+    ui->workAreaLayout->setStretch(0, 6);
+    ui->workAreaLayout->setStretch(1, 1);
 }
 
 EditorWindow::~EditorWindow()
