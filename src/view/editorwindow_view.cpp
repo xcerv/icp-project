@@ -42,6 +42,12 @@ void EditorWindow::updateAction(const QString &parentState, const QString &actio
 
 void EditorWindow::updateActiveState(const QString &name)
 {
+    // Failed to find the new state
+    if(!allStates.contains(name)){
+        qCritical() << "VIEW: Failed to find a state to be set to active";
+        return;
+    }
+
     if(activeState != nullptr){
         activeState->recolor("#b3d1ff","navy");
     }
