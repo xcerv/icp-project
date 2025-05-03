@@ -8,9 +8,10 @@
  *
  */
 
-#include "editorwindow.h"
+#include "view/editorwindow.h"
 #include "ui_editorwindow.h"
-#include "statefsmwidget.h"
+#include "view/state_fsm_widget/statefsmwidget.h"
+#include "view/logging_window/loggingwindow.h"
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QInputDialog>
@@ -21,6 +22,8 @@
 #include <QPointer>
 #include <QFileDialog>
 #include <QTextEdit>
+#include <QDebug>
+#include "editorwindow.h"
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -28,30 +31,62 @@ EditorWindow::EditorWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
     statusBarLabel = new QLabel("nothing");
     statusBar()->addWidget(statusBarLabel);
 
+    // Variable display
     variablesDisplay = new VariablesDisplay(this);
     variablesDisplay->move(5, 5); // top-left corner
     variablesDisplay->raise(); // appearing above other widgets
 
-    workArea = new WorkArea;
-    connect(workArea, &WorkArea::leftClick, this, &EditorWindow::workAreaLeftClick);
-    connect(workArea, &WorkArea::rightClick, this, &EditorWindow::workAreaRightClick);
-    resizeWorkArea(1000,500);
-
-    workAreaScrollContainer = new QWidget();
-    workAreaScrollLayout = new QVBoxLayout(workAreaScrollContainer);  // layout for centering
-    workAreaScrollLayout->addWidget(workArea);
-    workAreaScrollLayout->setAlignment(Qt::AlignCenter);  // center workArea
-    workAreaScrollContainer->setLayout(workAreaScrollLayout);
-    ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
+    if(variablesDisplay->size().width() > this->size().width()/2)
+        variablesDisplay->setDisplayVisibility(false);
 
     connect(variablesDisplay, &VariablesDisplay::addVariableToDisplay, this, &EditorWindow::variableToBeAdded);
     connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
     connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
 
+    // WorkAreaContrainer
+    workAreaScrollContainer = new QWidget();
+    workAreaScrollLayout = new QVBoxLayout(workAreaScrollContainer);  // layout for centering
+    workAreaScrollContainer->setLayout(workAreaScrollLayout);
+    ui->workAreaScroll->setWidget(workAreaScrollContainer);  // add container to scroll area
+    ui->workAreaScroll->setWidgetResizable(true);
+
+    // === Workarea ===
+    workArea = new WorkArea;
+    connect(workArea, &WorkArea::leftClick, this, &EditorWindow::workAreaLeftClick);
+    connect(workArea, &WorkArea::rightClick, this, &EditorWindow::workAreaRightClick);
+    resizeWorkArea(1500,700);
+    workAreaScrollLayout->addWidget(workArea);
+    workAreaScrollLayout->setAlignment(workArea, Qt::AlignHCenter);
+
+    // === Interpreter window ===
+    // Link important elements to attributes
+    stopButton = this->findChild<QPushButton*>("stopBtn");
+    startButton = this->findChild<QPushButton*>("startBtn");
+    inputSubmitButton = this->findChild<QPushButton*>("submitBtn");
+
+    inputEventField = this->findChild<QLineEdit*>("inputField");
+    inputEventCombox = this->findChild<QComboBox*>("inputSelect");
+    outputEventField = this->findChild<QPlainTextEdit*>("outputField");
+
+    connect(startButton, &QPushButton::clicked, this, &EditorWindow::startButtonClick);
+    connect(stopButton, &QPushButton::clicked, this, &EditorWindow::stopButtonClick);
+    connect(inputSubmitButton, &QPushButton::clicked, this, &EditorWindow::submitInputClick);
+
+    connect(inputEventCombox, &QComboBox::currentTextChanged, this, &EditorWindow::inputComboxChanged);
+
+    // === Logging Window ===
+    loggingWindow = new LoggingWindow(this);
+    loggingWindow->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+    loggingWindow->setMinimumHeight(150);
+    ui->verticalLayout->addWidget(loggingWindow);
+    ui->verticalLayout->setStretch(0, 4);
+    ui->verticalLayout->setStretch(1, 1);
+
+    ui->workAreaLayout->setStretch(0, 6);
+    ui->workAreaLayout->setStretch(1, 1);
 }
 
 EditorWindow::~EditorWindow()
@@ -69,6 +104,80 @@ EditorWindow::~EditorWindow()
     delete ui;
 }
 
+
+/*
+===========================
+     INTERPRETER RELATED 
+===========================
+*/
+
+void EditorWindow::startButtonClick()
+{
+    // Allow only variables set prior to interpretation
+    QList<QString> keys = allVars[INPUTV].keys();
+    for (const QString &key : keys) {
+        this->inputEventCombox->addItem(key);
+    }
+
+    this->inputEventCombox->setEnabled(true);
+    // this->inputSubmitButton->setEnabled(true); // Enable only once ... is not set
+
+    this->stopButton->setEnabled(true);
+    this->startButton->setEnabled(false);
+
+    // Disable variable editing
+    this->variablesDisplay->setActButtonsAll(false);
+
+    this->model->startInterpretation();
+}
+
+void EditorWindow::stopButtonClick()
+{
+    // Remove all input events after interpretation ended
+    this->model->stopInterpretation();
+
+    // Reset Input Combox/Submit button to disabled
+    this->inputEventCombox->setEnabled(false);
+    this->inputSubmitButton->setEnabled(false);
+    this->stopButton->setEnabled(false);
+    this->startButton->setEnabled(true);
+
+    this->inputEventCombox->clear();
+    this->inputEventCombox->addItem("..."); // Add just ... by default
+
+    // Enable variable editing
+    for(int i = 0; i < NUMV; i++){
+        this->variablesDisplay->setActButtonsAdding(!allVars[i].isEmpty(), (variableType)i);
+    }
+}
+
+void EditorWindow::submitInputClick()
+{
+    // Don't allow empty inputs
+    if(this->inputEventField->text().isEmpty() || this->inputEventCombox->currentText() == "...")
+        return;
+
+    this->model->inputEvent(this->inputEventCombox->currentText(), this->inputEventField->text());
+    this->inputEventField->clear();
+}
+
+void EditorWindow::inputComboxChanged()
+{
+    if(this->inputEventCombox->currentText() == "...")
+    {
+        this->inputSubmitButton->setEnabled(false);
+    }
+    else
+    {
+        this->inputSubmitButton->setEnabled(true);
+    }
+}
+
+/*
+===========================
+     VARIABLE RELATED 
+===========================
+*/
 
 void EditorWindow::variableToBeEdited(enum variableType type){
     // make dialog for getting neccassary info
@@ -192,7 +301,7 @@ void EditorWindow::variableToBeAdded(enum variableType type){
         QLineEdit *valueInput = new QLineEdit(&dialog);
         form.addRow("Value:", valueInput);
         form.addRow(&buttonBox);
-        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "" && valueInput->text() != "") {
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
             model->updateVarInput(nameInput->text(),valueInput->text());
         }
     }else{
@@ -272,14 +381,25 @@ void EditorWindow::resizeWorkArea(int width, int height){
 
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
+    //debug
+    /*
+    FSMTransition * arrow = new FSMTransition(workArea);
+    arrow->setGeometry(workArea->rect()); // cover entire area
+    arrow->show();
+    */
+    //end of debug
     if(isStateMoving){
-        if(checkIfFSMFits(position, movingState)){
-            model->updateState(movingState->getName(), position);
-            movingState = nullptr;
+        if(checkIfFSMFits(position, allStates[manipulatedState])){
+            model->updateState(manipulatedState, position);
+            allStates[manipulatedState] = nullptr;
         }else{
             statusBarLabel->setText("State did not fit");
         }
         isStateMoving = false;
+    }
+
+    if(isStateConnecting){
+        isStateConnecting = false;
     }
 }
 
@@ -389,13 +509,29 @@ void EditorWindow::stateFSMRightClick(){
 
     QMenu menu(this);  // create a QMenu
 
+    // Connect state to another state with transition
     QAction* connectToAction = menu.addAction("Connect to ...");
+    connect(connectToAction, &QAction::triggered, this, [=](bool){
+        isStateConnecting = true;
+        manipulatedState = stateClicked->getName();
+    });
+
+    // Destroying state
     QAction* deleteAction = menu.addAction("Delete");
     connect(deleteAction, &QAction::triggered, this,[=](bool){
         model->destroyState(stateClicked->getName());
     });
+
+    // Setting initial state
     QAction* setStartAction = menu.addAction("Set as starting");
-    QAction* editOutputAction = menu.addAction("Edit output ...");
+    connect(setStartAction, &QAction::triggered, this, 
+            [=](bool){
+                model->updateActiveState(stateClicked->getName());
+            }
+        );
+
+    // Edit state action
+    QAction* editOutputAction = menu.addAction("Edit state action ...");
     connect(editOutputAction, &QAction::triggered, this, [=](bool){
         QDialog dialog(this);
         dialog.setWindowTitle("Editing output");
@@ -417,6 +553,8 @@ void EditorWindow::stateFSMRightClick(){
         }
 
     });
+
+    // Rename a state
     QAction* renameStateAction = menu.addAction("Rename ...");
     connect(renameStateAction, &QAction::triggered, this, [=](bool){
         QString name = renamingWindow("Rename state");
@@ -424,10 +562,12 @@ void EditorWindow::stateFSMRightClick(){
             model->updateStateName(stateClicked->getName(),name);
         }
     });
+
+    // Move the state
     QAction * moveStateAction = menu.addAction("Move this state");
     connect(moveStateAction, &QAction::triggered, this, [=](bool){
         isStateMoving = true;
-        movingState = stateClicked;
+        manipulatedState = stateClicked->getName();
     });
     menu.exec(QCursor::pos());
 }
@@ -438,6 +578,10 @@ void EditorWindow::stateFSMLeftClick(){
     //debug
     //stateClicked->recolor("pink","teal");
     //stateClicked->setName("right-clicked");
+    if(isStateConnecting){
+        model->updateTransition(0,manipulatedState,stateClicked->getName());
+        isStateConnecting = false;
+    }
 }
 
 bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
@@ -530,6 +674,9 @@ QString EditorWindow::renamingWindow(QString title){
 }
 
 void EditorWindow::insertFSMState(QPoint position, QString name){
+    // Enable interpretation only once at least one state exits
+    this->startButton->setEnabled(true);
+
     StateFSMWidget * s = new StateFSMWidget(position,this);
     s->setParent(workArea);
     s->move(position);

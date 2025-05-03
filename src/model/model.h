@@ -29,8 +29,22 @@
 #include <QHash>
 #include <QObject>
 #include <QVariant>
+#include <QRegularExpression>
 
 using namespace std;
+
+#define FORMAT_CHECK(errMsg, regex, ...) do{if (!checkAllValidFormat(FsmFormats::regex, __VA_ARGS__))           \
+                                    {                                                                           \
+                                        this->view->throwError(ERROR_INVALID_NAMING_FORMAT, errMsg);            \
+                                        return;                                                                 \
+                                    }                                                                           \
+                                    }while(0)
+
+#define FORMAT_CHECK_EXCEPTION(errMsg, regex, ...) do{if (!checkAllValidFormat(FsmFormats::regex, __VA_ARGS__))         \
+                                                    {                                                                   \
+                                                        throw FsmModelException(ERROR_INVALID_NAMING_FORMAT, errMsg);   \
+                                                    }                                                                   \
+                                                    }while(0)
 
 // Macro for exception handling within model
 #define CATCH_MODEL(code)                                                           \
@@ -139,6 +153,18 @@ class FsmModel : public FsmInterface
         */
 
         /**
+         * @brief Returns the name of the active state
+         * @return String value of the active state
+         */
+        const QString getActiveName() const;
+
+        /**
+         * @brief Checks whether any states are defined
+         * @return True if any states exist, otherwise false
+         */
+        bool emptyStates() const;
+
+        /**
          * @brief Registers view entity
          * @param view Pointer to entity supporting 
          */
@@ -238,6 +264,27 @@ class FsmModel : public FsmInterface
          * @param line The line to be parsed
          */
         bool parseInOutVariableLine(const QString &line);
+        
+         * @brief Template that checks if all arguments match given regex
+         * @tparam ...Args The type arguments pased
+         * @param regexPattern The regex to check by
+         * @param ...args The arguments passed
+         * @return Returns true if all match the regex, otherwise false
+         */
+        template<typename... Args>
+        bool checkAllValidFormat(const char* regexPattern, const Args&... args)
+        {
+            return (QRegularExpression(regexPattern).match(args).hasMatch() && ...);
+        }
+        
+        /**
+         * @brief Checks whether the given string is in accordance to the expected regex
+         * @param str The string to check
+         * @param regex The regex to check by
+         * @return True on match, otherwise false
+         */
+        bool checkValidFormat(const QString &str, const char* regex);
+
         /**
          * @brief Parses given line into its variable interpretation
          * @param line The line to be parsed

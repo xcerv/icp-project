@@ -14,13 +14,21 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QHash>
-#include "statefsmwidget.h"
-#include "workarea.h"
 #include <memory>
 #include <QCloseEvent>
-#include "variablesdisplay.h"
-#include "internal_representations.h"
+#include <QTextEdit>
+#include <QComboBox>
+#include <QPlainTextEdit>
+
+#include "view/work_area/workarea.h"
+#include "view/state_fsm_widget/statefsmwidget.h"
+#include "view/variable_display/variablesdisplay.h"
+#include "view/logging_window/loggingwindow.h"
+#include "view/internal_representations.h"
+#include "view/fsmtransition.h"
+
 #include "mvc_interface.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,6 +36,9 @@ class EditorWindow;
 }
 QT_END_NAMESPACE
 
+/**
+ * @brief 
+ */
 class EditorWindow: public QMainWindow, public FsmInterface
 {
     Q_OBJECT
@@ -61,6 +72,28 @@ public:
     void insertFSMState(QPoint position, QString name);
 
 public slots:
+
+
+    /* Interpreter UI elements */
+    /**
+     * @brief Action triggered when interpretation stop button is clicked
+     */
+    void stopButtonClick();
+    /**
+     * @brief Action triggered when interpretation start button is clicked
+     */
+    void startButtonClick();
+    /**
+     * @brief Action triggered when interpretation start button is clicked
+     */
+    void submitInputClick();
+
+    /**
+     * @brief Event fired when ComboxValue had changed
+     */
+    void inputComboxChanged();
+
+    /* Work Area UI Elements */
     /**
      * @brief what happens after workArea is left clicked (no action)
      * @param position
@@ -133,7 +166,6 @@ private:
      */
     void resizeWorkArea();
 
-
     // ========================
     //       MVC INTERFACE 
     // ========================
@@ -194,18 +226,38 @@ private:
     // ========================
     //       Attributes 
     // ========================
+    
+    // UI elements
     Ui::EditorWindow *ui;
-    QLabel * statusBarLabel;///< label on status bar
-    WorkArea * workArea;///< work area widget
-    QWidget * workAreaScrollContainer;///< container for scroll area
-    QLayout * workAreaScrollLayout; ///< layout for scroll area
-    QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
-    StateFSMWidget * movingState = nullptr;///< A state that is being moved at the moment
+    QLabel * statusBarLabel = nullptr;///< label on status bar
+    WorkArea * workArea = nullptr;///< work area widget
+    QWidget * workAreaScrollContainer = nullptr;///< container for scroll area
+    QLayout * workAreaScrollLayout = nullptr; ///< layout for scroll area
+    VariablesDisplay * variablesDisplay = nullptr;/// Variable display
+    LoggingWindow * loggingWindow = nullptr;///< Logging window
+
+    // Interpreter buttons
+    QPushButton * stopButton = nullptr;
+    QPushButton * startButton = nullptr;
+    QPushButton * inputSubmitButton = nullptr;
+
+    QLineEdit * inputEventField = nullptr;
+    QComboBox * inputEventCombox = nullptr;
+    QPlainTextEdit * outputEventField = nullptr;
+
+    // State Helpers
+    QString manipulatedState;///< A state that is being moved at the moment
     StateFSMWidget * activeState = nullptr;///< A state that is active at the moment
     bool isStateMoving = false;///< wheter or not is any state moving
-    VariablesDisplay * variablesDisplay;
-    QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
+    bool isStateConnecting = false;
+
+    // Model-link
     FsmInterface* model = nullptr; ///< Reference to model
+    
+    // Entity storage
+    QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
+    QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
+    QHash<size_t,FSMTransition *> allTransitions;
 
     // Tady je doporučení, jak to může fungovat, není to závazné (použij místo QString/QVariant ten typ, co potřebuješ. 
     // Ale ten první typ pro indexaci by měla být podle QStringu)

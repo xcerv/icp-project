@@ -8,7 +8,7 @@
  *
  */
 
-#include "workarea.h"
+#include "view/work_area/workarea.h"
 #include <QPainter>
 
 WorkArea::WorkArea() {

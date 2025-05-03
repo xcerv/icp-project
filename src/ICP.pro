@@ -13,11 +13,11 @@ TARGET = icp_fsm_interpreter
 INCLUDEPATH += $$PWD/model
 INCLUDEPATH += $$PWD/interpreter
 INCLUDEPATH += $$PWD/exceptions
+INCLUDEPATH += $$PWD/view
 
-SOURCES += $$files($$PWD/*.cpp, true) \
+SOURCES += $$files($$PWD/*.cpp, true)
 
-HEADERS += $$files($$PWD/*.h, true) \
-    internal_representations.h
+HEADERS += $$files($$PWD/*.h, true)
 
 FORMS += $$files($$PWD/*.ui, true)
 
@@ -25,3 +25,5 @@ FORMS += $$files($$PWD/*.ui, true)
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += $$files($$PWD/*.qrc, true)

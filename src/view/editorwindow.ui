@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>EditorWindow</class>
+ <widget class="QMainWindow" name="EditorWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>512</width>
+    <height>384</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>newFSM</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow{
+background-color: #F0F5FF
+}
+
+QLabel{
+color: navy;
+font:14px &quot;Nimbus Mono PS&quot;;
+}
+
+QScrollArea::corner {
+    background: transparent;
+}
+
+QScrollBar::vertical
+    {
+        background-color:  lightgray;
+        width: 15px;
+        margin: 15px 3px 15px 3px;
+		 border:0px;
+    }
+QScrollBar::horizontal
+    {
+        background-color:  lightgray;
+        height: 15px;
+        margin: 3px 15px 3px 15px;
+		 border:0px;
+    }
+
+QScrollBar::handle
+    {
+        background-color: navy;
+        min-height: 5px;
+    }
+
+QScrollBar::sub-line:vertical
+    {
+        margin: 0px 0px 3px 0px;
+		 border-image: url(:/arrows/img/up.svg);
+		 border-width:0px;
+		 background-color:transparent;
+	    height: 10px;
+        width: 9px;
+        subcontrol-position: top;
+        subcontrol-origin: margin;
+    }
+QScrollBar::add-line:vertical
+    {
+        margin: 3px 0px 0px 0px;
+		 border-image: url(:/arrows/img/down.svg);
+		 border-width:0px;
+		 background-color:transparent;
+        height: 10px;
+        width: 9px;
+        subcontrol-position: bottom;
+        subcontrol-origin: margin;
+    }
+
+
+QScrollBar::sub-line:horizontal
+    {
+        margin: 0px 3px 0px 0px;
+		 border-image: url(:/arrows/img/left.svg);
+		 border-width:0px;
+		 background-color:transparent;
+	    height: 9px;
+        width: 10px;
+        subcontrol-position: left;
+        subcontrol-origin: margin;
+    }
+QScrollBar::add-line:horizontal
+    {
+        margin: 0px 0px 0px 3px;
+		 border-image: url(:/arrows/img/right.svg);
+		 border-width:0px;
+		 background-color:transparent;
+        height: 9px;
+        width: 10px;
+        subcontrol-position: right;
+        subcontrol-origin: margin;
+    }
+
+
+QTextEdit, QListView {
+    background-attachment: scroll;
+}
+</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+    <item>
+     <layout class="QHBoxLayout" name="workAreaLayout" stretch="7,0">
+      <item>
+       <widget class="QScrollArea" name="workAreaScroll">
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Plain</enum>
+        </property>
+        <property name="lineWidth">
+         <number>0</number>
+        </property>
+        <property name="widgetResizable">
+         <bool>true</bool>
+        </property>
+        <widget class="QWidget" name="workAreaScrollContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>228</width>
+           <height>322</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout"/>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="interpretationLayout">
+        <item>
+         <widget class="QComboBox" name="inputSelect">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <item>
+           <property name="text">
+            <string>...</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLineEdit" name="inputField">
+            <property name="minimumSize">
+             <size>
+              <width>150</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="submitBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="text">
+             <string>Submit</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QPlainTextEdit" name="outputField">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="buttons">
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QPushButton" name="startBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">  QPushButton {
+	border-image: url(:/buttons/img/buttons/play.png);
+    border: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 0px;
+    background-color: transparent;
+    min-width: 64px; 
+    min-height: 64px; 
+    max-width: 128px;
+    max-height: 128px;
+}
+QPushButton:hover {
+	border-image: url(:/buttons/img/buttons/play_hover.png);
+}
+QPushButton:pressed {
+	border-image: url(:/buttons/img/buttons/play_press.png);
+}
+QPushButton:disabled{
+	border-image: url(:/buttons/img/buttons/play_disabled.png);
+}</string>
+            </property>
+            <property name="text">
+             <string notr="true"/>
+            </property>
+           </widget>
+          </item>
+          <item alignment="Qt::AlignHCenter">
+           <widget class="QPushButton" name="stopBtn">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">  QPushButton{
+	border-image: url(:/buttons/img/buttons/stop.png);
+    border: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 0px;
+    background-color: transparent;
+    min-width: 64px; 
+    min-height: 64px; 
+    max-width: 128px;
+    max-height: 128px;
+}
+
+QPushButton:hover {
+	border-image: url(:/buttons/img/buttons/stop_hover.png);
+}
+QPushButton:pressed {
+	border-image: url(:/buttons/img/buttons/stop_press.png);
+}
+QPushButton:disabled {
+	border-image: url(:/buttons/img/buttons/stop_disabled.png);
+}</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>512</width>
+     <height>20</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

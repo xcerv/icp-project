@@ -20,7 +20,7 @@ enum variableType{
     INPUTV,
     OUTPUTV,
     INTERNALV,
-    NUMV
+    NUMV // Count of all variable types
 };
 
 /**

@@ -15,6 +15,7 @@
 #include <QPoint>
 #include <memory>
 #include <QTimer>
+#include <QDebug>
 #include <QMessageBox>
 
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
@@ -41,6 +42,12 @@ void EditorWindow::updateAction(const QString &parentState, const QString &actio
 
 void EditorWindow::updateActiveState(const QString &name)
 {
+    // Failed to find the new state
+    if(!allStates.contains(name)){
+        qCritical() << "VIEW: Failed to find a state to be set to active";
+        return;
+    }
+
     if(activeState != nullptr){
         activeState->recolor("#b3d1ff","navy");
     }
@@ -54,6 +61,12 @@ void EditorWindow::updateCondition(size_t transitionId, const QString &condition
 
 void EditorWindow::updateTransition(size_t transitionId, const QString &srcState, const QString &destState)
 {
+    FSMTransition* g = new FSMTransition(workArea);
+    g->relocateTransition(allStates[srcState]->getPosition(),allStates[srcState]->getSize(), allStates[destState]->getPosition(), allStates[destState]->getSize());
+    g->setDst(destState);
+    g->setSrc(srcState);
+    g->move(0,0);
+    allTransitions[transitionId] = g;
 }
 
 void EditorWindow::updateVarInput(const QString &name, const QString &value)
@@ -91,10 +104,17 @@ void EditorWindow::destroyState(const QString &name)
     QTimer::singleShot(0, this, [=]() {
         delete w;
     });
+
+    // Disable interpretation if there are no states
+    if(allStates.isEmpty())
+    {
+        this->startButton->setEnabled(false);
+    }
 }
 
 void EditorWindow::destroyAction(const QString &parentState)
 {
+    allStates[parentState]->setOutput("");
 }
 
 void EditorWindow::destroyCondition(size_t transitionId)
@@ -111,9 +131,11 @@ void EditorWindow::destroyVarInput(const QString &name)
 }
 
 void EditorWindow::destroyVar(enum variableType type, const QString &name){
+    // Find variable
     FSMVariable v = allVars[type][name];
     v.name->setParent(nullptr);
     v.value->setParent(nullptr);
+
     allVars[type].remove(name);
     QTimer::singleShot(0, this, [=]() {
         delete v.name;
@@ -137,11 +159,13 @@ void EditorWindow::destroyVarInternal(const QString &name)
 
 void EditorWindow::loadFile(const QString &filename)
 {
+    // Nop
     return;
 }
 
 void EditorWindow::saveFile(const QString &filename)
 {
+    // Nop
     return;
 }
 
@@ -161,18 +185,21 @@ void EditorWindow::cleanup(){} // Clear the class entirely
 
 void EditorWindow::throwError(FsmErrorType errNum)
 {
+    qCritical() << "Error " << errNum << " occured";
+    QMessageBox::critical(this,"Error","Err(" + QString::number(errNum) + ")");
     return; // Nop?
 }
 
 void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 {
+    qCritical() << "Error " << errNum << " is " << errMsg;
     QMessageBox::critical(this,"Error","Err(" + QString::number(errNum) + "): "+errMsg);
 }
 
 void EditorWindow::outputEvent(const QString &outName)
 {
     // Output msg to some output window
-    QMessageBox::information(this,"Information",outName);
+    this->outputEventField->appendPlainText(outName);
 }
 
 void EditorWindow::inputEvent(const QString &name, const QString &value)
@@ -182,11 +209,16 @@ void EditorWindow::inputEvent(const QString &name, const QString &value)
 
 void EditorWindow::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
 {
+    (void)time;
+    (void)state;
+    (void)varInputs;
+    (void)varOutputs;
+    (void)varInternals;
 }
 
 void EditorWindow::log() const
 {
-    // Here will be the the visualisation of the state handled
+    // Probably nop
     return;
 }
 
@@ -197,10 +229,11 @@ void EditorWindow::startInterpretation()
 
 void EditorWindow::stopInterpretation()
 {
-    return; // NOP?
+    this->stopButtonClick();
+    return;
 }
 
 void EditorWindow::registerModel(FsmInterface *model)
 {
-    this->model = model; // todo: can own each other?
+    this->model = model;
 }

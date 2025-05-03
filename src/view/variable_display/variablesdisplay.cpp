@@ -8,11 +8,12 @@
  *
  */
 
-#include "variablesdisplay.h"
+#include "view/variable_display/variablesdisplay.h"
 #include <qdialog.h>
 #include <qlineedit.h>
 #include <qdialogbuttonbox.h>
 #include "ui_variablesdisplay.h"
+#include "variablesdisplay.h"
 
 VariablesDisplay::VariablesDisplay(QWidget *parent)
     : QWidget(parent)
@@ -71,6 +72,18 @@ void VariablesDisplay::hideOrShow(){
     ui->scrollArea->setVisible(shown);
 }
 
+void VariablesDisplay::setDisplayVisibility(bool visibility){
+    shown = visibility;
+    if(!shown){
+        ui->btnHide->setText("show");
+        setFixedSize(42,22);
+    }else{
+        ui->btnHide->setText("hide");
+        setFixedSize(400,300);
+    }
+    ui->scrollArea->setVisible(shown);
+}
+
 FSMVariable VariablesDisplay::insertVariable(enum variableType type, QString name, QString value){
     QFormLayout *layout = qobject_cast<QFormLayout*>(ui->scrollAreaWidgetContents->layout());
 
@@ -80,7 +93,7 @@ FSMVariable VariablesDisplay::insertVariable(enum variableType type, QString nam
     int row;
     layout->getWidgetPosition(typeVar[type], &row, nullptr);
     layout->insertRow(row + 1, newLblName, newLblValue);
-    FSMVariable h{newLblName,newLblValue};
+    FSMVariable h{.name = newLblName, .value = newLblValue};
     return h;
 }
 
@@ -108,4 +121,47 @@ void VariablesDisplay::setActButtons(bool activate, enum variableType type){
         ui->btnRemoveInternalVar->setDisabled(activate);
         ui->btnEditInternalVar->setDisabled(activate);
     }
+}
+
+void VariablesDisplay::setActButtonsAdding(bool activate, variableType type){
+    ui->btnAddInputVar->setEnabled(true);
+    ui->btnAddOutputVar->setEnabled(true);
+    ui->btnAddInternalVar->setEnabled(true);
+
+    switch(type)
+    {
+        case INPUTV:
+            ui->btnRemoveInputVar->setEnabled(activate);
+            ui->btnEditInputVar->setEnabled(activate);
+            break;
+
+        case OUTPUTV:
+            ui->btnRemoveOutputVar->setEnabled(activate);
+            break;
+
+        case INTERNALV:
+            ui->btnRemoveInternalVar->setEnabled(activate);
+            ui->btnEditInternalVar->setEnabled(activate);
+            break;
+
+        default:
+            break;
+    }
+}
+
+void VariablesDisplay::setActButtonsAll(bool activate){
+    // Input
+    ui->btnAddInputVar->setEnabled(activate);
+    ui->btnEditInputVar->setEnabled(activate);
+    ui->btnRemoveInputVar->setEnabled(activate);
+
+
+    // Output
+    ui->btnAddOutputVar->setEnabled(activate);
+    ui->btnRemoveOutputVar->setEnabled(activate);
+
+    // Internal
+    ui->btnAddInternalVar->setEnabled(activate);
+    ui->btnRemoveInternalVar->setEnabled(activate);
+    ui->btnEditInternalVar->setEnabled(activate);
 }
