@@ -22,6 +22,13 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
     if(allStates.contains(name)){
         allStates[name]->setPosition(pos);
+        for(auto c : allTransitionsUI.keys()){
+            if(c.first == name || c.second == name){
+                auto src = allStates[c.first];
+                auto dst = allStates[c.second];
+                allTransitionsUI[c]->relocateTransition(src->getPosition(),src->getSize(),dst->getPosition(),dst->getSize());
+            }
+        }
     }else{
         insertFSMState(pos, name);
     }
