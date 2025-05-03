@@ -128,6 +128,10 @@ bool FsmModel::parseStateLine(const QString &line) {
     if(!action.isEmpty())
         updateAction(name, action);
 
+    if (states.size() == 1) {
+        updateActiveState(name);
+    }
+
     return true;
 }
 
@@ -314,15 +318,34 @@ void FsmModel::saveFile(const QString &filename)
      
  
         out << type << " " << variable.key() << " = " << val.toString() << "\n";
-     }
+    }
      out << "\n";
  
      // States
      out << "States:\n";
+     auto activeState = getActiveState();
+
+     //put active state first
      for (auto state = states.begin(); state != states.end(); state++) {
+        if (state.value() == activeState) {
+            auto position = state.value()->getPosition();
+            out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
+        }
+     }
+
+     for (auto state = states.begin(); state != states.end(); state++) {
+        if (state.value() == activeState) {
+            continue;
+        }
         auto position = state.value()->getPosition();
         out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
      }
      out << "\n";
+
+     // Transitions
+     out << "Transitions:\n";
+     
+
+    file.close();
 }
  
