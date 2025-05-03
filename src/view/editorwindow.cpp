@@ -384,7 +384,7 @@ void EditorWindow::workAreaLeftClick(QPoint position){
     if(isStateMoving){
         if(checkIfFSMFits(position, allStates[manipulatedState])){
             model->updateState(manipulatedState, position);
-            allStates[manipulatedState] = nullptr;
+            manipulatedState = nullptr;
         }else{
             statusBarLabel->setText("State did not fit");
         }
