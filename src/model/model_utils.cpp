@@ -15,10 +15,11 @@
 #include <QDateTime>
 #include <QRegularExpression>
 #include <QDebug>
-
 #include "mvc_interface.h"
 #include "model.h"
 #include "combined_event.h"
+
+#include <QtWidgets>
 
 using namespace std;
 
@@ -29,13 +30,17 @@ void hashmapToString(const QHash<Key, Value> &container, QString &out)
     QTextStream stream(&out);
     for (auto it = (container).constBegin(); it != (container).constEnd(); it++)
     {
-        stream << QStringLiteral("\t") << it.key() << QStringLiteral("\t=");
+        stream << QStringLiteral("\t") << it.key();
 
         if constexpr (std::is_same_v<Value, QVariant>) {
-            stream << it.value().toString();
+            if(!it.value().toString().isEmpty()){
+                stream << QStringLiteral("\t=\t") << it.value().toString();
+            }
         }
         else {
-            stream << it.value();
+            if(!it.value().isEmpty()){
+                stream << QStringLiteral("\t=\t") << it.value();
+            }
         } 
         
         stream << "\n";
@@ -71,9 +76,9 @@ void FsmModel::log(const QString &time, const QString &state, const QString &var
 {
     (void)time;
     qInfo() << "\nActive State: " << state << "\n" 
-            << "Inputs: " << varInputs << "\n"
-            << "Outputs: " << varOutputs << "\n"
-            << "Internals: " << varInternals << "\n";
+            << "Inputs: " << "\n" << qUtf8Printable(varInputs)
+            << "Outputs: " << "\n" << qUtf8Printable(varOutputs)
+            << "Internals: " << "\n" << qUtf8Printable(varInternals);
 
     return; // Null operation for model?
 }
@@ -145,7 +150,7 @@ void FsmModel::inputEvent(const QString &name, const QString &value)
 {
     // Accept events only if interpretation is running
     if(!this->machine.isRunning()){
-        qWarning() << "Caught input event \"" << name << "\" of value: " << value << " while FSM is inactive";
+        qWarning() << "Caught input event " << name << " of value: " << value << " while FSM is inactive";
         return;
     }
 
@@ -155,7 +160,7 @@ void FsmModel::inputEvent(const QString &name, const QString &value)
     // The input variable exits!
     if(it != this->varsInput.end())
     {
-        qInfo() << "Caught input event \"" << name << "\" of value: " << value;
+        qInfo() << "Caught input event " << name << " of value: " << value;
 
         // Update value
         this->updateVarInput(name, value);

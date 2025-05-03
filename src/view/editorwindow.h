@@ -88,6 +88,11 @@ public slots:
      */
     void submitInputClick();
 
+    /**
+     * @brief Event fired when ComboxValue had changed
+     */
+    void inputComboxChanged();
+
     /* Work Area UI Elements */
     /**
      * @brief what happens after workArea is left clicked (no action)

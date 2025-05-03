@@ -72,6 +72,8 @@ EditorWindow::EditorWindow(QWidget *parent)
     connect(stopButton, &QPushButton::clicked, this, &EditorWindow::stopButtonClick);
     connect(inputSubmitButton, &QPushButton::clicked, this, &EditorWindow::submitInputClick);
 
+    connect(inputEventCombox, &QComboBox::currentTextChanged, this, &EditorWindow::inputComboxChanged);
+
     // === Logging Window ===
     loggingWindow = new LoggingWindow(this);
     loggingWindow->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
@@ -112,7 +114,7 @@ void EditorWindow::startButtonClick()
     }
 
     this->inputEventCombox->setEnabled(true);
-    this->inputSubmitButton->setEnabled(true);
+    // this->inputSubmitButton->setEnabled(true); // Enable only once ... is not set
 
     this->stopButton->setEnabled(true);
     this->startButton->setEnabled(false);
@@ -143,6 +145,18 @@ void EditorWindow::submitInputClick()
 
     this->model->inputEvent(this->inputEventCombox->currentText(), this->inputEventField->text());
     this->inputEventField->clear();
+}
+
+void EditorWindow::inputComboxChanged()
+{
+    if(this->inputEventCombox->currentText() == "...")
+    {
+        this->inputSubmitButton->setEnabled(false);
+    }
+    else
+    {
+        this->inputSubmitButton->setEnabled(true);
+    }
 }
 
 /*
@@ -273,7 +287,7 @@ void EditorWindow::variableToBeAdded(enum variableType type){
         QLineEdit *valueInput = new QLineEdit(&dialog);
         form.addRow("Value:", valueInput);
         form.addRow(&buttonBox);
-        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "" && valueInput->text() != "") {
+        if (dialog.exec() == QDialog::Accepted && nameInput->text() != "") {
             model->updateVarInput(nameInput->text(),valueInput->text());
         }
     }else{
