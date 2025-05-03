@@ -33,6 +33,47 @@ void EditorWindow::updateStateName(const QString &oldName, const QString &newNam
     w->setName(newName);
     allStates.remove(oldName);
     allStates.insert(newName,w);
+
+    for(auto &c : allTransitionsConditions){
+        if(c.src == oldName){
+            c.src = newName;
+        }
+        if(c.dest == oldName){
+            c.dest = newName;
+        }
+    }
+
+    QHash<QPair<QString, QString>, FSMTransition*> updatedTransitions;
+
+    for (auto it = allTransitionsUI.begin(); it != allTransitionsUI.end(); ) {
+        QPair<QString, QString> key = it.key();
+        FSMTransition* value = it.value();
+
+        QPair<QString, QString> newKey = key;
+
+        bool changed = false;
+        if (key.first == oldName) {
+            newKey.first = newName;
+            changed = true;
+        }
+        if (key.second == oldName) {
+            newKey.second = newName;
+            changed = true;
+        }
+
+        if (changed) {
+            it = allTransitionsUI.erase(it);  // Remove old key
+            updatedTransitions[newKey] = value;  // Save to insert later
+        } else {
+            ++it;
+        }
+    }
+
+    // Reinsert updated keys
+    for (auto it = updatedTransitions.begin(); it != updatedTransitions.end(); ++it) {
+        allTransitionsUI[it.key()] = it.value();
+    }
+
 }
 
 void EditorWindow::updateAction(const QString &parentState, const QString &action)
@@ -141,9 +182,7 @@ void EditorWindow::destroyCondition(size_t transitionId)
 
 void EditorWindow::destroyTransition(size_t transitionId)
 {
-
     auto help = allTransitionsConditions[transitionId];
-    //statusBarLabel->setText(allTransitionsConditions[transitionId].dest + "...");
 
     QPair<QString, QString> key  = {help.src, help.dest};
     QPair<QString, QString> keyR = {help.dest, help.src};
@@ -158,18 +197,13 @@ void EditorWindow::destroyTransition(size_t transitionId)
         delTr = allTransitionsUI[keyR];
         key = keyR;
     }else{
-        statusBarLabel->setText(allTransitionsConditions[transitionId].dest + "...");
 
-        //for (auto key : allTransitionsUI.keys()) {
-        //statusBarLabel->setText("i am deytrying" + key.first + " " + key.second + "----" + help.src + " " + help.dest);
-        //}
         //throwError(99,"Internal error occured");
         return;
     }
     delTr->subTransition(transitionId);
     auto num = delTr->getTransitions();
     if (num.isEmpty()){
-        statusBarLabel->setText("destroy and conquer");
         delTr->blockSignals(true);
         QObject::disconnect(delTr, nullptr, nullptr, nullptr);
         delTr->setParent(nullptr);
@@ -177,10 +211,7 @@ void EditorWindow::destroyTransition(size_t transitionId)
         QTimer::singleShot(0, this, [=]() {
             delete delTr;
         });
-    }else{
-        statusBarLabel->setText("size:"+ QString::number(num.size()));
     }
-
 }
 
 void EditorWindow::destroyVarInput(const QString &name)
