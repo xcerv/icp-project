@@ -93,6 +93,17 @@ public slots:
      */
     void inputComboxChanged();
 
+    /* Save-loading Related */
+
+    /**
+     * @brief Handler for saving files
+     */
+    void handleActionSaveAs();
+    void handleActionSave();
+    void handleActionNew();
+    void handleActionLoad();
+    void handleActionExit();
+
     /* Work Area UI Elements */
     /**
      * @brief what happens after workArea is left clicked (no action)
@@ -244,6 +255,10 @@ private:
     QLineEdit * inputEventField = nullptr;
     QComboBox * inputEventCombox = nullptr;
     QPlainTextEdit * outputEventField = nullptr;
+
+    // File related
+    bool fileModified = false;
+    QString lastFileName;
 
     // State Helpers
     QString manipulatedState;///< A state that is being moved at the moment
