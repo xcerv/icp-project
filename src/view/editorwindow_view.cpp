@@ -192,17 +192,20 @@ void EditorWindow::destroyVarInternal(const QString &name)
 void EditorWindow::loadFile(const QString &filename)
 {
     // Nop
+    (void)filename;
     return;
 }
 
 void EditorWindow::saveFile(const QString &filename)
 {
     // Nop
+    (void)filename;
     return;
 }
 
 void EditorWindow::renameFsm(const QString &name)
 {
+    (void)name;
     fileModified = true;
 }
 
@@ -245,6 +248,8 @@ void EditorWindow::outputEvent(const QString &outName)
 
 void EditorWindow::inputEvent(const QString &name, const QString &value)
 {
+    (void)name;
+    (void)value;
     return; // Nop?
 }
 

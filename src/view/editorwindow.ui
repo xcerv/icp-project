@@ -310,7 +310,7 @@ QPushButton:disabled {
      <string>File</string>
     </property>
     <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
+    <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="separator"/>
@@ -332,7 +332,7 @@ QPushButton:disabled {
     <string>New</string>
    </property>
   </action>
-  <action name="actionOpen">
+  <action name="actionLoad">
    <property name="text">
     <string>Open...</string>
    </property>

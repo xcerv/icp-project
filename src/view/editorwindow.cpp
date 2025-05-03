@@ -90,16 +90,17 @@ EditorWindow::EditorWindow(QWidget *parent)
 
     // === Menubar ===
     // Load
-    connect(ui->actionOpen, &QAction::triggered, this, &EditorWindow::handleActionLoad);
-
+    connect(ui->actionLoad, &QAction::triggered, this, &EditorWindow::handleActionLoad);
     // SaveAs
     connect(ui->actionSaveAs, &QAction::triggered, this, &EditorWindow::handleActionSaveAs);
-
     // Save
     connect(ui->actionSave, &QAction::triggered, this, &EditorWindow::handleActionSave);
-
     // New
     connect(ui->actionNew, &QAction::triggered, this, &EditorWindow::handleActionNew);
+    // About
+    connect(ui->actionAbout, &QAction::triggered, this, &EditorWindow::handleActionAbout);
+    // Help
+    connect(ui->actionHelp, &QAction::triggered, this, &EditorWindow::handleActionHelp);
 
 }
 
@@ -281,6 +282,21 @@ void EditorWindow::handleActionLoad()
 void EditorWindow::handleActionExit()
 {
     this->close();
+}
+
+void EditorWindow::handleActionHelp()
+{
+    QMessageBox::information(this,"Help",
+    QStringLiteral("Right-click on work area to show allowed actions.\n\n"
+        "Right panel is used for interpretaion purposes\n\nFile operations in the top left corner.\n\nEvents logged at bottom.")    
+    );
+}
+
+void EditorWindow::handleActionAbout()
+{
+    QMessageBox::information(this,"About",
+        QStringLiteral("FSM interpreter and editor created as a project for ICP 2024/25 course at FIT VUT.\n\nAuthors: Antonín Červinka, Tezera Kadlecová, Jana Zejdová\n")    
+        );
 }
 
 /*
