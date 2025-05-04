@@ -158,16 +158,6 @@ void EditorWindow::updateVarOutput(const QString &name, const QString &value)
 
 void EditorWindow::updateVar(enum variableType type, const QString &name, const QString &value){
     fileModified = true;
-/*
-    if(allVars[type].contains(name)){
-        statusBarLabel->setText("changed value of variable: " + name);
-        FSMVariable toDel = allVars[type][name];
-        delete toDel.name;
-        delete toDel.value;
-    }
-    allVars[type].insert(name, variablesDisplay->insertVariable(type, name, value));
-    variablesDisplay->setActButtons(true,type);
-*/
     if(allVars[type].contains(name)){
         statusBarLabel->setText("changed value of variable: " + name);
         FSMVariable &chng = allVars[type][name];
