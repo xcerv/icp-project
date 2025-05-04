@@ -16,10 +16,10 @@
 
 namespace FsmFormats
 {
-    constexpr const char *FORMAT_STATE = R"([a-zA-Z0-9_-]{1,256})";
-    constexpr const char *FORMAT_VARIABLE = R"([a-zA-Z0-9_-]{1,256})";
-    constexpr const char *FORMAT_ACTION = R"(.+)";
-    constexpr const char *FORMAT_VARIABLE_TYPE = R"((int|float|bool|string))";
+    constexpr const char *FORMAT_STATE = R"(^[a-zA-Z0-9_-]{1,256}$)";
+    constexpr const char *FORMAT_VARIABLE = R"(^[a-zA-Z0-9_-]{1,256}$)";
+    constexpr const char *FORMAT_ACTION = R"(^.+$)";
+    constexpr const char *FORMAT_VARIABLE_TYPE = R"(^(int|float|bool|string)$)";
 }
 
 /**
@@ -213,6 +213,11 @@ class FsmInterface
          * @note By default returns to the original state before interpretation
          */
         virtual void stopInterpretation() = 0;
+
+        /**
+         * @brief Restores state prior to interpretation
+         */
+        virtual void restoreInterpretationBackup() = 0;
 
         /**
          * @brief Executes output event (print out output variable)
