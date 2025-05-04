@@ -87,6 +87,21 @@ class CombinedTransition : public QAbstractTransition
          */
         void stopTimer();
 
+        /**
+         * @brief Returns name of the input that can trigger the transition
+         */
+        QString getName() const;
+
+        /**
+         * @brief Returns guard condition
+         */
+        QString getGuard() const;
+
+        /**
+         * @brief Returns timeout
+         */
+        QString getTimeout() const;
+
 };
 
 #endif // COMBINEDTRANSITION_H

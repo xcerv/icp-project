@@ -346,8 +346,15 @@ void FsmModel::saveFile(const QString &filename)
      out << "Transitions:\n";
      for (auto transition = transitions.begin(); transition != transitions.end(); transition++) {
         CombinedTransition* t = transition.value();
+        QString condition;
+        if (!t->getName().isEmpty())
+            condition += t->getName();
+        if (!t->getGuard().isEmpty())
+            condition += " [" + t->getGuard() + "]";
+        if (!t->getTimeout().isEmpty())
+            condition += " @ " + t->getTimeout();
 
-        out << "" << " -> " << t->targetState()->objectName() << ": {" << "" << "}\n";
+        out << t->sourceState()->objectName() << " -> " << t->targetState()->objectName() << ": {" << condition << "}\n";
     }
 
     file.close();

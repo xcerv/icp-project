@@ -186,3 +186,15 @@ void CombinedTransition::onTransition(QEvent * e)
         curr->stopTimer();
     }
 }
+
+QString CombinedTransition::getName() const {
+    return m_name;
+}
+
+QString CombinedTransition::getGuard() const {
+    return m_guard;
+}
+
+QString CombinedTransition::getTimeout() const {
+    return m_timeout;
+}
