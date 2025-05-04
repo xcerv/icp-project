@@ -71,6 +71,32 @@ void FsmModel::interpretationError(FsmErrorType errNum, const QString &errMsg)
     this->throwError(errNum, errMsg);
 }
 
+void FsmModel::restoreInterpretationBackup()
+{
+    // Backup not set
+    if(backup.initialState == nullptr)
+        return;
+
+    // Restore internal vars
+    for (const auto &key : backup.vInternal.keys()) 
+    {
+        this->updateVarInternal(key, backup.vInternal.value(key));
+    }
+    // Restore input vars
+    for (const auto &key : backup.vInput.keys()) 
+    {
+        this->updateVarInput(key, backup.vInput.value(key));
+    }
+    // Restore output vars
+    for (const auto &key : backup.vOutput.keys()) 
+    {
+        this->updateVarOutput(key, backup.vOutput.value(key));
+    }
+
+    // Restore initial state
+    this->updateActiveState(backup.initialState->objectName());
+}
+
 void FsmModel::stopInterpretation()
 {
     if(!machine.isRunning()){
@@ -81,11 +107,8 @@ void FsmModel::stopInterpretation()
 
     this->machine.stop();
 
-    // On full stop restore original values (maybe add another button for restoring?)
-    this->varsInternal = backup.vInternal;
-    this->varsInput = backup.vInput;
-    this->varsOutput = backup.vOutput;
-    this->machine.setInitialState(backup.initialState);
+    // On full stop restore original values
+    this->restoreInterpretationBackup();
 
     this->engine.collectGarbage();
     return;
