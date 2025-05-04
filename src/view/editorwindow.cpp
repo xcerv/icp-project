@@ -399,6 +399,13 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 void EditorWindow::workAreaRightClick(QPoint position){
     QMenu menu(this);  // create a QMenu
 
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+
     QAction* addStateAction = menu.addAction("Add new state ...");
     QAction* closeWindowAction = menu.addAction("Close program");
     QAction* startProjectionAction = menu.addAction("Start projection");
@@ -506,6 +513,13 @@ QPoint EditorWindow::getMinWorkAreaSize(){
 void EditorWindow::stateFSMRightClick(){
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+
+    if(isStateMoving){
+        isStateMoving = false;
+    }
     QMenu menu(this);  // create a QMenu
 
     QAction* renameStateAction = menu.addAction("Rename ...");

@@ -256,8 +256,8 @@ private:
     StateFSMWidget * activeState = nullptr;///< A state that is active at the moment
     bool isStateMoving = false;///< wheter or not is any state moving
     bool isStateConnecting = false;///< whether or not is any state connecting to another -- via transition
-    bool isInterpreting = false;///< the system is running
 
+    bool isInterpreting = false;///< the system is running
 
     // Model-link
     FsmInterface* model = nullptr; ///< Reference to model
@@ -266,14 +266,16 @@ private:
     QHash<QString,StateFSMWidget*> allStates; ///< List of all states used within the FSM
     QHash<QString, FSMVariable> allVars[3];///< representation of all variables used in FSM
 
-    QHash<QPair<QString,QString>,FSMTransition *> allTransitionsUI;
+
+    QHash<QPair<QString,QString>,FSMTransition *> allTransitionsUI;///< all transitions in UI identified by the two states it is between
+
     struct reprCondTr {
         QString src;
         QString dest;
         QString condition;
     };
 
-    QHash<size_t,reprCondTr> allTransitionsConditions;
+    QHash<size_t,reprCondTr> allTransitionsConditions;///< all conditions (transitions) identified by their ID
 
 };
 #endif // EDITORWINDOW_H

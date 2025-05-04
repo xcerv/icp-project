@@ -153,7 +153,6 @@ void FSMTransition::relocateTransition(QPoint startPoint, QPoint startSize, QPoi
     fn.setX(finPos.x() > startPos.x()? finPos.x():startPos.x());
     fn.setY(finPos.y() > startPos.y()? finPos.y():startPos.y());
 
-    //QRect bounds = QRect(st, fn).normalized().adjusted(-10, -10, 10, 10); // with padding
     QRect bounds = QRect(st, fn).normalized().adjusted(0,0,0,BREATHINGROOM); // with padding
     setGeometry(bounds);
     QPoint center = (startPos + finPos) / 2;
