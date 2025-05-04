@@ -31,7 +31,7 @@ EditorWindow::EditorWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    statusBarLabel = new QLabel("nothing");
+    statusBarLabel = new QLabel("");
     statusBar()->addWidget(statusBarLabel);
 
     // Variable display
@@ -106,16 +106,6 @@ EditorWindow::EditorWindow(QWidget *parent)
 
 EditorWindow::~EditorWindow()
 {
-    /*
-    for (StateFSMWidget* state : allStates) {
-        delete state;  // free all condition labels
-    }
-    allStates.clear();  // ensure the vector is empty
-    delete workAreaScrollContainer;
-    delete workAreaScrollLayout;
-    delete workArea;
-    delete statusBarLabel;
-    */
     delete ui;
 }
 
@@ -521,13 +511,13 @@ void EditorWindow::resizeWorkArea(int width, int height){
 }
 
 void EditorWindow::workAreaLeftClick(QPoint position){
-    statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
+    statusBarLabel->setText(QString::number(position.x()) + ", " + QString::number(position.y()));
     if(isStateMoving){
         if(checkIfFSMFits(position, allStates[manipulatedState])){
             model->updateState(manipulatedState, position);
             manipulatedState = nullptr;
         }else{
-            statusBarLabel->setText("State did not fit");
+            QMessageBox::warning(this,"Warning","State did not fit.");
         }
         isStateMoving = false;
     }
