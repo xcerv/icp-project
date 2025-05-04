@@ -315,10 +315,11 @@ void EditorWindow::cleanup(){
 
     activeState = nullptr;
 
-    qDeleteAll(workArea->children());
+    //qDeleteAll(workArea->children());
+    qDeleteAll(allStates);
+    qDeleteAll(allTransitionsUI);
 
     allTransitionsUI.clear();
-
     allStates.clear();
 
     allTransitionsConditions.clear();
