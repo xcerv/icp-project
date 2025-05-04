@@ -71,8 +71,10 @@ struct ContextBackup
 /**
  * @brief Implementation of the Model part of the MVC pattern; handles internal representation of the FSM and interpretation
  */
-class FsmModel : public FsmInterface
+class FsmModel : public QObject, public FsmInterface
 {
+    Q_OBJECT
+
     friend class ScriptHelper; ///< ScriptHelper here works as an interface for communication with the interpreter QJSEngine
 
     protected:

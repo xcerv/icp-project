@@ -90,6 +90,8 @@ bool CombinedTransition::eventTest(QEvent *e)
 {
     if(e == nullptr || !this->machine()->isRunning()) return false;
 
+    qDebug() << "In transition" << this->m_id << " Event type " << e->type();
+
     if(e->type() == FsmInputEvent::getType()) // Initial input trigger
     {
         // Already waiting for timeout, wait for it instead
@@ -155,6 +157,9 @@ bool CombinedTransition::eventTest(QEvent *e)
         
         m_pending = false;
         m_pending_id = -1;
+
+        qInfo() << "Interpreter: Transition of id " << this->m_id << " from state " << this->sourceState()->objectName()
+                << " to " << this->targetState()->objectName() << " had been triggered";
 
         return true;
         

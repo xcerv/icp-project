@@ -45,6 +45,8 @@ FsmModel::FsmModel()
     scriptHelper{this, nullptr},
     uniqueTransId{0}
 {
+    machine.setGlobalRestorePolicy(QState::RestoreProperties);
+
     // Link model to QJSEngine
     QJSValue helperEngine = engine.newQObject(&this->scriptHelper);
     engine.globalObject().setProperty("icp", helperEngine);
@@ -74,6 +76,11 @@ void FsmModel::updateState(const QString &name, const QPoint &pos)
                 auto tmp = new ActionState("", pos);
                 tmp->setObjectName(name);
                 this->machine.addState(tmp);
+                // When this state changes, update View's active state
+                QObject::connect(tmp, &QState::entered, this, [this]() 
+                {
+                    if(sender()){this->view->updateActiveState(sender()->objectName());}
+                });
                 return tmp;
             }
         );
@@ -96,7 +103,6 @@ void FsmModel::updateStateName(const QString &oldName, const QString &newName)
     // The state with the new name already exists - ignore this action
     if(this->states.contains(newName))
     {
-        view->throwError(ERROR_RENAME_EXISTING);
         return;
     }
 
@@ -286,8 +292,8 @@ void FsmModel::destroyTransition(size_t transitionId)
         auto it = safeGetter(this->transitions, transitionId, {ERROR_UNDEFINED_TRANSITION, "MODEL: Failed to obtain transition to destroy"});
         
         // Unregister from state
-        if(it->machine() != nullptr)
-            {it->machine()->removeTransition(it);} 
+        if(it->sourceState() != nullptr)
+            {it->sourceState()->removeTransition(it);} 
 
         // Remove transition itself
         this->transitions.remove(transitionId); 
