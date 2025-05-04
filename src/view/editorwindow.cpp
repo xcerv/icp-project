@@ -9,6 +9,7 @@
  */
 
 #include "view/editorwindow.h"
+#include "qdebug.h"
 #include "ui_editorwindow.h"
 #include "view/state_fsm_widget/statefsmwidget.h"
 #include "view/logging_window/loggingwindow.h"
@@ -22,7 +23,6 @@
 #include <QPointer>
 #include <QFileDialog>
 #include <QTextEdit>
-#include <QDebug>
 #include "editorwindow.h"
 
 EditorWindow::EditorWindow(QWidget *parent)
@@ -538,8 +538,6 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 }
 
 void EditorWindow::workAreaRightClick(QPoint position){
-    QMenu menu(this);  // create a QMenu
-
     if(isStateMoving){
         isStateMoving = false;
     }
@@ -547,12 +545,24 @@ void EditorWindow::workAreaRightClick(QPoint position){
         isStateConnecting = false;
     }
 
+    QMenu menu(this);  // create a QMenu
+
     QAction* addStateAction = menu.addAction("Add new state ...");
     QAction* closeWindowAction = menu.addAction("Close program");
     QAction* renameFSMAction = menu.addAction("Rename FSM ...");
     QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
-    QAction * loadFileAction = menu.addAction("Load file ...");
-    QAction * saveFileAction = menu.addAction("Save file as ...");
+    QAction* loadFileAction = menu.addAction("Load file ...");
+    QAction* saveFileAction = menu.addAction("Save file as ...");
+
+    if (isInterpreting){
+        addStateAction->setEnabled(false);
+        renameFSMAction->setEnabled(false);
+        resizeWorkareaAction->setEnabled(false);
+        loadFileAction->setEnabled(false);
+        saveFileAction->setEnabled(false);
+    }
+
+
 
     // adds new state
     connect(addStateAction, &QAction::triggered, this, [=]() {
@@ -655,6 +665,11 @@ void EditorWindow::stateFSMRightClick(){
     if(isStateMoving){
         isStateMoving = false;
     }
+
+    if(isInterpreting){
+        return;
+    }
+
     QMenu menu(this);  // create a QMenu
 
     QAction* renameStateAction = menu.addAction("Rename ...");
@@ -738,6 +753,7 @@ bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
     int sy = position.y() + sizeS.y();
     canBeInserted = canBeInserted && sx < sizeWA.x() && sy < sizeWA.y();
     //check for collision with other states
+
     for(StateFSMWidget * state: allStates){
         if(state == nullptr || state == skip){
             continue;

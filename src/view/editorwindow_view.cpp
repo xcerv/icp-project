@@ -23,6 +23,7 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
     fileModified = true;
 
     if(allStates.contains(name)){
+        qDebug()<<"updating";
         allStates[name]->setPosition(pos);
         for(auto c : allTransitionsUI.keys()){
             if(c.first == name || c.second == name){
@@ -296,7 +297,7 @@ void EditorWindow::saveFile(const QString &filename)
 
 void EditorWindow::renameFsm(const QString &name)
 {
-    (void)name;
+    setWindowTitle(name);
     fileModified = true;
 }
 
@@ -313,9 +314,23 @@ void EditorWindow::cleanup(){
     // Clear the class entirely
     fileModified = false;
 
-   /**
-    * @todo CLEANUP
-    */
+    activeState = nullptr;
+
+    qDeleteAll(workArea->children());
+
+    allTransitionsUI.clear();
+
+    allStates.clear();
+
+    allTransitionsConditions.clear();
+
+    for(int i =0; i < NUMV; i++){
+        for(auto d : allVars[i]){
+            delete d.name;
+            delete d.value;
+        }
+        allVars[i].clear();
+    }
 } 
 
 void EditorWindow::throwError(FsmErrorType errNum)
@@ -362,14 +377,15 @@ void EditorWindow::log() const
 void EditorWindow::startInterpretation()
 {
     isInterpreting = true;
-    return; // NOP?
 }
 
 void EditorWindow::stopInterpretation()
 {
+    if(isInterpreting == true)
+    {
+        this->stopButtonClick();
+    }
     isInterpreting = false;
-    this->stopButtonClick();
-    return;
 }
 
 void EditorWindow::registerModel(FsmInterface *model)
