@@ -849,6 +849,8 @@ void EditorWindow::closeEvent(QCloseEvent *event)
 {
     // Nothing was changed, so dont show the message
     if(fileModified == false){
+        model->stopInterpretation();
+        model->cleanup();
         event->accept();
         return;
     }
@@ -873,6 +875,7 @@ void EditorWindow::closeEvent(QCloseEvent *event)
     if (ret == QMessageBox::Save) {
         this->handleActionSave();
     } else if (ret == QMessageBox::Close) {
+        model->stopInterpretation();
         model->cleanup();
         event->accept();
     } else {

@@ -253,6 +253,7 @@ private:
 
     void startInterpretation() override;
     void stopInterpretation() override;
+    void restoreInterpretationBackup() override;
 
     void cleanup() override;
     void throwError(FsmErrorType errNum) override;

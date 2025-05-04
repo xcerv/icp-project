@@ -397,6 +397,12 @@ void EditorWindow::stopInterpretation()
     isInterpreting = false;
 }
 
+void EditorWindow::restoreInterpretationBackup()
+{
+    // Nop?
+    return;
+}
+
 void EditorWindow::registerModel(FsmInterface *model)
 {
     this->model = model;
