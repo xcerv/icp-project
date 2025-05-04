@@ -93,6 +93,38 @@ public slots:
      */
     void inputComboxChanged();
 
+    /* Save-loading Related */
+
+    /**
+     * @brief Handler for saving files
+     */
+    void handleActionSaveAs();
+    /**
+     * @brief Save current session
+     */
+    void handleActionSave();
+    /**
+     * @brief Cleanup workarea and load blank session
+     */
+    void handleActionNew();
+    /**
+     * @brief Load fsm from file
+     */
+    void handleActionLoad();
+    /**
+     * @brief What to do when Exit function is triggered
+     * @note This is different to standard closing; This is triggered by the Exit action
+     */
+    void handleActionExit();
+    /**
+     * @brief Prints help message
+     */
+    void handleActionHelp();
+    /**
+     * @brief Prints info about the program
+     */
+    void handleActionAbout();
+
     /* Work Area UI Elements */
     /**
      * @brief what happens after workArea is left clicked (no action)
@@ -250,6 +282,10 @@ private:
     QLineEdit * inputEventField = nullptr;
     QComboBox * inputEventCombox = nullptr;
     QPlainTextEdit * outputEventField = nullptr;
+
+    // File related
+    bool fileModified = false;
+    QString lastFileName;
 
     // State Helpers
     QString manipulatedState;///< A state that is being moved at the moment

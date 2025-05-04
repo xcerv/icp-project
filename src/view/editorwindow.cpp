@@ -36,7 +36,7 @@ EditorWindow::EditorWindow(QWidget *parent)
 
     // Variable display
     variablesDisplay = new VariablesDisplay(this);
-    variablesDisplay->move(5, 5); // top-left corner
+    variablesDisplay->move(15, 35); // top-left corner
     variablesDisplay->raise(); // appearing above other widgets
 
     if(variablesDisplay->size().width() > this->size().width()/2)
@@ -63,13 +63,13 @@ EditorWindow::EditorWindow(QWidget *parent)
 
     // === Interpreter window ===
     // Link important elements to attributes
-    stopButton = this->findChild<QPushButton*>("stopBtn");
-    startButton = this->findChild<QPushButton*>("startBtn");
-    inputSubmitButton = this->findChild<QPushButton*>("submitBtn");
+    stopButton = ui->stopBtn;
+    startButton = ui->startBtn;
+    inputSubmitButton = ui->submitBtn;
 
-    inputEventField = this->findChild<QLineEdit*>("inputField");
-    inputEventCombox = this->findChild<QComboBox*>("inputSelect");
-    outputEventField = this->findChild<QPlainTextEdit*>("outputField");
+    inputEventField = ui->inputField;
+    inputEventCombox = ui->inputSelect;
+    outputEventField = ui->outputField;
 
     connect(startButton, &QPushButton::clicked, this, &EditorWindow::startButtonClick);
     connect(stopButton, &QPushButton::clicked, this, &EditorWindow::stopButtonClick);
@@ -87,6 +87,21 @@ EditorWindow::EditorWindow(QWidget *parent)
 
     ui->workAreaLayout->setStretch(0, 6);
     ui->workAreaLayout->setStretch(1, 1);
+
+    // === Menubar ===
+    // Load
+    connect(ui->actionLoad, &QAction::triggered, this, &EditorWindow::handleActionLoad);
+    // SaveAs
+    connect(ui->actionSaveAs, &QAction::triggered, this, &EditorWindow::handleActionSaveAs);
+    // Save
+    connect(ui->actionSave, &QAction::triggered, this, &EditorWindow::handleActionSave);
+    // New
+    connect(ui->actionNew, &QAction::triggered, this, &EditorWindow::handleActionNew);
+    // About
+    connect(ui->actionAbout, &QAction::triggered, this, &EditorWindow::handleActionAbout);
+    // Help
+    connect(ui->actionHelp, &QAction::triggered, this, &EditorWindow::handleActionHelp);
+
 }
 
 EditorWindow::~EditorWindow()
@@ -171,6 +186,117 @@ void EditorWindow::inputComboxChanged()
     {
         this->inputSubmitButton->setEnabled(true);
     }
+}
+
+void EditorWindow::handleActionSaveAs()
+{
+    auto startDirectory = lastFileName.isEmpty() ? QDir::currentPath() : QFileInfo(lastFileName).absolutePath();
+
+    QFileDialog dialog(this, tr("Save FSM As..."));
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setAcceptMode(QFileDialog::AcceptSave);
+    dialog.setDirectory(startDirectory);
+    dialog.setNameFilter(tr("FSM Files (*.fsm);;All Files (*)"));
+    dialog.setDefaultSuffix("fsm");    
+
+    if(dialog.exec() == QDialog::Accepted){
+        QString fileName = dialog.selectedFiles().value(0);
+        
+        // Get the directory that was actually chosen
+        lastFileName = fileName;
+
+        fileModified = false;
+        model->saveFile(fileName);
+    }
+}
+
+void EditorWindow::handleActionSave()
+{
+    // Saved for first time, handle as "Save as"
+    if(lastFileName.isEmpty())
+    {
+        this->handleActionSaveAs();
+        return;
+    }
+
+    // Nothing was changed since last time, do nothing
+    if(!fileModified)
+        return;
+
+    // Save to last file
+    fileModified = false;
+    this->saveFile(this->lastFileName);
+}
+
+void EditorWindow::handleActionNew()
+{
+    // Creating blank file multiple times
+    if(!this->fileModified && lastFileName.isEmpty())
+        return;
+
+    fileModified = false;
+    this->lastFileName.clear();
+    this->model->cleanup();
+}
+
+void EditorWindow::handleActionLoad()
+{
+    // If there are unsaved changes, prompt user to save them first
+    if(fileModified){
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle("Opening new workplace");
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText("Do you want to save before opening new file?");
+        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+        QAbstractButton *cancelButton = msgBox.button(QMessageBox::Cancel);
+        if (cancelButton) 
+            cancelButton->setIcon(QIcon());
+
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        int ret = msgBox.exec();
+
+        // User changed their mind - no opening
+        if(ret == QMessageBox::Cancel){
+            return;
+        }
+
+        // User decided to save first
+        if (ret == QMessageBox::Save) {
+            this->handleActionSave();
+        }
+    }
+    
+    auto fileName = QFileDialog::getOpenFileName();
+    if(fileName.isEmpty())
+    {
+        return;
+    }
+
+    model->loadFile(fileName);
+    
+    lastFileName = fileName;
+    fileModified = false;
+}
+
+void EditorWindow::handleActionExit()
+{
+    this->close();
+}
+
+void EditorWindow::handleActionHelp()
+{
+    QMessageBox::information(this,"Help",
+    QStringLiteral("Right-click on work area to show allowed actions.\n\n"
+        "Right panel is used for interpretaion purposes\n\nFile operations in the top left corner.\n\nEvents logged at bottom.")    
+    );
+}
+
+void EditorWindow::handleActionAbout()
+{
+    QMessageBox::information(this,"About",
+        QStringLiteral("FSM interpreter and editor created as a project for ICP 2024/25 course at FIT VUT.\n\nAuthors: Antonín Červinka, Tezera Kadlecová, Jana Zejdová\n")    
+        );
 }
 
 /*
@@ -444,9 +570,7 @@ void EditorWindow::workAreaRightClick(QPoint position){
         addStateAction->setEnabled(false);
     }
 
-    // closes out of program
-    connect(closeWindowAction, &QAction::triggered, this, &EditorWindow::close);
-
+    connect(closeWindowAction, &QAction::triggered, this, &EditorWindow::handleActionExit);
 
     // rename whole FSM
     connect(renameFSMAction, &QAction::triggered, this, [=](bool){
@@ -459,15 +583,12 @@ void EditorWindow::workAreaRightClick(QPoint position){
     // resize work area
     connect(resizeWorkareaAction, &QAction::triggered, this, [=](bool){resizeWorkArea();});
 
-    // load file
-    connect(loadFileAction, &QAction::triggered, this, [this](bool){
-        model->loadFile(QFileDialog::getOpenFileName());
-    });
 
-    // save file
-    connect(saveFileAction, &QAction::triggered, this, [this](bool){
-        model->saveFile(QFileDialog::getSaveFileName());
-    });
+    connect(loadFileAction, &QAction::triggered, this, &EditorWindow::handleActionLoad);
+
+
+    connect(saveFileAction, &QAction::triggered, this, &EditorWindow::handleActionSaveAs);
+
 
     menu.exec(QCursor::pos());
 }
@@ -721,6 +842,12 @@ void EditorWindow::insertFSMState(QPoint position, QString name){
 
 void EditorWindow::closeEvent(QCloseEvent *event)
 {
+    // Nothing was changed, so dont show the message
+    if(fileModified == false){
+        event->accept();
+        return;
+    }
+
     QMessageBox msgBox(this);
     msgBox.setWindowTitle("Closing program");
     msgBox.setIcon(QMessageBox::Warning);
@@ -739,14 +866,7 @@ void EditorWindow::closeEvent(QCloseEvent *event)
     int ret = msgBox.exec();
 
     if (ret == QMessageBox::Save) {
-        QString file = QFileDialog::getSaveFileName();
-        if(file != ""){
-            model->saveFile(file);
-            model->cleanup();
-            event->accept();
-        }else{
-            event->ignore();
-        }
+        this->handleActionSave();
     } else if (ret == QMessageBox::Close) {
         model->cleanup();
         event->accept();
@@ -754,6 +874,7 @@ void EditorWindow::closeEvent(QCloseEvent *event)
         event->ignore();
     }
 }
+
 
 
 void EditorWindow::editTransitionHanling(FSMTransition * transition){

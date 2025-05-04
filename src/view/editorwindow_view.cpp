@@ -20,6 +20,8 @@
 
 void EditorWindow::updateState(const QString &name, const QPoint &pos)
 {
+    fileModified = true;
+
     if(allStates.contains(name)){
         allStates[name]->setPosition(pos);
         for(auto c : allTransitionsUI.keys()){
@@ -36,6 +38,8 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
 
 void EditorWindow::updateStateName(const QString &oldName, const QString &newName)
 {
+    fileModified = true;
+
     StateFSMWidget *w = allStates[oldName];
     w->setName(newName);
     allStates.remove(oldName);
@@ -85,11 +89,15 @@ void EditorWindow::updateStateName(const QString &oldName, const QString &newNam
 
 void EditorWindow::updateAction(const QString &parentState, const QString &action)
 {
+    fileModified = true;
+
     allStates[parentState]->setOutput(action);
 }
 
 void EditorWindow::updateActiveState(const QString &name)
 {
+    fileModified = true;
+
     // Failed to find the new state
     if(!allStates.contains(name)){
         qCritical() << "VIEW: Failed to find a state to be set to active";
@@ -105,6 +113,7 @@ void EditorWindow::updateActiveState(const QString &name)
 
 void EditorWindow::updateCondition(size_t transitionId, const QString &condition)
 {
+    fileModified = true;
     auto help = allTransitionsConditions[transitionId];
     help.condition = condition;
     allTransitionsConditions[transitionId] = help;
@@ -112,6 +121,7 @@ void EditorWindow::updateCondition(size_t transitionId, const QString &condition
 
 void EditorWindow::updateTransition(size_t transitionId, const QString &srcState, const QString &destState)
 {
+    fileModified = true;
     QPair<QString, QString> key = {srcState, destState};
     QPair<QString, QString> keyR = {destState, srcState};
 
@@ -132,16 +142,22 @@ void EditorWindow::updateTransition(size_t transitionId, const QString &srcState
 
 void EditorWindow::updateVarInput(const QString &name, const QString &value)
 {
+    fileModified = true;
+
     updateVar(INPUTV, name, value);
 }
 
 void EditorWindow::updateVarOutput(const QString &name, const QString &value)
 {
+    fileModified = true;
+
     updateVar(OUTPUTV, name, value);
 }
 
 
 void EditorWindow::updateVar(enum variableType type, const QString &name, const QString &value){
+    fileModified = true;
+
     if(allVars[type].contains(name)){
         statusBarLabel->setText("changed value of variable: " + name);
         FSMVariable toDel = allVars[type][name];
@@ -154,6 +170,8 @@ void EditorWindow::updateVar(enum variableType type, const QString &name, const 
 
 void EditorWindow::destroyState(const QString &name)
 {
+    fileModified = true;
+
     StateFSMWidget *w = allStates[name];
     if(w == activeState){
         activeState = nullptr;
@@ -175,11 +193,14 @@ void EditorWindow::destroyState(const QString &name)
 
 void EditorWindow::destroyAction(const QString &parentState)
 {
+    fileModified = true;
+
     allStates[parentState]->setOutput("");
 }
 
 void EditorWindow::destroyCondition(size_t transitionId)
 {
+    fileModified = true;
     auto help = allTransitionsConditions[transitionId];
     help.condition = "";
     allTransitionsConditions[transitionId] = help;
@@ -202,7 +223,6 @@ void EditorWindow::destroyTransition(size_t transitionId)
         delTr = allTransitionsUI[keyR];
         key = keyR;
     }else{
-
         //throwError(99,"Internal error occured");
         return;
     }
@@ -217,14 +237,19 @@ void EditorWindow::destroyTransition(size_t transitionId)
             delete delTr;
         });
     }
+    fileModified = true;
 }
 
 void EditorWindow::destroyVarInput(const QString &name)
 {
+    fileModified = true;
+
     destroyVar(INPUTV,name);
 }
 
 void EditorWindow::destroyVar(enum variableType type, const QString &name){
+    fileModified = true;
+
     // Find variable
     FSMVariable v = allVars[type][name];
     v.name->setParent(nullptr);
@@ -243,39 +268,55 @@ void EditorWindow::destroyVar(enum variableType type, const QString &name){
 
 void EditorWindow::destroyVarOutput(const QString &name)
 {
+    fileModified = true;
+
     destroyVar(OUTPUTV,name);
 }
 
 void EditorWindow::destroyVarInternal(const QString &name)
 {
+    fileModified = true;
+
     destroyVar(INTERNALV, name);
 }
 
 void EditorWindow::loadFile(const QString &filename)
 {
     // Nop
+    (void)filename;
     return;
 }
 
 void EditorWindow::saveFile(const QString &filename)
 {
     // Nop
+    (void)filename;
     return;
 }
 
 void EditorWindow::renameFsm(const QString &name)
 {
-    this->setWindowTitle(name);
+    (void)name;
+    fileModified = true;
 }
 
 void EditorWindow::updateVarInternal(const QString &name, const QVariant &value)
 {
+    fileModified = true;
+
     QString v = value.toString();
     updateVar(INTERNALV, name, v);
 }
 
 
-void EditorWindow::cleanup(){} // Clear the class entirely
+void EditorWindow::cleanup(){
+    // Clear the class entirely
+    fileModified = false;
+
+   /**
+    * @todo CLEANUP
+    */
+} 
 
 void EditorWindow::throwError(FsmErrorType errNum)
 {
@@ -298,6 +339,8 @@ void EditorWindow::outputEvent(const QString &outName)
 
 void EditorWindow::inputEvent(const QString &name, const QString &value)
 {
+    (void)name;
+    (void)value;
     return; // Nop?
 }
 

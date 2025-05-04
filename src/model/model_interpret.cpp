@@ -42,6 +42,7 @@ void FsmModel::startInterpretation()
     }
 
     // Log before interpretation
+    qInfo() << "Interpretation started...";
     this->log();
 
     // Backup 
@@ -75,6 +76,8 @@ void FsmModel::stopInterpretation()
     if(!machine.isRunning()){
         return;
     }
+
+    qInfo() << "Interpretation stopped...";
 
     this->machine.stop();
 
