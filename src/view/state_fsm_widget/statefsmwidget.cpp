@@ -83,7 +83,7 @@ void StateFSMWidget::setPosition(QPoint pos){
     move(pos);
 }
 
-void StateFSMWidget::recolor(const QString& c1, const QString& c2) {
+void StateFSMWidget::recolor(const QString& c1, const QString& c2, const QString& ar) {
     QString style = QString(
                         "QWidget { background: %1; }"
                         "QLabel { color: %2; font: 14px \"Nimbus Mono PS\"; }"
@@ -98,27 +98,26 @@ void StateFSMWidget::recolor(const QString& c1, const QString& c2) {
                         "QScrollBar::handle{background-color: %2;min-height: 5px;}"
 
                         "QScrollBar::sub-line:vertical"
-                        "{margin: 0px 0px 3px 0px;border-image: url(:/arrows/img/up.svg);"
+                        "{margin: 0px 0px 3px 0px;border-image: url(:/arrows/img/up%3.svg);"
                         "border-width:0px;background-color:transparent;height: 10px;"
                         "width: 9px;subcontrol-position: top;subcontrol-origin: margin;}"
 
                         "QScrollBar::add-line:vertical"
-                        "{margin: 3px 0px 0px 0px;border-image: url(:/arrows/img/down.svg);"
+                        "{margin: 3px 0px 0px 0px;border-image: url(:/arrows/img/down%3.svg);"
                         "border-width:0px;background-color:transparent;height: 10px;"
                         "width: 9px;subcontrol-position: bottom;subcontrol-origin: margin;}"
 
                         "QScrollBar::sub-line:horizontal"
-                        "{margin: 0px 3px 0px 0px;border-image: url(:/arrows/img/left.svg);"
+                        "{margin: 0px 3px 0px 0px;border-image: url(:/arrows/img/left%3.svg);"
                         "border-width:0px;background-color:transparent;height: 9px;"
                         "width: 10px;subcontrol-position: left;subcontrol-origin: margin;}"
 
                         "QScrollBar::add-line:horizontal"
-                        "{margin: 0px 0px 0px 3px;border-image: url(:/arrows/img/right.svg);"
+                        "{margin: 0px 0px 0px 3px;border-image: url(:/arrows/img/right%3.svg);"
                         "border-width:0px;background-color:transparent;height: 9px;"
                         "width: 10px;subcontrol-position: right;subcontrol-origin: margin;}"
 
                         "QTextEdit, QListView {background-attachment: scroll;}"
-                        ).arg(c1, c2);
-
+                        ).arg(c1, c2, ar);
     setStyleSheet(style);
 }

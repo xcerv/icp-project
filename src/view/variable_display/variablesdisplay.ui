@@ -15,17 +15,18 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QWidget{
-background-color: rgba(0,255,0,40)
+background-color: rgba(50,125,181,40)
 }
 
 QLabel{
 background-color: rgba(0,0,0,0);
-color: black;
+color: navy;
 font:14px &quot;Nimbus Mono PS&quot;;
 }
 
 QPushButton{
-color: black;
+color: white;
+background-color: navy;
 font:14px &quot;Nimbus Mono PS&quot;;
 }
 
@@ -78,27 +79,27 @@ QPushButton#btnHide{
          <colorrole role="Button">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
          <colorrole role="Base">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
          <colorrole role="Window">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
@@ -107,27 +108,27 @@ QPushButton#btnHide{
          <colorrole role="Button">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
          <colorrole role="Base">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
          <colorrole role="Window">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
@@ -136,27 +137,27 @@ QPushButton#btnHide{
          <colorrole role="Button">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
          <colorrole role="Base">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
          <colorrole role="Window">
           <brush brushstyle="SolidPattern">
            <color alpha="40">
-            <red>0</red>
-            <green>255</green>
-            <blue>0</blue>
+            <red>50</red>
+            <green>125</green>
+            <blue>181</blue>
            </color>
           </brush>
          </colorrole>
@@ -206,10 +207,10 @@ QPushButton#btnHide{
               </colorrole>
               <colorrole role="Button">
                <brush brushstyle="SolidPattern">
-                <color alpha="40">
+                <color alpha="255">
                  <red>0</red>
-                 <green>255</green>
-                 <blue>0</blue>
+                 <green>0</green>
+                 <blue>128</blue>
                 </color>
                </brush>
               </colorrole>
@@ -233,19 +234,19 @@ QPushButton#btnHide{
               </colorrole>
               <colorrole role="Base">
                <brush brushstyle="SolidPattern">
-                <color alpha="40">
+                <color alpha="255">
                  <red>0</red>
-                 <green>255</green>
-                 <blue>0</blue>
+                 <green>0</green>
+                 <blue>128</blue>
                 </color>
                </brush>
               </colorrole>
               <colorrole role="Window">
                <brush brushstyle="SolidPattern">
-                <color alpha="40">
+                <color alpha="255">
                  <red>0</red>
-                 <green>255</green>
-                 <blue>0</blue>
+                 <green>0</green>
+                 <blue>128</blue>
                 </color>
                </brush>
               </colorrole>
@@ -271,10 +272,10 @@ QPushButton#btnHide{
               </colorrole>
               <colorrole role="Button">
                <brush brushstyle="SolidPattern">
-                <color alpha="40">
+                <color alpha="255">
                  <red>0</red>
-                 <green>255</green>
-                 <blue>0</blue>
+                 <green>0</green>
+                 <blue>128</blue>
                 </color>
                </brush>
               </colorrole>
@@ -298,19 +299,19 @@ QPushButton#btnHide{
               </colorrole>
               <colorrole role="Base">
                <brush brushstyle="SolidPattern">
-                <color alpha="40">
+                <color alpha="255">
                  <red>0</red>
-                 <green>255</green>
-                 <blue>0</blue>
+                 <green>0</green>
+                 <blue>128</blue>
                 </color>
                </brush>
               </colorrole>
               <colorrole role="Window">
                <brush brushstyle="SolidPattern">
-                <color alpha="40">
+                <color alpha="255">
                  <red>0</red>
-                 <green>255</green>
-                 <blue>0</blue>
+                 <green>0</green>
+                 <blue>128</blue>
                 </color>
                </brush>
               </colorrole>
@@ -429,10 +430,6 @@ QPushButton#btnHide{
            <property name="text">
             <string>⚙️</string>
            </property>
-           <property name="icon">
-            <iconset theme="tools-check-spelling">
-             <normaloff>.</normaloff>.</iconset>
-           </property>
           </widget>
          </item>
          <item>
@@ -536,10 +533,6 @@ QPushButton#btnHide{
            </property>
            <property name="text">
             <string>⚙️</string>
-           </property>
-           <property name="icon">
-            <iconset theme="tools-check-spelling">
-             <normaloff>.</normaloff>.</iconset>
            </property>
           </widget>
          </item>

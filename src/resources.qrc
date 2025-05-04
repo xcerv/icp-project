@@ -4,13 +4,16 @@
         <file>img/up.svg</file>
         <file>img/right.svg</file>
         <file>img/left.svg</file>
+        <file>img/downw.svg</file>
+        <file>img/leftw.svg</file>
+        <file>img/rightw.svg</file>
+        <file>img/upw.svg</file>
     </qresource>
     <qresource prefix="/buttons">
         <file>img/buttons/play.png</file>
         <file>img/buttons/play_hover.png</file>
         <file>img/buttons/play_press.png</file>
         <file>img/buttons/play_disabled.png</file>
-
         <file>img/buttons/stop.png</file>
         <file>img/buttons/stop_hover.png</file>
         <file>img/buttons/stop_press.png</file>

@@ -18,6 +18,23 @@
 background-color: #F0F5FF
 }
 
+
+QMenuBar{
+font:14px &quot;Nimbus Mono PS&quot;;
+}
+
+QMenu::item{
+border: 1px solid transparent; 
+padding-left: 10px;
+padding-right: 10px;
+font:14px &quot;Nimbus Mono PS&quot;;
+}
+
+QMenu::item::selected{
+border-color: navy;
+background-color: #F0F5FF
+}
+
 QLabel{
 color: navy;
 font:14px &quot;Nimbus Mono PS&quot;;
@@ -129,7 +146,7 @@ QTextEdit, QListView {
            <x>0</x>
            <y>0</y>
            <width>228</width>
-           <height>318</height>
+           <height>317</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout"/>
@@ -142,6 +159,9 @@ QTextEdit, QListView {
          <widget class="QComboBox" name="inputSelect">
           <property name="enabled">
            <bool>false</bool>
+          </property>
+          <property name="cursor">
+           <cursorShape>PointingHandCursor</cursorShape>
           </property>
           <item>
            <property name="text">
@@ -166,6 +186,9 @@ QTextEdit, QListView {
            <widget class="QPushButton" name="submitBtn">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="text">
              <string>Submit</string>
@@ -207,6 +230,9 @@ QTextEdit, QListView {
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
+            </property>
             <property name="styleSheet">
              <string notr="true">  QPushButton {
 	border-image: url(:/buttons/img/buttons/play.png);
@@ -239,6 +265,9 @@ QPushButton:disabled{
            <widget class="QPushButton" name="stopBtn">
             <property name="enabled">
              <bool>false</bool>
+            </property>
+            <property name="cursor">
+             <cursorShape>PointingHandCursor</cursorShape>
             </property>
             <property name="styleSheet">
              <string notr="true">  QPushButton{
@@ -301,7 +330,10 @@ QPushButton:disabled {
    </property>
    <property name="font">
     <font>
-     <pointsize>12</pointsize>
+     <family>Nimbus Mono PS</family>
+     <pointsize>-1</pointsize>
+     <italic>false</italic>
+     <bold>false</bold>
     </font>
    </property>
    <widget class="QMenu" name="menuFile">

@@ -10,10 +10,10 @@ FSMTransition::FSMTransition(QWidget *parent)
 {
     setAttribute(Qt::WA_TransparentForMouseEvents);
     setAttribute(Qt::WA_NoSystemBackground);
-    editTransitionBtn = new QPushButton("Edit", parent);
+    editTransitionBtn = new QPushButton("⚙️", parent);
     editTransitionBtn->raise();
     editTransitionBtn->show();
-    btnSize = QPoint(40, 20);
+    btnSize = QPoint(20, 20);
     editTransitionBtn->setFixedSize(btnSize.x(),btnSize.y());
     connect(editTransitionBtn, &QPushButton::clicked, this, &FSMTransition::clickedEdit);
 }

@@ -549,7 +549,6 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
     QAction* addStateAction = menu.addAction("Add new state ...");
     QAction* closeWindowAction = menu.addAction("Close program");
-    QAction* startProjectionAction = menu.addAction("Start projection");
     QAction* renameFSMAction = menu.addAction("Rename FSM ...");
     QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
     QAction * loadFileAction = menu.addAction("Load file ...");

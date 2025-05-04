@@ -73,8 +73,9 @@ public:
      * @brief recolors the state
      * @param c1 primary color (of body)
      * @param c2 secondary color (of text)
+     * @param ar arrow suffix
      */
-    void recolor(const QString& c1, const QString& c2);
+    void recolor(const QString& c1, const QString& c2, const QString& ar);
 signals:
     /**
      * @brief rightClick onto state

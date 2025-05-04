@@ -105,10 +105,10 @@ void EditorWindow::updateActiveState(const QString &name)
     }
 
     if(activeState != nullptr){
-        activeState->recolor("#b3d1ff","navy");
+        activeState->recolor("#b3d1ff","navy","");
     }
     activeState = allStates[name];
-    activeState->recolor("red","white");
+    activeState->recolor("navy","white","w");
 }
 
 void EditorWindow::updateCondition(size_t transitionId, const QString &condition)
