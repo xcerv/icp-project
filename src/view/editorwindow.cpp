@@ -180,6 +180,13 @@ void EditorWindow::inputComboxChanged()
 */
 
 void EditorWindow::variableToBeEdited(enum variableType type){
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+
     // make dialog for getting neccassary info
     QDialog dialog(this);
     dialog.setWindowTitle("Edit variable");
@@ -278,6 +285,14 @@ void EditorWindow::variableToBeEdited(enum variableType type){
 }
 
 void EditorWindow::variableToBeAdded(enum variableType type){
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+
     // make dialog for getting neccassary info
     QDialog dialog(this);
     dialog.setWindowTitle("Add variable");
@@ -622,6 +637,13 @@ bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
 }
 
 void EditorWindow::variableToBeDeleted(enum variableType type){
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
     QDialog dialog(this);
     dialog.setWindowTitle("Deleting variable");
 
