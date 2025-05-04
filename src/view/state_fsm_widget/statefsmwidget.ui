@@ -132,9 +132,13 @@ QTextEdit, QListView {
       <font>
        <family>Nimbus Mono PS</family>
        <pointsize>-1</pointsize>
+       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">border-radius: 5px;</string>
      </property>
      <property name="text">
       <string>name of state</string>
@@ -146,6 +150,10 @@ QTextEdit, QListView {
    </item>
    <item>
     <widget class="QScrollArea" name="scrollArea">
+     <property name="styleSheet">
+      <string notr="true">
+border-radius: 5px;</string>
+     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
@@ -166,6 +174,9 @@ QTextEdit, QListView {
         <width>186</width>
         <height>182</height>
        </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2"/>
      </widget>

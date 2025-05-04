@@ -29,6 +29,7 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
     output = new QLabel;
     output->setText("");
     output->setWordWrap(true);
+    output->setAlignment(Qt::AlignJustify | Qt::AlignTop);
     scrollLayout->addWidget(output);
 }
 
