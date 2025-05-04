@@ -23,6 +23,10 @@ color: navy;
 font:14px &quot;Nimbus Mono PS&quot;;
 }
 
+QPushButton{
+font:14px &quot;Nimbus Mono PS&quot;;
+}
+
 QScrollArea::corner {
     background: transparent;
 }

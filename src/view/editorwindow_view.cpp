@@ -24,6 +24,13 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
 
     if(allStates.contains(name)){
         allStates[name]->setPosition(pos);
+        for(auto c : allTransitionsUI.keys()){
+            if(c.first == name || c.second == name){
+                auto src = allStates[c.first];
+                auto dst = allStates[c.second];
+                allTransitionsUI[c]->relocateTransition(src->getPosition(),src->getSize(),dst->getPosition(),dst->getSize());
+            }
+        }
     }else{
         insertFSMState(pos, name);
     }
@@ -37,6 +44,47 @@ void EditorWindow::updateStateName(const QString &oldName, const QString &newNam
     w->setName(newName);
     allStates.remove(oldName);
     allStates.insert(newName,w);
+
+    for(auto &c : allTransitionsConditions){
+        if(c.src == oldName){
+            c.src = newName;
+        }
+        if(c.dest == oldName){
+            c.dest = newName;
+        }
+    }
+
+    QHash<QPair<QString, QString>, FSMTransition*> updatedTransitions;
+
+    for (auto it = allTransitionsUI.begin(); it != allTransitionsUI.end(); ) {
+        QPair<QString, QString> key = it.key();
+        FSMTransition* value = it.value();
+
+        QPair<QString, QString> newKey = key;
+
+        bool changed = false;
+        if (key.first == oldName) {
+            newKey.first = newName;
+            changed = true;
+        }
+        if (key.second == oldName) {
+            newKey.second = newName;
+            changed = true;
+        }
+
+        if (changed) {
+            it = allTransitionsUI.erase(it);  // Remove old key
+            updatedTransitions[newKey] = value;  // Save to insert later
+        } else {
+            ++it;
+        }
+    }
+
+    // Reinsert updated keys
+    for (auto it = updatedTransitions.begin(); it != updatedTransitions.end(); ++it) {
+        allTransitionsUI[it.key()] = it.value();
+    }
+
 }
 
 void EditorWindow::updateAction(const QString &parentState, const QString &action)
@@ -66,18 +114,30 @@ void EditorWindow::updateActiveState(const QString &name)
 void EditorWindow::updateCondition(size_t transitionId, const QString &condition)
 {
     fileModified = true;
+    auto help = allTransitionsConditions[transitionId];
+    help.condition = condition;
+    allTransitionsConditions[transitionId] = help;
 }
 
 void EditorWindow::updateTransition(size_t transitionId, const QString &srcState, const QString &destState)
 {
     fileModified = true;
+    QPair<QString, QString> key = {srcState, destState};
+    QPair<QString, QString> keyR = {destState, srcState};
 
-    FSMTransition* g = new FSMTransition(workArea);
-    g->relocateTransition(allStates[srcState]->getPosition(),allStates[srcState]->getSize(), allStates[destState]->getPosition(), allStates[destState]->getSize());
-    g->setDst(destState);
-    g->setSrc(srcState);
-    g->move(0,0);
-    allTransitions[transitionId] = g;
+    if(allTransitionsUI.contains(key)) {
+        allTransitionsUI[key]->addTransition(transitionId);
+    }else if(allTransitionsUI.contains(keyR)){
+        allTransitionsUI[keyR]->addTransition(transitionId);
+    }else {
+        FSMTransition* g = new FSMTransition(workArea);
+        g->relocateTransition(allStates[srcState]->getPosition(),allStates[srcState]->getSize(), allStates[destState]->getPosition(), allStates[destState]->getSize());
+        g->move(0,0);
+        connect(g,&FSMTransition::editTransition, this, &EditorWindow::editTransitionHanling);
+        allTransitionsUI[key] = g;
+        allTransitionsUI[key]->addTransition(transitionId);
+    }
+    allTransitionsConditions[transitionId] = {srcState,destState,""};
 }
 
 void EditorWindow::updateVarInput(const QString &name, const QString &value)
@@ -141,11 +201,42 @@ void EditorWindow::destroyAction(const QString &parentState)
 void EditorWindow::destroyCondition(size_t transitionId)
 {
     fileModified = true;
-
+    auto help = allTransitionsConditions[transitionId];
+    help.condition = "";
+    allTransitionsConditions[transitionId] = help;
 }
 
 void EditorWindow::destroyTransition(size_t transitionId)
 {
+    auto help = allTransitionsConditions[transitionId];
+
+    QPair<QString, QString> key  = {help.src, help.dest};
+    QPair<QString, QString> keyR = {help.dest, help.src};
+
+    allTransitionsConditions.remove(transitionId);
+
+    FSMTransition * delTr;
+
+    if(allTransitionsUI.contains(key)) {
+        delTr = allTransitionsUI[key];
+    }else if(allTransitionsUI.contains(keyR)){
+        delTr = allTransitionsUI[keyR];
+        key = keyR;
+    }else{
+        //throwError(99,"Internal error occured");
+        return;
+    }
+    delTr->subTransition(transitionId);
+    auto num = delTr->getTransitions();
+    if (num.isEmpty()){
+        delTr->blockSignals(true);
+        QObject::disconnect(delTr, nullptr, nullptr, nullptr);
+        delTr->setParent(nullptr);
+        allTransitionsUI.remove(key);
+        QTimer::singleShot(0, this, [=]() {
+            delete delTr;
+        });
+    }
     fileModified = true;
 }
 
@@ -270,11 +361,13 @@ void EditorWindow::log() const
 
 void EditorWindow::startInterpretation()
 {
+    isInterpreting = true;
     return; // NOP?
 }
 
 void EditorWindow::stopInterpretation()
 {
+    isInterpreting = false;
     this->stopButtonClick();
     return;
 }

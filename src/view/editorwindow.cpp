@@ -306,6 +306,13 @@ void EditorWindow::handleActionAbout()
 */
 
 void EditorWindow::variableToBeEdited(enum variableType type){
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+
     // make dialog for getting neccassary info
     QDialog dialog(this);
     dialog.setWindowTitle("Edit variable");
@@ -404,6 +411,14 @@ void EditorWindow::variableToBeEdited(enum variableType type){
 }
 
 void EditorWindow::variableToBeAdded(enum variableType type){
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+
     // make dialog for getting neccassary info
     QDialog dialog(this);
     dialog.setWindowTitle("Add variable");
@@ -507,17 +522,10 @@ void EditorWindow::resizeWorkArea(int width, int height){
 
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText("left: " + QString::number(position.x()) + ", " + QString::number(position.y()));
-    //debug
-    /*
-    FSMTransition * arrow = new FSMTransition(workArea);
-    arrow->setGeometry(workArea->rect()); // cover entire area
-    arrow->show();
-    */
-    //end of debug
     if(isStateMoving){
         if(checkIfFSMFits(position, allStates[manipulatedState])){
             model->updateState(manipulatedState, position);
-            allStates[manipulatedState] = nullptr;
+            manipulatedState = nullptr;
         }else{
             statusBarLabel->setText("State did not fit");
         }
@@ -530,11 +538,24 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 }
 
 void EditorWindow::workAreaRightClick(QPoint position){
-    statusBarLabel->setText("right: " + QString::number(position.x()) + ", " + QString::number(position.y()));
-
     QMenu menu(this);  // create a QMenu
 
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+
     QAction* addStateAction = menu.addAction("Add new state ...");
+    QAction* closeWindowAction = menu.addAction("Close program");
+    QAction* startProjectionAction = menu.addAction("Start projection");
+    QAction* renameFSMAction = menu.addAction("Rename FSM ...");
+    QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
+    QAction * loadFileAction = menu.addAction("Load file ...");
+    QAction * saveFileAction = menu.addAction("Save file as ...");
+
+    // adds new state
     connect(addStateAction, &QAction::triggered, this, [=]() {
         QString name = renamingWindow("Insert state");
         if(name != ""){
@@ -548,10 +569,10 @@ void EditorWindow::workAreaRightClick(QPoint position){
     if(!checkIfFSMFits(position)){
         addStateAction->setEnabled(false);
     }
-    QAction* closeWindowAction = menu.addAction("Close program");
+
     connect(closeWindowAction, &QAction::triggered, this, &EditorWindow::handleActionExit);
 
-    QAction* renameFSMAction = menu.addAction("Rename FSM ...");
+    // rename whole FSM
     connect(renameFSMAction, &QAction::triggered, this, [=](bool){
         QString name = renamingWindow("Renaming FSM");
         if(name != ""){
@@ -559,14 +580,15 @@ void EditorWindow::workAreaRightClick(QPoint position){
         }
     });
 
-    QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
+    // resize work area
     connect(resizeWorkareaAction, &QAction::triggered, this, [=](bool){resizeWorkArea();});
 
-    QAction * loadFileAction = menu.addAction("Load file ...");
+
     connect(loadFileAction, &QAction::triggered, this, &EditorWindow::handleActionLoad);
 
-    QAction * saveFileAction = menu.addAction("Save file as ...");
+
     connect(saveFileAction, &QAction::triggered, this, &EditorWindow::handleActionSaveAs);
+
 
     menu.exec(QCursor::pos());
 }
@@ -627,23 +649,34 @@ QPoint EditorWindow::getMinWorkAreaSize(){
 void EditorWindow::stateFSMRightClick(){
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
 
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
+
+    if(isStateMoving){
+        isStateMoving = false;
+    }
     QMenu menu(this);  // create a QMenu
 
-    // Connect state to another state with transition
+    QAction* renameStateAction = menu.addAction("Rename ...");
+    QAction* editOutputAction = menu.addAction("Edit state action ...");
     QAction* connectToAction = menu.addAction("Connect to ...");
+    QAction* setStartAction = menu.addAction("Set as starting");
+    QAction* moveStateAction = menu.addAction("Move state");
+    QAction* deleteAction = menu.addAction("Delete");
+
+    // Connect state to another state with transition
     connect(connectToAction, &QAction::triggered, this, [=](bool){
         isStateConnecting = true;
         manipulatedState = stateClicked->getName();
     });
 
     // Destroying state
-    QAction* deleteAction = menu.addAction("Delete");
     connect(deleteAction, &QAction::triggered, this,[=](bool){
         model->destroyState(stateClicked->getName());
     });
 
     // Setting initial state
-    QAction* setStartAction = menu.addAction("Set as starting");
     connect(setStartAction, &QAction::triggered, this, 
             [=](bool){
                 model->updateActiveState(stateClicked->getName());
@@ -651,7 +684,6 @@ void EditorWindow::stateFSMRightClick(){
         );
 
     // Edit state action
-    QAction* editOutputAction = menu.addAction("Edit state action ...");
     connect(editOutputAction, &QAction::triggered, this, [=](bool){
         QDialog dialog(this);
         dialog.setWindowTitle("Editing output");
@@ -675,7 +707,6 @@ void EditorWindow::stateFSMRightClick(){
     });
 
     // Rename a state
-    QAction* renameStateAction = menu.addAction("Rename ...");
     connect(renameStateAction, &QAction::triggered, this, [=](bool){
         QString name = renamingWindow("Rename state");
         if(name != ""){
@@ -684,7 +715,6 @@ void EditorWindow::stateFSMRightClick(){
     });
 
     // Move the state
-    QAction * moveStateAction = menu.addAction("Move this state");
     connect(moveStateAction, &QAction::triggered, this, [=](bool){
         isStateMoving = true;
         manipulatedState = stateClicked->getName();
@@ -694,10 +724,6 @@ void EditorWindow::stateFSMRightClick(){
 
 void EditorWindow::stateFSMLeftClick(){
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
-
-    //debug
-    //stateClicked->recolor("pink","teal");
-    //stateClicked->setName("right-clicked");
     if(isStateConnecting){
         model->updateTransition(0,manipulatedState,stateClicked->getName());
         isStateConnecting = false;
@@ -732,6 +758,13 @@ bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
 }
 
 void EditorWindow::variableToBeDeleted(enum variableType type){
+    if(isStateMoving){
+        isStateMoving = false;
+    }
+
+    if(isStateConnecting){
+        isStateConnecting = false;
+    }
     QDialog dialog(this);
     dialog.setWindowTitle("Deleting variable");
 
@@ -841,3 +874,60 @@ void EditorWindow::closeEvent(QCloseEvent *event)
         event->ignore();
     }
 }
+
+
+
+void EditorWindow::editTransitionHanling(FSMTransition * transition){
+    QDialog dialog(this);
+    dialog.setWindowTitle("Edit conditions");
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+    QComboBox *idComboBox = new QComboBox(&dialog);
+    auto c = transition->getTransitions();
+    QList<size_t> idList = c.values();
+    for (size_t tId : idList) {
+        idComboBox->addItem(QString::number(tId), QVariant::fromValue(tId));
+    }
+    mainLayout->addWidget(idComboBox);
+
+    QLabel *infoLabel = new QLabel(&dialog);
+    mainLayout->addWidget(infoLabel);
+
+    QLineEdit *conditionEdit = new QLineEdit(&dialog);
+    mainLayout->addWidget(conditionEdit);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+    QPushButton *deleteButton = new QPushButton("Delete", &dialog);
+    buttonBox->addButton(deleteButton, QDialogButtonBox::DestructiveRole);
+    mainLayout->addWidget(buttonBox);
+
+    // change fields when a different ID is selected
+    auto updateFields = [=]() {
+        size_t selectedId = idComboBox->currentData().toULongLong(); // convert QVariant to size_t
+        const auto &cond = allTransitionsConditions[selectedId];
+        infoLabel->setText(cond.src + " -> " + cond.dest);
+        conditionEdit->setText(cond.condition);
+    };
+    updateFields();
+    connect(idComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), updateFields);
+
+    // OK
+    connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
+        size_t selectedId = idComboBox->currentData().toULongLong();
+        model->updateCondition(selectedId, conditionEdit->text());
+        dialog.accept();
+    });
+
+    // Cancel
+    connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    // Delete
+    connect(deleteButton, &QPushButton::clicked, [&]() {
+        size_t selectedId = idComboBox->currentData().toULongLong();
+        transition->subTransition(selectedId);
+        model->destroyTransition(selectedId);
+        dialog.accept();
+    });
+
+    dialog.exec();
+}
+

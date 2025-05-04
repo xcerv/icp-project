@@ -1,7 +1,9 @@
 #ifndef FSMTRANSITION_H
 #define FSMTRANSITION_H
 
+#include <QPushButton>
 #include <QWidget>
+#include <QSet>
 
 class FSMTransition : public QWidget
 {
@@ -17,24 +19,33 @@ public:
      */
     void relocateTransition(QPoint startPoint, QPoint startSize, QPoint finPoint, QPoint finSize);
 
-    void setSrc(QString nsrc);
-    void setDst(QString ndst);
+    ~FSMTransition();
+
+    void addTransition(size_t num);
+    void subTransition(size_t num);
+    QSet<size_t> getTransitions();
+signals:
+    void editTransition(FSMTransition *);
 protected:
     /**
      * @brief paints the transition
      */
     void paintEvent(QPaintEvent *) override;
-
-
-
-signals:
+    /**
+     * @brief clicked on the edit button
+     */
+    void clickedEdit();
 
 private:
     QPoint startPos;
     QPoint finPos;
 
-    QString src;
-    QString dst;
+    QSet<size_t> individualTransitions;
+
+    QPushButton * editTransitionBtn = nullptr;
+    QPoint btnSize;
+
+    bool isLoop = false;
 
 };
 
