@@ -302,7 +302,7 @@ void FsmModel::saveFile(const QString &filename)
                 type = "int";
                 break;
             case QVariant::Double:
-                type = "double";
+                type = "float";
                 break;
             case QVariant::Bool:
                 type = "bool";
@@ -344,7 +344,11 @@ void FsmModel::saveFile(const QString &filename)
 
      // Transitions
      out << "Transitions:\n";
-     
+     for (auto transition = transitions.begin(); transition != transitions.end(); transition++) {
+        CombinedTransition* t = transition.value();
+
+        out << "" << " -> " << t->targetState()->objectName() << ": {" << "" << "}\n";
+    }
 
     file.close();
 }
