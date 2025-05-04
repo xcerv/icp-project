@@ -28,7 +28,7 @@ using namespace std;
 #define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+(\w+)\s*=\s*(\w+)$)"
 // Internal variable regex ==> type and 
 #define REGEX_VARIABLE_INTERNAL "" REGEX_VARIABLE ""
-#define REGEX_VARIABLE_INPUT REGEX_VARIABLE
+#define REGEX_VARIABLE_INPUT R"(^(\w+)\s*=\s*(\w+)$)"
 #define REGEX_VARIABLE_OUTPUT REGEX_VARIABLE
 
 // Regex for states
