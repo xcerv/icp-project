@@ -17,7 +17,9 @@
 #include "model.h"
 
 #include <QtGlobal>
+#include <QCoreApplication>
 #include <QDebug>
+#include <QStateMachine>
 
 using namespace std;
 
@@ -109,6 +111,11 @@ void FsmModel::stopInterpretation()
 
     // On full stop restore original values
     this->restoreInterpretationBackup();
+
+    for(auto &tr : this->transitions)
+    {
+        tr->stopTimer();
+    }
 
     this->engine.collectGarbage();
     return;

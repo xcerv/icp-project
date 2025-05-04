@@ -39,7 +39,9 @@ void ActionState::onEntry(QEvent *event)
     qInfo() << "Interpreter: State entered: " << this->objectName();
 
     this->executeAction();
-    this->machine()->postEvent(new FsmInputEvent("")); // Upon entry, implicitlly fire 'empty' input
+    if(this->machine()->isRunning()){
+        this->machine()->postEvent(new FsmInputEvent("")); // Upon entry, implicitlly fire 'empty' input
+    }
 }
 
 void ActionState::executeAction()
