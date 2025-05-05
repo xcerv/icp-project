@@ -32,7 +32,7 @@ using namespace std;
 #define REGEX_VARIABLE_OUTPUT REGEX_VARIABLE
 
 // Regex for states
-#define REGEX_STATE R"(^\s*(\w+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}$)"
+#define REGEX_STATE R"(^\s*([A-Za-z0-9_-]+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}\s*$)"
 
 // Regex for transitions
 #define REGEX_TRANSITION R"(^\s*(\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\}$)"
