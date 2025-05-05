@@ -11,8 +11,21 @@ PROJECT=ICP
 TARGET=icp_fsm_interpreter
 
 # Qmake
-QMAKE=qmake
+QMAKE:=qmake
 QT_PRO=$(SRC)/*.pro
+
+
+
+# Merlin specific 
+MERLIN_HOSTNAME:=merlin.fit.vutbr.cz
+MERLIN_QT_PATH=/usr/local/share/Qt-5.9/5.9.2/
+
+ifeq ("${HOSTNAME}","${MERLIN_HOSTNAME}")
+#export QT_PLUGN_PATH=$(MERLIN_QT_PATH)/gcc_64/plugins
+#export QT_QPA_PLATFORM_PLUGIN_PATH=$(MERLIN_QT_PATH)/gcc_64/plugins
+QMAKE:=$(MERLIN_QT_PATH)/gcc_64/bin/qmake
+endif
+
 
 all: $(BUILD)
 	$(MAKE) -j8 -C $(BUILD)
@@ -35,7 +48,9 @@ pack:
 	@cp -r $(EXAMPLES) $(ARCHIVE_NAME)/
 	@mkdir -p $(ARCHIVE_NAME)/$(DOC)
 	@cp README.txt $(ARCHIVE_NAME)/
+	@cp README.md $(ARCHIVE_NAME)/
 	@cp Makefile $(ARCHIVE_NAME)/
+	@cp Doxyfile $(ARCHIVE_NAME)/
 	@find $(ARCHIVE_NAME)/$(SRC) -name "*.pro.user" -delete
 	@cd $(ARCHIVE_NAME); zip -r ../$(ARCHIVE_NAME).zip *
 	@rm -rf $(ARCHIVE_NAME)
