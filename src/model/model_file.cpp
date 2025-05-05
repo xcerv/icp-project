@@ -18,8 +18,6 @@
 #include "mvc_interface.h"
 #include "model.h"
 
-using namespace std;
-
 // Regular
 #define REGEX_NAME
 // Variable regexes

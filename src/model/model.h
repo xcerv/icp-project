@@ -31,8 +31,6 @@
 #include <QVariant>
 #include <QRegularExpression>
 
-using namespace std;
-
 #define FORMAT_CHECK(errMsg, regex, ...) do{if (!checkAllValidFormat(FsmFormats::regex, __VA_ARGS__))           \
                                     {                                                                           \
                                         this->view->throwError(ERROR_INVALID_NAMING_FORMAT, errMsg);            \

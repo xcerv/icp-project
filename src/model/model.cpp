@@ -19,8 +19,6 @@
 #include "model.h"
 #include "combined_event.h"
 
-using namespace std;
-
 
 /* Templates */
 template <typename Key, typename Value, typename UpdateFunc, typename InsertFunc>

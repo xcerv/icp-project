@@ -21,8 +21,6 @@
 
 #include <QtWidgets>
 
-using namespace std;
-
 
 template <typename Key, typename Value>
 void hashmapToString(const QHash<Key, Value> &container, QString &out)

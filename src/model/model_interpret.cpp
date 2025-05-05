@@ -21,8 +21,6 @@
 #include <QDebug>
 #include <QStateMachine>
 
-using namespace std;
-
 #if QT_VERSION >= QT_VERSION_CHECK(5, 12, 0)
     #define STOP_EVALUATION(engine) do{(engine).throwError("Interpretation error");}while(0)
 #else
