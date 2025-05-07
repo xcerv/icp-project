@@ -18,6 +18,17 @@
 #include "mvc_interface.h"
 #include "model.h"
 
+enum Section { 
+    NONE, 
+    NAME, 
+    COMMENT, 
+    INPUT, 
+    OUTPUT, 
+    VARIABLES, 
+    STATES, 
+    TRANSITIONS 
+};
+
 // Regular
 #define REGEX_NAME
 // Variable regexes
@@ -36,7 +47,7 @@
 #define REGEX_TRANSITION R"(^\s*(\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\}$)"
 
 
-bool FsmModel::parseInOutVariableLine(const QString &line) {
+bool FsmModel::parseInOutVariableLine(const QString &line, int type) {
  
     auto match = QRegularExpression(REGEX_VARIABLE_INPUT).match(line);
     if (!match.hasMatch()){
@@ -44,8 +55,12 @@ bool FsmModel::parseInOutVariableLine(const QString &line) {
     }
     QString name = match.captured(1);
     QString value = match.captured(2);
-    if (value.isEmpty()) value = "0";
-    updateVarInput(name, value);
+    if (value.isEmpty()) value = "";
+
+    if(type == Section::INPUT)
+        updateVarInput(name, value);
+    else if(type == Section::OUTPUT)
+        updateVarOutput(name, value);
 
     return true;
 }
@@ -171,17 +186,8 @@ void FsmModel::loadFile(const QString &filename)
      // Section tracking for which part of the file is being parsed
     QTextStream in(&file);
     QString line;
-    enum Section { 
-        NONE, 
-        NAME, 
-        COMMENT, 
-        INPUT, 
-        OUTPUT, 
-        VARIABLES, 
-        STATES, 
-        TRANSITIONS 
-    } 
-    currentSection = NONE;
+
+    Section currentSection = NONE;
 
     // Read the file line by line
     while (!in.atEnd()) {
@@ -224,13 +230,13 @@ void FsmModel::loadFile(const QString &filename)
                 break;
 
             case INPUT:
-                if(parseInOutVariableLine(line) == false){
+                if(parseInOutVariableLine(line, currentSection) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
                 }
                     break;
     
             case OUTPUT:
-                if(parseInOutVariableLine(line) == false){
+                if(parseInOutVariableLine(line, currentSection) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
                 }
                     break;
@@ -273,19 +279,19 @@ void FsmModel::saveFile(const QString &filename)
 
     // Name
     out << "Name:\n";
-    out << machine.objectName() << "\n";
+    out << "\t" << machine.objectName() << "\n";
 
     // Inputs
     out << "Input:\n";
     for (auto input = varsInput.begin(); input != varsInput.end(); input++) {
-        out << input.key() << (input.value().isEmpty() ? "" : QStringLiteral(" = ") + input.value()) << "\n";
+        out << "\t" << input.key() << (input.value().isEmpty() ? "" : QStringLiteral(" = ") + input.value()) << "\n";
     }
     out << "\n";
 
     // Outputs
     out << "Output:\n";
     for (auto output = varsOutput.begin(); output != varsOutput.end(); output++) {
-        out << output.key() << (output.value().isEmpty() ? "" : QStringLiteral(" = ") + output.value()) << "\n";
+        out << "\t" << output.key() << (output.value().isEmpty() ? "" : QStringLiteral(" = ") + output.value()) << "\n";
     }
     out << "\n";
 
@@ -315,34 +321,34 @@ void FsmModel::saveFile(const QString &filename)
         }
      
  
-        out << type << " " << variable.key() << " = " << val.toString() << "\n";
+        out << "\t" << type << " " << variable.key() << " = " << val.toString() << "\n";
     }
-     out << "\n";
- 
-     // States
-     out << "States:\n";
-     auto activeState = getActiveState();
+    out << "\n";
 
-     //put active state first
-     for (auto state = states.begin(); state != states.end(); state++) {
-        if (state.value() == activeState) {
-            auto position = state.value()->getPosition();
-            out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
-        }
-     }
+    // States
+    out << "States:\n";
+    auto activeState = static_cast<ActionState*>(getActiveState());
 
-     for (auto state = states.begin(); state != states.end(); state++) {
+    //put active state first
+    if(activeState != nullptr){
+        auto position = activeState->getPosition();
+        out << "\t" << activeState->objectName() << "(" << position.x() << "," << position.y() << "): {" 
+                    << QString(activeState->getAction()).replace(QStringLiteral("\n"), QStringLiteral(" ")) << "}\n";
+    }
+
+    for (auto state = states.begin(); state != states.end(); state++) {
         if (state.value() == activeState) {
             continue;
         }
         auto position = state.value()->getPosition();
-        out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
-     }
-     out << "\n";
+        out << "\t" << state.key() << "(" << position.x() << "," << position.y() << "): {" 
+                    << QString(state.value()->getAction()).replace(QStringLiteral("\n"), QStringLiteral(" ")) << "}\n";
+    }
+    out << "\n";
 
-     // Transitions
-     out << "Transitions:\n";
-     for (auto transition = transitions.begin(); transition != transitions.end(); transition++) {
+    // Transitions
+    out << "Transitions:\n";
+    for (auto transition = transitions.begin(); transition != transitions.end(); transition++) {
         CombinedTransition* t = transition.value();
         QString condition;
         if (!t->getName().isEmpty())
@@ -352,7 +358,7 @@ void FsmModel::saveFile(const QString &filename)
         if (!t->getTimeout().isEmpty())
             condition += " @ " + t->getTimeout();
 
-        out << t->sourceState()->objectName() << " -> " << t->targetState()->objectName() << ": {" << condition << "}\n";
+        out << "\t" << t->sourceState()->objectName() << " -> " << t->targetState()->objectName() << ": {" << condition << "}\n";
     }
 
     file.close();

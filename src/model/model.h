@@ -264,7 +264,7 @@ class FsmModel : public QObject, public FsmInterface
          * @brief Parses given line into its Input and Output variables interpretation
          * @param line The line to be parsed
          */
-        bool parseInOutVariableLine(const QString &line);
+        bool parseInOutVariableLine(const QString &line, int type);
         
         /**
          * @brief Template that checks if all arguments match given regex
