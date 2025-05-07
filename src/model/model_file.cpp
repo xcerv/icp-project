@@ -26,11 +26,11 @@
 #define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+(\w+)\s*=\s*(\w+)$)"
 // Internal variable regex ==> type and 
 #define REGEX_VARIABLE_INTERNAL "" REGEX_VARIABLE ""
-#define REGEX_VARIABLE_INPUT REGEX_VARIABLE
+#define REGEX_VARIABLE_INPUT R"(^(\w+)\s*=\s*(\w+)$)"
 #define REGEX_VARIABLE_OUTPUT REGEX_VARIABLE
 
 // Regex for states
-#define REGEX_STATE R"(^\s*(\w+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}$)"
+#define REGEX_STATE R"(^\s*([A-Za-z0-9_-]+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}\s*$)"
 
 // Regex for transitions
 #define REGEX_TRANSITION R"(^\s*(\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\}$)"
@@ -125,6 +125,10 @@ bool FsmModel::parseStateLine(const QString &line) {
     // Set Action (if not blank)
     if(!action.isEmpty())
         updateAction(name, action);
+
+    if (states.size() == 1) {
+        updateActiveState(name);
+    }
 
     return true;
 }
@@ -269,63 +273,88 @@ void FsmModel::saveFile(const QString &filename)
 
     // Name
     out << "Name:\n";
-    out << machine.objectName() << "\n\n";
+    out << machine.objectName() << "\n";
 
     // Inputs
     out << "Input:\n";
     for (auto input = varsInput.begin(); input != varsInput.end(); input++) {
-        out << input.key() <<  " = " << (input.value().isEmpty() ? "" : input.value()) << "\n";
+        out << input.key() << (input.value().isEmpty() ? "" : QStringLiteral(" = ") + input.value()) << "\n";
     }
     out << "\n";
 
     // Outputs
     out << "Output:\n";
     for (auto output = varsOutput.begin(); output != varsOutput.end(); output++) {
-        out << output.key() << " = " << (output.value().isEmpty() ? "" : output.value()) << "\n";
+        out << output.key() << (output.value().isEmpty() ? "" : QStringLiteral(" = ") + output.value()) << "\n";
     }
     out << "\n";
 
     // Internal variables
     out << "Variables:\n";
      for (auto variable = varsInternal.begin(); variable != varsInternal.end(); variable++) {
-         QString type;
-         const QVariant &val = variable.value();
- 
-         switch (val.type()) {
-             case QVariant::Int:
-                 type = "int";
-                 break;
-             case QVariant::Double:
-                 type = "double";
-                 break;
-             case QVariant::Bool:
-                 type = "bool";
-                 break;
-             case QVariant::String: {
-                 QString str = val.toString();
-                 if (str.length() == 1) {
-                     type = "char";
-                 } 
-                 else {
-                     type = "string";
-                 }
-                 break;
-             }
-             default:
-                 continue;
-         }
+        QString type;
+        const QVariant &val = variable.value();
+
+        switch (val.type()) {
+            case QVariant::Int:
+                type = "int";
+                break;
+            case QVariant::Double:
+                type = "float";
+                break;
+            case QVariant::Bool:
+                type = "bool";
+                break;
+            case QVariant::String: {
+                QString str = val.toString();
+                type = "string";
+                break;
+            }
+            default:
+                continue;
+        }
      
  
-         out << type << " " << variable.key() << " = " << val.toString() << "\n";
-     }
+        out << type << " " << variable.key() << " = " << val.toString() << "\n";
+    }
      out << "\n";
  
      // States
      out << "States:\n";
+     auto activeState = getActiveState();
+
+     //put active state first
      for (auto state = states.begin(); state != states.end(); state++) {
-         QPoint position = state.value()->getPosition();
-         out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
+        if (state.value() == activeState) {
+            auto position = state.value()->getPosition();
+            out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
+        }
+     }
+
+     for (auto state = states.begin(); state != states.end(); state++) {
+        if (state.value() == activeState) {
+            continue;
+        }
+        auto position = state.value()->getPosition();
+        out << state.key() << "(" << position.x() << "," << position.y() << "): {" << state.value()->getAction() << "}\n";
      }
      out << "\n";
+
+     // Transitions
+     out << "Transitions:\n";
+     for (auto transition = transitions.begin(); transition != transitions.end(); transition++) {
+        CombinedTransition* t = transition.value();
+        QString condition;
+        if (!t->getName().isEmpty())
+            condition += t->getName();
+        if (!t->getGuard().isEmpty())
+            condition += " [" + t->getGuard() + "]";
+        if (!t->getTimeout().isEmpty())
+            condition += " @ " + t->getTimeout();
+
+        out << t->sourceState()->objectName() << " -> " << t->targetState()->objectName() << ": {" << condition << "}\n";
+    }
+
+    file.close();
 }
  
