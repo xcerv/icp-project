@@ -335,15 +335,32 @@ void EditorWindow::cleanup(){
 
 void EditorWindow::throwError(FsmErrorType errNum)
 {
+    this->stopButtonClick();
+
+    if(isShowingError) 
+        {return;}
+    isShowingError = true;
+
     qCritical() << "Error " << errNum << " occured";
     QMessageBox::critical(this,"Error","Err(" + QString::number(errNum) + ")");
-    return; // Nop?
+
+    isShowingError = false;
+    return;
 }
 
 void EditorWindow::throwError(FsmErrorType errNum, const QString &errMsg)
 {
+    this->stopButtonClick();
+
+    if(isShowingError) 
+        {return;}
+    isShowingError = true;
+
     qCritical() << "Error " << errNum << " is " << errMsg;
     QMessageBox::critical(this,"Error","Err(" + QString::number(errNum) + "): "+errMsg);
+    
+    isShowingError = false;
+    return;
 }
 
 void EditorWindow::outputEvent(const QString &outName)
