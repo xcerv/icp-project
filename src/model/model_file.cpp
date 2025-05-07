@@ -232,30 +232,40 @@ void FsmModel::loadFile(const QString &filename)
             case INPUT:
                 if(parseInOutVariableLine(line, currentSection) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
+                    this->cleanup();
+                    return;
                 }
                     break;
     
             case OUTPUT:
                 if(parseInOutVariableLine(line, currentSection) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
+                    this->cleanup();
+                    return;
                 }
                     break;
 
             case VARIABLES:
                 if(parseVariableLine(line) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse variable from file");
+                    this->cleanup();
+                    return;
                 }
                 break;
 
             case STATES:
                 if(parseStateLine(line) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse state from file");
+                    this->cleanup();
+                    return;
                 }
                 break;
 
             case TRANSITIONS:
                 if (parseTransitionLine(line) == false){
                     this->throwError(ERROR_FILE_INVALID_FORMAT, "Failed to parse transition from file");
+                    this->cleanup();
+                    return;
                 }
                 break;
 
