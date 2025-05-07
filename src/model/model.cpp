@@ -246,6 +246,12 @@ void FsmModel::destroyState(const QString &name)
             destroyTransition(static_cast<CombinedTransition*>(trans)->getId());
         }
 
+        for (auto &trans : this->machine.findChildren<QAbstractTransition*>()){
+            if(trans->targetState() == it){
+                destroyTransition(static_cast<CombinedTransition*>(trans)->getId());
+            }
+        }
+
         // Unregister from state machine
         if(it->machine() != nullptr)
             {it->machine()->removeState(it);}
