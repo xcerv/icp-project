@@ -21,8 +21,8 @@ MERLIN_HOSTNAME:=merlin.fit.vutbr.cz
 MERLIN_QT_PATH=/usr/local/share/Qt-5.9/5.9.2/
 
 ifeq ("${HOSTNAME}","${MERLIN_HOSTNAME}")
-#export QT_PLUGN_PATH=$(MERLIN_QT_PATH)/gcc_64/plugins
-#export QT_QPA_PLATFORM_PLUGIN_PATH=$(MERLIN_QT_PATH)/gcc_64/plugins
+export QT_PLUGN_PATH:=$(MERLIN_QT_PATH)/gcc_64/plugins
+export QT_QPA_PLATFORM_PLUGIN_PATH:=$(MERLIN_QT_PATH)/gcc_64/plugins
 QMAKE:=$(MERLIN_QT_PATH)/gcc_64/bin/qmake
 endif
 
