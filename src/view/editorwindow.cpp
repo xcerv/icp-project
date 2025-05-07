@@ -159,6 +159,8 @@ void EditorWindow::stopButtonClick()
     this->inputEventCombox->clear();
     this->inputEventCombox->addItem("..."); // Add just ... by default
 
+    this->outputEventField->clear(); // Clear outputs from current session
+
     // Enable variable editing
     for(int i = 0; i < NUMV; i++){
         this->variablesDisplay->setActButtonsAdding(!allVars[i].isEmpty(), (variableType)i);
