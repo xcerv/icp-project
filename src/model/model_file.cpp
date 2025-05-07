@@ -34,22 +34,22 @@ enum Section {
 // Variable regexes
 
 // Generic regex for variables ==> name and 
-#define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+(\w+)\s*=\s*(\w+)$)"
+#define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+(\w+)\s*=\s*(\w+)\s*$)"
 // Internal variable regex ==> type and 
 #define REGEX_VARIABLE_INTERNAL "" REGEX_VARIABLE ""
-#define REGEX_VARIABLE_INPUT R"(^(\w+)\s*=\s*(\w+)$)"
+#define REGEX_VARIABLE_INPUT_OUTPUT R"(^(\w+)\s*(=\s*(\w+)\s*)?$)"
 #define REGEX_VARIABLE_OUTPUT REGEX_VARIABLE
 
 // Regex for states
 #define REGEX_STATE R"(^\s*([A-Za-z0-9_-]+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}\s*$)"
 
 // Regex for transitions
-#define REGEX_TRANSITION R"(^\s*(\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\}$)"
+#define REGEX_TRANSITION R"(^\s*(\w+)\s*->\s*(\w+)\s*:\s*\{\s*(.*)\s*\}\s*$)"
 
 
 bool FsmModel::parseInOutVariableLine(const QString &line, int type) {
  
-    auto match = QRegularExpression(REGEX_VARIABLE_INPUT).match(line);
+    auto match = QRegularExpression(REGEX_VARIABLE_INPUT_OUTPUT).match(line);
     if (!match.hasMatch()){
         return false;
     }
