@@ -235,7 +235,7 @@ void EditorWindow::handleActionNew()
     if(!this->fileModified && lastFileName.isEmpty())
         return;
 
-    model->stopInterpretation();
+    this->stopButtonClick();
     fileModified = false;
     this->lastFileName.clear();
     this->model->cleanup();
@@ -275,7 +275,7 @@ void EditorWindow::handleActionLoad()
         return;
     }
 
-    model->stopInterpretation();
+    this->stopButtonClick();
     model->loadFile(fileName);
     
     lastFileName = fileName;
