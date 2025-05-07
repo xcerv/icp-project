@@ -158,3 +158,7 @@ void ScriptHelper::engine_error(const QJSValue &errNum, const QString &errMsg)
     this->m_model->interpretationError(static_cast<FsmErrorType>(errNum.toInt()), errMsg);
 }
 
+void ScriptHelper::stop()
+{
+    return this->m_model->view->stopInterpretation();
+}

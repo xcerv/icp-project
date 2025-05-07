@@ -139,6 +139,10 @@ class ScriptHelper : public QObject
          * @note This should not be used normally
          */
         Q_INVOKABLE void engine_error(const QJSValue &errNum, const QString &errMsg);
+        /**
+         * @brief Explicitly stops interpretation
+         */
+        Q_INVOKABLE void stop();
 };
 
 #endif
