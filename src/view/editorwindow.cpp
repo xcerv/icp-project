@@ -95,6 +95,7 @@ EditorWindow::EditorWindow(QWidget *parent)
     ui->workAreaLayout->setStretch(1, 1);
 
     // === Menubar ===
+    // = File =
     // Load
     connect(ui->actionLoad, &QAction::triggered, this, &EditorWindow::handleActionLoad);
     // SaveAs
@@ -107,7 +108,14 @@ EditorWindow::EditorWindow(QWidget *parent)
     connect(ui->actionAbout, &QAction::triggered, this, &EditorWindow::handleActionAbout);
     // Help
     connect(ui->actionHelp, &QAction::triggered, this, &EditorWindow::handleActionHelp);
+    // Hotkeys
+    connect(ui->actionHotkeys, &QAction::triggered, this, &EditorWindow::handleActionHotkeys);
+    // Exit
+    connect(ui->actionExit, &QAction::triggered, this, &EditorWindow::handleActionExit);
 
+    // = Execture =
+    connect(ui->actionStartInterpret, &QAction::triggered, this, &EditorWindow::startButtonClick);
+    connect(ui->actionStopInterpret, &QAction::triggered, this, &EditorWindow::stopButtonClick);
 }
 
 EditorWindow::~EditorWindow()
@@ -296,7 +304,8 @@ void EditorWindow::handleActionExit()
 void EditorWindow::handleActionHelp()
 {
     QMessageBox::information(this,"Help",
-    QStringLiteral("Right-click on work area to show allowed actions.\n\n"
+    QStringLiteral(
+        "Right-click on work area to show allowed actions.\n\n"
         "Right panel is used for interpretaion purposes\n\nFile operations in the top left corner.\n\nEvents logged at bottom.")    
     );
 }
@@ -304,7 +313,24 @@ void EditorWindow::handleActionHelp()
 void EditorWindow::handleActionAbout()
 {
     QMessageBox::information(this,"About",
-        QStringLiteral("FSM interpreter and editor created as a project for ICP 2024/25 course at FIT VUT.\n\nAuthors: Antonín Červinka, Tezera Kadlecová, Jana Zejdová\n")    
+        QStringLiteral(
+            "FSM interpreter and editor created as a project for ICP 2024/25 course at FIT VUT.\n\n"
+            "Authors: Antonín Červinka, Tezera Kadlecová, Jana Zejdová\n")    
+        );
+}
+
+void EditorWindow::handleActionHotkeys()
+{
+    QMessageBox::information(this,"About",
+        QStringLiteral(
+            "A --> Add new state\n\n"
+            "C --> Connect states\n\n"
+            "E --> Edit state/transition body\n\n"
+            "CTRL + S --> Save current FSM\n\n"
+            "CTRL + SHIFT +  S --> Save current FSM to new file\n\n"
+            "CTRL + O --> Open FSM\n\n"
+            "CTRL + N --> New FSM\n\n"
+        )    
         );
 }
 

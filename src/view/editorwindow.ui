@@ -358,9 +358,30 @@ QPushButton:disabled {
      <string>Hint</string>
     </property>
     <addaction name="actionHelp"/>
+    <addaction name="actionHotkeys"/>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuNetwork">
+    <property name="title">
+     <string>Network</string>
+    </property>
+    <addaction name="actionNetStartListening"/>
+    <addaction name="actionNetStopListening"/>
+    <addaction name="separator"/>
+    <addaction name="actionNetConnectTo"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
+   </widget>
+   <widget class="QMenu" name="menuExecute">
+    <property name="title">
+     <string>Execute</string>
+    </property>
+    <addaction name="actionStartInterpret"/>
+    <addaction name="actionStopInterpret"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuExecute"/>
+   <addaction name="menuNetwork"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -397,6 +418,41 @@ QPushButton:disabled {
   <action name="actionAbout">
    <property name="text">
     <string>About</string>
+   </property>
+  </action>
+  <action name="actionNetStartListening">
+   <property name="text">
+    <string>Start Listening</string>
+   </property>
+  </action>
+  <action name="actionNetStopListening">
+   <property name="text">
+    <string>Stop Listening</string>
+   </property>
+  </action>
+  <action name="actionNetConnectTo">
+   <property name="text">
+    <string>Connect to...</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings...</string>
+   </property>
+  </action>
+  <action name="actionStartInterpret">
+   <property name="text">
+    <string>Start Interpreting</string>
+   </property>
+  </action>
+  <action name="actionStopInterpret">
+   <property name="text">
+    <string>Stop Interpreting</string>
+   </property>
+  </action>
+  <action name="actionHotkeys">
+   <property name="text">
+    <string>Hotkeys</string>
    </property>
   </action>
  </widget>

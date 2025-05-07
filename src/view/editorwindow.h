@@ -126,6 +126,10 @@ public slots:
      * @brief Prints info about the program
      */
     void handleActionAbout();
+    /**
+     * @brief Prints info about hotkeys
+     */
+    void handleActionHotkeys();
 
     /* Work Area UI Elements */
     /**
