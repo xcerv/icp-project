@@ -105,6 +105,17 @@ void FsmModel::cleanup()
 {
     qWarning() << "Performing cleanup...";
 
+    if (machine.isRunning()) {
+        machine.stop();
+    }
+
+    // Remove transitions first
+    for (CombinedTransition* tr : transitions.values()) {
+        if (tr != nullptr && tr->sourceState() != nullptr) {
+            tr->sourceState()->removeTransition(tr);
+        }
+    }
+
     // Unlink states from FSM
     for (ActionState* st : states.values()) {
         if (st != nullptr) {
@@ -113,13 +124,16 @@ void FsmModel::cleanup()
     }
 
     /** @todo Check that the removal here is correct; state should have ownership of its transition and will delete them too... probably */
-    qDeleteAll(states);
     states.clear();
+    qDeleteAll(states.values());
     transitions.clear();
+    qDeleteAll(transitions.values());
 
     varsInternal.clear();
     varsInput.clear();
     varsOutput.clear();
+
+    this->machine.setInitialState(nullptr);
 
     // Reset transition unique id;
     this->uniqueTransId = 0;
