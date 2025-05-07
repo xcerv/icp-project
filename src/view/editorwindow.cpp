@@ -25,6 +25,7 @@
 #include <QPointer>
 #include <QFileDialog>
 #include <QTextEdit>
+#include <QScreen>
 #include "editorwindow.h"
 
 EditorWindow::EditorWindow(QWidget *parent)
@@ -94,16 +95,26 @@ EditorWindow::EditorWindow(QWidget *parent)
     ui->workAreaLayout->setStretch(0, 6);
     ui->workAreaLayout->setStretch(1, 1);
 
+    // === Workarea actions ===
+    QAction* addStateAction = new QAction("Add State", this);
+    this->addAction(addStateAction);
+    connect(addStateAction, &QAction::triggered, this, [this]() {this->handleActionAddState(workArea->mapFromGlobal(QCursor::pos()));});
+    addStateAction->setShortcut(QKeySequence(Qt::Key_A));
+
     // === Menubar ===
     // = File =
     // Load
     connect(ui->actionLoad, &QAction::triggered, this, &EditorWindow::handleActionLoad);
+    ui->actionLoad->setShortcut(QKeySequence::Open);
     // SaveAs
     connect(ui->actionSaveAs, &QAction::triggered, this, &EditorWindow::handleActionSaveAs);
+    ui->actionSaveAs->setShortcut(QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_S));
     // Save
     connect(ui->actionSave, &QAction::triggered, this, &EditorWindow::handleActionSave);
+    ui->actionSave->setShortcut(QKeySequence::Save);
     // New
     connect(ui->actionNew, &QAction::triggered, this, &EditorWindow::handleActionNew);
+    ui->actionNew->setShortcut(QKeySequence::New);
     // About
     connect(ui->actionAbout, &QAction::triggered, this, &EditorWindow::handleActionAbout);
     // Help
@@ -332,6 +343,22 @@ void EditorWindow::handleActionHotkeys()
             "CTRL + N --> New FSM\n\n"
         )    
         );
+}
+
+void EditorWindow::handleActionAddState(QPoint position)
+{
+    if(!checkIfFSMFits(position)){
+        return;
+    }
+
+    QString name = renamingWindow("Insert state");
+    if(name != ""){
+        if(allStates.contains(name)){
+            QMessageBox::warning(this,"Cannot insert state","State cannot be insterted, because states need to have unique names.");
+        }else{
+            model->updateState(name, position);
+        }
+    }
 }
 
 /*
@@ -600,16 +627,10 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
 
     // adds new state
-    connect(addStateAction, &QAction::triggered, this, [=]() {
-        QString name = renamingWindow("Insert state");
-        if(name != ""){
-            if(allStates.contains(name)){
-                QMessageBox::warning(this,"Cannot insert state","State cannot be insterted, because states need to have unique names.");
-            }else{
-                model->updateState(name, position);
-            }
-        }
+    connect(addStateAction, &QAction::triggered, this, [this, position]() {
+        this->handleActionAddState(position);
     });
+
     if(!checkIfFSMFits(position)){
         addStateAction->setEnabled(false);
     }
@@ -782,14 +803,18 @@ void EditorWindow::stateFSMLeftClick(){
 bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
     bool canBeInserted = true;
     QPoint sizeWA = workArea->getSizeWA();
-    QPoint sizeS; sizeS.setX(150); sizeS.setY(180); //TODO: fix if states can be multiple sizes
+    QPoint sizeS; sizeS.setX(160); sizeS.setY(200); //TODO: fix if states can be multiple sizes
     //check if fits into workArea
     int sx = position.x() + sizeS.x();
     int sy = position.y() + sizeS.y();
-    canBeInserted = canBeInserted && sx < sizeWA.x() && sy < sizeWA.y();
+    canBeInserted = canBeInserted && sx < sizeWA.x() && sy < sizeWA.y() && sx > sizeS.x() && sy > sizeS.y();
     //check for collision with other states
 
     for(StateFSMWidget * state: allStates){
+        if(canBeInserted == false) {
+            break;
+        }
+
         if(state == nullptr || state == skip){
             continue;
         }
@@ -857,6 +882,27 @@ void EditorWindow::variableToBeDeleted(enum variableType type){
 QString EditorWindow::renamingWindow(QString title){
         QDialog dialog(this);
         dialog.setWindowTitle(title);
+
+        // Get Mouse pos
+        QPoint mousePos = QCursor::pos();
+        QSize dialogSize = dialog.size();
+
+        int dialogX = mousePos.x() - ((dialogSize.width()));
+        int dialogY = mousePos.y() - ((dialogSize.height()));
+        QPoint dialogPos(dialogX, dialogY);
+
+        QRect screenGeometry = qApp->primaryScreen()->geometry();
+        if (dialogPos.x() < screenGeometry.left()) {
+            dialogPos.setX(screenGeometry.left());
+        } else if (dialogPos.x() + dialogSize.width() > screenGeometry.right()) {
+            dialogPos.setX(screenGeometry.right() - dialogSize.width());
+        }
+        if (dialogPos.y() < screenGeometry.top()) {
+            dialogPos.setY(screenGeometry.top());
+        } else if (dialogPos.y() + dialogSize.height() > screenGeometry.bottom()) {
+            dialogPos.setY(screenGeometry.bottom() - dialogSize.height());
+        }
+        dialog.move(dialogPos);
 
         QFormLayout form(&dialog);
 

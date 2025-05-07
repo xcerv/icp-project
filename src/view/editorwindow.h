@@ -130,6 +130,11 @@ public slots:
      * @brief Prints info about hotkeys
      */
     void handleActionHotkeys();
+    /**
+     * @brief Inserts a new state
+     * @param position Position of the state
+     */
+    void handleActionAddState(QPoint position);
 
     /* Work Area UI Elements */
     /**
