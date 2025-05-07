@@ -1,0 +1,23 @@
+Name:
+	Factorial
+Input:
+	fac = 5
+
+Output:
+	out = 120
+
+Variables:
+	int val = 2
+
+States:
+	Fatorial(269,349): {}
+	Decrement(1005,491): {icp.set("val", icp.get("val")-1);}
+	Multiply(999,157): {var mult = icp.get("val"); mult = icp.valueof("out") * (mult-1); icp.output("out", mult);}
+	Init(661,230): {icp.set("val", icp.valueof("fac")); icp.output("out", icp.get("val"));}
+
+Transitions:
+	Decrement -> Multiply: { [icp.get("val") > 2] @ 250}
+	Init -> Multiply: { @ 500}
+	Decrement -> Fatorial: { [icp.get("val") <= 2] @ 250}
+	Fatorial -> Init: {fac [ icp.valueof("fac") > 1 ] @ 500}
+	Multiply -> Decrement: { @ 500}
