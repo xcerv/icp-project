@@ -267,7 +267,7 @@ private:
     // ========================
     
     // UI elements
-    Ui::EditorWindow *ui;
+    Ui::EditorWindow *ui; ///< The ui itself
     QLabel * statusBarLabel = nullptr;///< label on status bar
     WorkArea * workArea = nullptr;///< work area widget
     QWidget * workAreaScrollContainer = nullptr;///< container for scroll area
@@ -276,17 +276,21 @@ private:
     LoggingWindow * loggingWindow = nullptr;///< Logging window
 
     // Interpreter buttons
-    QPushButton * stopButton = nullptr;
-    QPushButton * startButton = nullptr;
-    QPushButton * inputSubmitButton = nullptr;
+    QPushButton * stopButton = nullptr; ///< Button for stopping interpreattion
+    QPushButton * startButton = nullptr; ///< Button for starting interpretation
+    QPushButton * inputSubmitButton = nullptr; ///< Button for submitting input
 
-    QLineEdit * inputEventField = nullptr;
-    QComboBox * inputEventCombox = nullptr;
-    QPlainTextEdit * outputEventField = nullptr;
+    QLineEdit * inputEventField = nullptr; ///< Text field for inputting event value
+    QComboBox * inputEventCombox = nullptr; ///< Combox for selecting which input to use
+    QPlainTextEdit * outputEventField = nullptr; ///< The output of the FSM
 
     // File related
-    bool fileModified = false;
-    QString lastFileName;
+    bool fileModified = false; ///< Was the file modified since the last save?
+    QString lastFileName; ///< The name of the last opened/saved file 
+
+    // Error Handling
+    bool isShowingError = false; ///< Is the FSM currently showing error message? 
+
 
     // State Helpers
     QString manipulatedState;///< A state that is being moved at the moment
@@ -307,12 +311,12 @@ private:
     QHash<QPair<QString,QString>,FSMTransition *> allTransitionsUI;///< all transitions in UI identified by the two states it is between
 
     struct reprCondTr {
-        QString src;
-        QString dest;
-        QString condition;
+        QString src; // Source state
+        QString dest; // Destination state
+        QString condition; // Transittion condition
     };
 
-    QHash<size_t,reprCondTr> allTransitionsConditions;///< all conditions (transitions) identified by their ID
+    QHash<size_t,reprCondTr> allTransitionsConditions; ///< all conditions (transitions) identified by their ID
 
 };
 #endif // EDITORWINDOW_H

@@ -224,6 +224,7 @@ void EditorWindow::handleActionNew()
     if(!this->fileModified && lastFileName.isEmpty())
         return;
 
+    model->stopInterpretation();
     fileModified = false;
     this->lastFileName.clear();
     this->model->cleanup();
@@ -263,6 +264,7 @@ void EditorWindow::handleActionLoad()
         return;
     }
 
+    model->stopInterpretation();
     model->loadFile(fileName);
     
     lastFileName = fileName;
