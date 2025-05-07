@@ -24,7 +24,6 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
     fileModified = true;
 
     if(allStates.contains(name)){
-        qDebug()<<"updating";
         allStates[name]->setPosition(pos);
         for(auto c : allTransitionsUI.keys()){
             if(c.first == name || c.second == name){

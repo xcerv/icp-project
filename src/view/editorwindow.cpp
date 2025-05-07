@@ -953,6 +953,14 @@ void EditorWindow::editTransitionHanling(FSMTransition * transition){
     buttonBox->addButton(deleteButton, QDialogButtonBox::DestructiveRole);
     mainLayout->addWidget(buttonBox);
 
+    // Block edits when interpretation is ON
+    if(isInterpreting)
+    {
+        deleteButton->setDisabled(true);   
+        conditionEdit->setReadOnly(true);   
+        buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);   
+    }
+
     // change fields when a different ID is selected
     auto updateFields = [=]() {
         size_t selectedId = idComboBox->currentData().toULongLong(); // convert QVariant to size_t
