@@ -17,19 +17,28 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
     , ui(new Ui::StateFSMWidget)
 {
     ui->setupUi(this);
-    size.setX(150);
-    size.setY(180);
-    setFixedSize(150,180);
+    size.setX(160);
+    size.setY(200);
+    setFixedSize(160,200);
+
+    ui->scrollArea->setWidgetResizable(true);
+    ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     position = pos;
     scrollContainer = new QWidget;
     scrollLayout = new QVBoxLayout(scrollContainer);
+    scrollLayout->setContentsMargins(2, 2, 2, 2);
+    scrollLayout->setSpacing(0);
+
     scrollContainer->setLayout(scrollLayout);
     ui->scrollArea->setWidget(scrollContainer);  // add container to scroll area
     output = new QLabel;
     output->setText("");
+    output->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
     output->setWordWrap(true);
-    output->setAlignment(Qt::AlignJustify | Qt::AlignTop);
+    output->setStyleSheet("QLabel { font-size: 10pt;}");
+    output->setAlignment(Qt::AlignLeft | Qt::AlignTop);
     scrollLayout->addWidget(output);
 }
 
