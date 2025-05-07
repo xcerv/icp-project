@@ -3,6 +3,7 @@
  *
  * @file editorwindow_view.cpp
  * @author  xkadlet00
+ * @author  xcervia00
  *
  * @brief Implementation of view (mvc interface) functions used by the editorwindow
  *

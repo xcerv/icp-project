@@ -146,7 +146,7 @@ QTextEdit, QListView {
            <x>0</x>
            <y>0</y>
            <width>228</width>
-           <height>317</height>
+           <height>318</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout"/>
@@ -173,7 +173,7 @@ QTextEdit, QListView {
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QLineEdit" name="inputField">
+           <widget class="InputEventLineEdit" name="inputField">
             <property name="minimumSize">
              <size>
               <width>150</width>
@@ -332,6 +332,7 @@ QPushButton:disabled {
     <font>
      <family>Nimbus Mono PS</family>
      <pointsize>-1</pointsize>
+     <weight>50</weight>
      <italic>false</italic>
      <bold>false</bold>
     </font>
@@ -399,6 +400,13 @@ QPushButton:disabled {
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>InputEventLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>view/input_event_edit/input_event_line_edit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

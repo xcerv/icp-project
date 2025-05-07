@@ -3,6 +3,7 @@
  *
  * @file editorwindow.c
  * @author  xkadlet00
+ * @author  xcervia00
  *
  * @brief window where FSM is edited
  *
@@ -13,6 +14,7 @@
 #include "ui_editorwindow.h"
 #include "view/state_fsm_widget/statefsmwidget.h"
 #include "view/logging_window/loggingwindow.h"
+#include "view/input_event_edit/input_event_line_edit.h"
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <QInputDialog>
@@ -67,13 +69,17 @@ EditorWindow::EditorWindow(QWidget *parent)
     startButton = ui->startBtn;
     inputSubmitButton = ui->submitBtn;
 
-    inputEventField = ui->inputField;
+    inputEventField = static_cast<InputEventLineEdit*>(ui->inputField);
     inputEventCombox = ui->inputSelect;
     outputEventField = ui->outputField;
 
     connect(startButton, &QPushButton::clicked, this, &EditorWindow::startButtonClick);
     connect(stopButton, &QPushButton::clicked, this, &EditorWindow::stopButtonClick);
     connect(inputSubmitButton, &QPushButton::clicked, this, &EditorWindow::submitInputClick);
+    connect(inputEventField, &QLineEdit::returnPressed, this, &EditorWindow::submitInputClick);
+
+    connect(inputEventField, &InputEventLineEdit::upArrowPressed, this, &EditorWindow::scrollInputComboxUp);
+    connect(inputEventField, &InputEventLineEdit::downArrowPressed, this, &EditorWindow::scrollInputComboxDown);
 
     connect(inputEventCombox, &QComboBox::currentTextChanged, this, &EditorWindow::inputComboxChanged);
 
@@ -952,3 +958,29 @@ void EditorWindow::editTransitionHanling(FSMTransition * transition){
     dialog.exec();
 }
 
+/*
+===========================
+      HOTKEY RELATED 
+===========================
+*/
+
+void EditorWindow::scrollInputComboxUp()
+{
+    if(this->inputEventCombox->count() <= 1) return;
+    this->inputEventCombox->setCurrentIndex((this->inputEventCombox->currentIndex() + 1) % this->inputEventCombox->count());
+}
+
+void EditorWindow::scrollInputComboxDown()
+{
+    if(this->inputEventCombox->count() <= 1) return;
+
+    if(this->inputEventCombox->currentIndex() == 0)
+    {
+        this->inputEventCombox->setCurrentIndex(this->inputEventCombox->count() - 1);
+    }
+    else
+    {
+        this->inputEventCombox->setCurrentIndex(this->inputEventCombox->currentIndex() - 1);
+    }
+    
+}

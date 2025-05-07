@@ -3,6 +3,7 @@
  *
  * @file editorwindow.h
  * @author  xkadlet00
+ * @author  xcervia00
  *
  * @brief window where FSM is edited
  *
@@ -21,6 +22,7 @@
 #include <QPlainTextEdit>
 
 #include "view/work_area/workarea.h"
+#include "view/input_event_edit/input_event_line_edit.h"
 #include "view/state_fsm_widget/statefsmwidget.h"
 #include "view/variable_display/variablesdisplay.h"
 #include "view/logging_window/loggingwindow.h"
@@ -263,6 +265,19 @@ private:
     void inputEvent(const QString &name, const QString &value) override;
 
     // ========================
+    //       Hotkeys 
+    // ========================
+
+    /**
+     * @brief Scrolls input combox up
+     */
+    void scrollInputComboxUp();
+    /**
+     * @brief Scrolls input combox down
+     */
+    void scrollInputComboxDown();
+
+    // ========================
     //       Attributes 
     // ========================
     
@@ -280,7 +295,7 @@ private:
     QPushButton * startButton = nullptr; ///< Button for starting interpretation
     QPushButton * inputSubmitButton = nullptr; ///< Button for submitting input
 
-    QLineEdit * inputEventField = nullptr; ///< Text field for inputting event value
+    InputEventLineEdit * inputEventField = nullptr; ///< Text field for inputting event value
     QComboBox * inputEventCombox = nullptr; ///< Combox for selecting which input to use
     QPlainTextEdit * outputEventField = nullptr; ///< The output of the FSM
 
