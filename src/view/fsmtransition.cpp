@@ -1,3 +1,14 @@
+/**
+ * Project name: ICP Project 2024/2025
+ *
+ * @file fsmtransition.cpp
+ * @author  xkadlet00
+ * @author  xcervia00
+ *
+ * @brief Transition definition
+ *
+ */
+
 #include "fsmtransition.h"
 #include <QPainter>
 

@@ -1,3 +1,14 @@
+/**
+ * Project name: ICP Project 2024/2025
+ *
+ * @file fsmtransition.
+ * @author  xkadlet00
+ * @author  xcervia00
+ *
+ * @brief Transition definition
+ *
+ */
+
 #ifndef FSMTRANSITION_H
 #define FSMTRANSITION_H
 

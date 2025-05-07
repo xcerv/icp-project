@@ -10,11 +10,13 @@
 
 #include "view/work_area/workarea.h"
 #include <QPainter>
+#include <QMouseEvent>
 
 WorkArea::WorkArea() {
     size.setX(0);
     size.setY(0);
     setFixedSize(0,0);
+    setMouseTracking(false);
 }
 
 WorkArea::~WorkArea(){}
@@ -43,3 +45,9 @@ void WorkArea::setSizeWA(int x, int y){
     setFixedSize(x,y);
 }
 
+void WorkArea::mouseMoveEvent(QMouseEvent *event) {
+    if (hasMouseTracking()) {
+        emit mouseMoved(event->pos());
+    }
+    QWidget::mouseMoveEvent(event);
+}

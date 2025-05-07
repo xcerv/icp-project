@@ -73,6 +73,9 @@ public:
      */
     void insertFSMState(QPoint position, QString name);
 
+private slots:
+    void workAreaMouseMoved(QPoint pos);
+
 public slots:
 
 
@@ -135,6 +138,17 @@ public slots:
      * @param position Position of the state
      */
     void handleActionAddState(QPoint position);
+
+    /**
+     * @brief Handler for moving a state
+     * @param position 
+     */
+    void handleActionMoveState(StateFSMWidget* movingState);
+
+    /**
+     * @brief Cancels movement of a state
+     */
+    void cancelActionMove();
 
     /* Work Area UI Elements */
     /**
@@ -315,11 +329,15 @@ private:
     // Error Handling
     bool isShowingError = false; ///< Is the FSM currently showing error message? 
 
+    // State moving Helpers
+    QString manipulatedState;///< A state that is being moved at the moment
+    StateFSMWidget* movingStateWidget = nullptr;
+    QLabel* ghostStateWidget = nullptr;
+    QPoint movingStateOrigPos; ///< Original position of the moving state
+    bool isStateMoving = false;///< wheter or not is any state moving
 
     // State Helpers
-    QString manipulatedState;///< A state that is being moved at the moment
     StateFSMWidget * activeState = nullptr;///< A state that is active at the moment
-    bool isStateMoving = false;///< wheter or not is any state moving
     bool isStateConnecting = false;///< whether or not is any state connecting to another -- via transition
 
     bool isInterpreting = false;///< the system is running

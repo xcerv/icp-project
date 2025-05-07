@@ -29,7 +29,9 @@ void EditorWindow::updateState(const QString &name, const QPoint &pos)
             if(c.first == name || c.second == name){
                 auto src = allStates[c.first];
                 auto dst = allStates[c.second];
-                allTransitionsUI[c]->relocateTransition(src->getPosition(),src->getSize(),dst->getPosition(),dst->getSize());
+                if(src && dst){
+                    allTransitionsUI[c]->relocateTransition(src->getPosition(),src->getSize(),dst->getPosition(),dst->getSize());
+                }
             }
         }
     }else{

@@ -127,6 +127,9 @@ EditorWindow::EditorWindow(QWidget *parent)
     // = Execture =
     connect(ui->actionStartInterpret, &QAction::triggered, this, &EditorWindow::startButtonClick);
     connect(ui->actionStopInterpret, &QAction::triggered, this, &EditorWindow::stopButtonClick);
+
+    // Moving
+    connect(workArea, &WorkArea::mouseMoved, this, &EditorWindow::workAreaMouseMoved);
 }
 
 EditorWindow::~EditorWindow()
@@ -361,6 +364,32 @@ void EditorWindow::handleActionAddState(QPoint position)
     }
 }
 
+void EditorWindow::handleActionMoveState(StateFSMWidget *movingState)
+{
+    if(movingState == nullptr) return;
+
+    isStateMoving = true;
+    movingStateWidget = movingState;
+    movingStateOrigPos = movingState->getPosition();
+    manipulatedState = movingState->getName();
+
+    if (!ghostStateWidget) {
+        ghostStateWidget = new QLabel(workArea);
+        ghostStateWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
+    }
+
+    auto size = movingStateWidget->getSize();
+    ghostStateWidget->setFixedSize(size.x(), size.y());
+    ghostStateWidget->move(workArea->mapFromGlobal(workArea->mapToGlobal(movingStateOrigPos)));
+    ghostStateWidget->show();
+    ghostStateWidget->raise();
+
+    movingStateWidget->hide(); // Maybe??
+
+    QApplication::setOverrideCursor(Qt::SizeAllCursor);
+    workArea->setMouseTracking(true);
+}
+
 /*
 ===========================
      VARIABLE RELATED 
@@ -372,7 +401,7 @@ void EditorWindow::variableToBeEdited(enum variableType type){
         isStateConnecting = false;
     }
     if(isStateMoving){
-        isStateMoving = false;
+        cancelActionMove();
     }
 
     // make dialog for getting neccassary info
@@ -478,7 +507,7 @@ void EditorWindow::variableToBeAdded(enum variableType type){
     }
 
     if(isStateMoving){
-        isStateMoving = false;
+        cancelActionMove();
     }
 
     // make dialog for getting neccassary info
@@ -584,10 +613,18 @@ void EditorWindow::resizeWorkArea(int width, int height){
 
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText(QString::number(position.x()) + ", " + QString::number(position.y()));
-    if(isStateMoving){
-        if(checkIfFSMFits(position, allStates[manipulatedState])){
+
+
+    if(isStateMoving && movingStateWidget && ghostStateWidget){
+        QApplication::restoreOverrideCursor();
+        workArea->setMouseTracking(false);
+
+        ghostStateWidget->hide();
+        movingStateWidget->show();
+
+        if(checkIfFSMFits(position, movingStateWidget)){
             model->updateState(manipulatedState, position);
-            manipulatedState = nullptr;
+            manipulatedState.clear();
         }else{
             QMessageBox::warning(this,"Warning","State did not fit.");
         }
@@ -601,7 +638,9 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 
 void EditorWindow::workAreaRightClick(QPoint position){
     if(isStateMoving){
+        this->cancelActionMove();
         isStateMoving = false;
+        return;
     }
     if(isStateConnecting){
         isStateConnecting = false;
@@ -719,7 +758,7 @@ void EditorWindow::stateFSMRightClick(){
     }
 
     if(isStateMoving){
-        isStateMoving = false;
+        cancelActionMove();
     }
 
     if(isInterpreting){
@@ -785,18 +824,25 @@ void EditorWindow::stateFSMRightClick(){
     });
 
     // Move the state
-    connect(moveStateAction, &QAction::triggered, this, [=](bool){
-        isStateMoving = true;
-        manipulatedState = stateClicked->getName();
+    connect(moveStateAction, &QAction::triggered, this, [this, stateClicked](bool){
+        this->handleActionMoveState(stateClicked);
     });
     menu.exec(QCursor::pos());
 }
 
 void EditorWindow::stateFSMLeftClick(){
     StateFSMWidget* stateClicked = qobject_cast<StateFSMWidget*>(sender()); // get state user clicked on
+    if(stateClicked == nullptr) return;
+
     if(isStateConnecting){
         model->updateTransition(0,manipulatedState,stateClicked->getName());
         isStateConnecting = false;
+        return;
+    }
+
+    if(!isStateMoving)
+    {
+        this->handleActionMoveState(stateClicked);
     }
 }
 
@@ -834,7 +880,7 @@ bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
 
 void EditorWindow::variableToBeDeleted(enum variableType type){
     if(isStateMoving){
-        isStateMoving = false;
+        cancelActionMove();
     }
 
     if(isStateConnecting){
@@ -1063,4 +1109,35 @@ void EditorWindow::scrollInputComboxDown()
         this->inputEventCombox->setCurrentIndex(this->inputEventCombox->currentIndex() - 1);
     }
     
+}
+
+
+void EditorWindow::workAreaMouseMoved(QPoint pos) {
+    if (isStateMoving && ghostStateWidget && movingStateWidget) {
+  
+        ghostStateWidget->move(pos);
+
+        if (checkIfFSMFits(pos, movingStateWidget)) {
+            ghostStateWidget->setStyleSheet("QLabel { border: 2px dashed green; background-color: rgba(200, 255, 200, 100); }");
+        } else {
+            ghostStateWidget->setStyleSheet("QLabel { border: 2px dashed red; background-color: rgba(255, 200, 200, 100); }");
+        }
+    }
+}
+
+void EditorWindow::cancelActionMove()
+{
+    if (isStateMoving && movingStateWidget) {
+        QApplication::restoreOverrideCursor();
+        workArea->setMouseTracking(false);
+
+        if (ghostStateWidget) {
+            ghostStateWidget->hide();
+        }
+        movingStateWidget->move(movingStateOrigPos);
+        movingStateWidget->show();
+
+        isStateMoving = false;
+        movingStateWidget = nullptr;
+    }
 }

@@ -54,12 +54,23 @@ signals:
      * @param position of left click within work area
      */
     void leftClick(QPoint position);
+    /**
+     * @brief Signal fired when mouse was moved
+     * @param pos The position to which it was moved
+     */
+    void mouseMoved(QPoint pos);
 protected:
     /**
      * @brief paints work area white
      * @param event
      */
     void paintEvent(QPaintEvent *event) override;
+
+    /**
+     * @brief Event fired when mouse event happens
+     * @param event The mouseEvent
+     */
+    void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
     QPoint size;//current size of work area
