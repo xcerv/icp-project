@@ -118,6 +118,11 @@ EditorWindow::~EditorWindow()
 
 void EditorWindow::startButtonClick()
 {
+    if(isInterpreting)
+        return;
+
+    isInterpreting = true;
+
     // Allow only variables set prior to interpretation
     QList<QString> keys = allVars[INPUTV].keys();
     for (const QString &key : keys) {
@@ -138,6 +143,10 @@ void EditorWindow::startButtonClick()
 
 void EditorWindow::stopButtonClick()
 {
+    if(!isInterpreting)
+        return;
+
+    isInterpreting = false;
     // Remove all input events after interpretation ended
     this->model->stopInterpretation();
 
