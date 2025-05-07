@@ -12,9 +12,9 @@ Output:
 Variables:
     int timeout = 5000
 States:
-    IDLE:                       { if {icp.defined("set_to")} { icp.set("timeout", Number(valueof("set_to")));};  icp.output("out", 0);  icp.output("rt", 0); }
-    ACTIVE:                     { if {icp.defined("set_to")} { icp.set("timeout", Number(valueof("set_to")));};  icp.output("out", 1);  icp.output("rt", icp.get("timeout")); }
-    TIMING:                     { if {icp.defined("set_to")} { icp.set("timeout", Number(valueof("set_to")));};  icp.output("rt", icp.get("timeout") - icp.elapsed() ); }
+    IDLE (250,100):                       { if {icp.defined("set_to")} { icp.set("timeout", Number(valueof("set_to")));};  icp.output("out", 0);  icp.output("rt", 0); }
+    ACTIVE (750,100):                     { if {icp.defined("set_to")} { icp.set("timeout", Number(valueof("set_to")));};  icp.output("out", 1);  icp.output("rt", icp.get("timeout")); }
+    TIMING (500,250):                     { if {icp.defined("set_to")} { icp.set("timeout", Number(valueof("set_to")));};  icp.output("rt", icp.get("timeout") - icp.elapsed() ); }
 Transitions:
     IDLE -> ACTIVE:             { in [ Number(valueof("in")) == 1  ] }
     ACTIVE -> TIMING:           { in [ Number(valueof("in")) == 0  ] }
