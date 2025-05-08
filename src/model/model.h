@@ -81,8 +81,8 @@ class FsmModel : public QObject, public FsmInterface
 
         FsmInterface* view = nullptr; ///< Reference to view
 
-        QHash<QString,ActionState*> states; ///< List of all states used within the FSM
-        QHash<size_t,CombinedTransition*> transitions;
+        QHash<QString,ActionState*> states; ///< HTable of all states used within the FSM
+        QHash<size_t,CombinedTransition*> transitions; ///< HTable of all the transitions identified by unique ID
         QHash<QString,QVariant> varsInternal; ///< Internal variable - may be of variable type
         QHash<QString,QString> varsInput; ///< Input variable - only string format
         QHash<QString,QString> varsOutput; ///< Output variable - only string format
