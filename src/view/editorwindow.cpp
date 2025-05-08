@@ -1211,8 +1211,8 @@ void EditorWindow::editTransitionHanling(FSMTransition * transition){
     QDialogButtonBox *buttonBox;
     if(isInterpreting){
         buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
-        conditionEdit->setStyleSheet("background-color: transparent");
-        conditionEdit->setFrame(false);
+        //conditionEdit->setStyleSheet("background-color: transparent");
+        //conditionEdit->setFrame(false);
     }else{
         buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
         QPushButton *deleteButton = new QPushButton("Delete", &dialog);
