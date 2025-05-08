@@ -26,7 +26,7 @@ class WorkArea : public QWidget
     Q_OBJECT
 public:
     WorkArea();
-    ~WorkArea();
+    virtual ~WorkArea();
     /**
      * @brief mousePressEvent to know when user is clicking into work area
      * @param event user input from mouse

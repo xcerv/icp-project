@@ -30,7 +30,7 @@ class VariablesDisplay : public QWidget
 public:
 
     explicit VariablesDisplay(QWidget *parent = nullptr);
-    ~VariablesDisplay();
+    virtual ~VariablesDisplay();
 
 
     /**

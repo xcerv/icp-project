@@ -29,7 +29,7 @@ public:
     QtMessageHandler originalHandler; ///< The default handler of messages
 
     explicit LoggingWindow(QWidget *parent = nullptr);
-    ~LoggingWindow();
+    virtual ~LoggingWindow();
 
     /**
      * @brief Handler for all qMessages ==> redirects them to logger 

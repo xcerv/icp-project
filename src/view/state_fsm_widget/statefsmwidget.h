@@ -28,7 +28,7 @@ class StateFSMWidget : public QWidget
 
 public:
     explicit StateFSMWidget(QPoint pos, QWidget *parent = nullptr);
-    ~StateFSMWidget();
+    virtual ~StateFSMWidget();
     /**
      * @brief adds mousePressEvent
      * @param event what happend (mouse left click / mouse right click)

@@ -48,7 +48,7 @@ class EditorWindow: public QMainWindow, public FsmInterface
 public:
 
     EditorWindow(QWidget *parent = nullptr);
-    ~EditorWindow();
+    virtual ~EditorWindow();
 
     
     /**

@@ -260,8 +260,8 @@ void FsmModel::destroyState(const QString &name)
         this->states.remove(name);
 
         // Delete the state itself
-        delete it;
-        it = nullptr;
+        // delete it;
+        // it = nullptr;
     )
 
     qInfo() << "MODEL: Destroyed state" << name;
@@ -303,8 +303,8 @@ void FsmModel::destroyTransition(size_t transitionId)
         this->transitions.remove(transitionId); 
 
         // Free the transition itself
-        delete it;
-        it = nullptr;
+        // delete it;
+        // it = nullptr;
     )
 
     qInfo() << "MODEL: Destroyed transition " << transitionId;

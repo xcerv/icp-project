@@ -30,7 +30,7 @@ public:
      */
     void relocateTransition(QPoint startPoint, QPoint startSize, QPoint finPoint, QPoint finSize);
 
-    ~FSMTransition();
+    virtual ~FSMTransition();
 
     void addTransition(size_t num);
     void subTransition(size_t num);
