@@ -12,14 +12,14 @@ Output:
 Variables:
     int timeout = 5000
 States:
-    IDLE (250,100):                       { if {icp.defined("set_to")} { icp.set("timeout", Number(icp.valueof("set_to")));};  icp.output("out", 0);  icp.output("rt", 0); }
-    ACTIVE (750,100):                     { if {icp.defined("set_to")} { icp.set("timeout", Number(icp.valueof("set_to")));};  icp.output("out", 1);  icp.output("rt", icp.get("timeout")); }
-    TIMING (500,250):                     { if {icp.defined("set_to")} { icp.set("timeout", Number(icp.valueof("set_to")));};  icp.output("rt", icp.get("timeout") - icp.elapsed() ); }
+    IDLE (250,100):             { if (icp.defined("set_to")) { icp.set("timeout", Number(icp.valueof("set_to")));}  icp.output("out", "OUT: " + 0);  icp.output("rt", "RT: " + 0); }
+    ACTIVE (750,100):           { if (icp.defined("set_to")) { icp.set("timeout", Number(icp.valueof("set_to")));}  icp.output("out", "OUT: " + 1);  icp.output("rt", "RT: " + icp.get("timeout")); }
+    TIMING (500,250):           { if (icp.defined("set_to")) { icp.set("timeout", Number(icp.valueof("set_to")));}  icp.output("rt", "TIME LEFT: " + Math.max(icp.get("timeout") - Number(icp.elapsed()), 0) ); }
 Transitions:
     IDLE -> ACTIVE:             { in [ Number(icp.valueof("in")) == 1  ] }
     ACTIVE -> TIMING:           { in [ Number(icp.valueof("in")) == 0  ] }
     TIMING -> ACTIVE:           { in [ Number(icp.valueof("in")) == 1  ] }
-    TIMING -> IDLE:             { @ icp.get("timeout") }
+    TIMING -> IDLE:             { @ icp.valueof("timeout") }
     IDLE -> IDLE:               { set_to }
     ACTIVE -> ACTIVE:           { set_to }
     TIMING -> TIMING:           { set_to }
