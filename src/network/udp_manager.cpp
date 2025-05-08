@@ -16,7 +16,7 @@
 #include <QHostAddress>
 #include <QAbstractSocket>
 
-bool FsmNetworkReceiver::parsePacket(const QByteArray &data, QString &outName, QString &outValue)
+bool FsmNetworkManager::parsePacket(const QByteArray &data, QString &outName, QString &outValue)
 {
     if(data.isEmpty())
         return false;
@@ -40,17 +40,17 @@ bool FsmNetworkReceiver::parsePacket(const QByteArray &data, QString &outName, Q
     return true;
 }
 
-FsmNetworkReceiver::FsmNetworkReceiver(QObject *parent)
+FsmNetworkManager::FsmNetworkManager(QObject *parent)
     : QObject(parent)
 {
     // New Socket
     m_udpSocket = new QUdpSocket(this);
 
     // Received packet ==> process signal
-    connect(m_udpSocket, &QUdpSocket::readyRead, this, &FsmNetworkReceiver::processReceivedPacket);
+    connect(m_udpSocket, &QUdpSocket::readyRead, this, &FsmNetworkManager::processReceivedPacket);
 }
 
-FsmNetworkReceiver::~FsmNetworkReceiver()
+FsmNetworkManager::~FsmNetworkManager()
 {
     if (m_udpSocket != nullptr && m_udpSocket->state() != QAbstractSocket::UnconnectedState) 
     {
@@ -58,7 +58,7 @@ FsmNetworkReceiver::~FsmNetworkReceiver()
     }
 }
 
-bool FsmNetworkReceiver::startListening(const QHostAddress &address, quint16 port)
+bool FsmNetworkManager::startListening(const QHostAddress &address, quint16 port)
 {
     // Is socket set?
     if(m_udpSocket == nullptr)
@@ -75,7 +75,7 @@ bool FsmNetworkReceiver::startListening(const QHostAddress &address, quint16 por
     return true;
 }
 
-void FsmNetworkReceiver::processReceivedPacket()
+void FsmNetworkManager::processReceivedPacket()
 {
     if(m_udpSocket == nullptr)
         return;
@@ -105,13 +105,13 @@ void FsmNetworkReceiver::processReceivedPacket()
     }
 }
 
-void FsmNetworkReceiver::stopListening()
+void FsmNetworkManager::stopListening()
 {
     if(this->isActive())
         m_udpSocket->close();
 }
 
-bool FsmNetworkReceiver::isActive()
+bool FsmNetworkManager::isActive()
 {
     return m_udpSocket != nullptr && m_udpSocket->state() == QAbstractSocket::BoundState;;
 }

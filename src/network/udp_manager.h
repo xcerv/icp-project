@@ -24,7 +24,7 @@
 /**
  * @brief Class for listening to input from network and converting it to format that FsmModel (interpreter) understands
  */
-class FsmNetworkReceiver: public QObject
+class FsmNetworkManager: public QObject
 {
     Q_OBJECT
 
@@ -44,12 +44,12 @@ class FsmNetworkReceiver: public QObject
          * @brief Constructor for UDP message receiver
          * @param parent The parent object
          */
-        FsmNetworkReceiver(QObject *parent = nullptr);
+        FsmNetworkManager(QObject *parent = nullptr);
 
         /**
          * @brief Destructor of UDP message receiver
          */
-        ~FsmNetworkReceiver();
+        ~FsmNetworkManager();
 
         /**
          * @brief Begins to listen with UDP packet
