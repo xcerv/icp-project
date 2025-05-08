@@ -389,27 +389,57 @@ void EditorWindow::handleActionAbout()
 
 void EditorWindow::handleActionHotkeys()
 {
-    //::renaminigWindow()
-    QMessageBox::information(this,"Hotkeys",
-        QStringLiteral(
-            "A --> Add new state\n\n"
-            "C --> Connect states\n\n"
-            "E --> Edit state action\n\n"
-            "D --> Delete state\n\n"
-            "S --> Set state to starting/initial\n\n"
-            "R --> Rename state\n\n"
-            "\n"
-            "SPACE --> Toggle interpretation\n\n"
-            "\n"
-            "CTRL + S --> Save current FSM\n\n"
-            "CTRL + SHIFT +  S --> Save current FSM to new file\n\n"
-            "CTRL + O --> Open FSM\n\n"
-            "CTRL + N --> New FSM\n\n"
-            "\n"
-            "F5 --> Rename FSM\n\n"
-            "F9 --> Resize Work Area"
-        )    
-    );
+    //::renamingWindow()
+    QDialog dialog(this);
+    dialog.setWindowTitle("Hotkeys");
+
+    QVBoxLayout* mainLayout = new QVBoxLayout(&dialog);
+
+    QScrollArea* scrollArea = new QScrollArea(&dialog);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setFrameShape(QFrame::NoFrame);
+
+    QWidget* scrollWidget = new QWidget();
+    QFormLayout* form = new QFormLayout;
+    scrollWidget->setLayout(form);
+
+
+    // hotkeys
+    QVector<QPair<QString, QString>> hotkeys = {
+        {"<h2>STATE ACTIONS</h2>", ""},
+        {"A", "Add new state"},
+        {"C", "Connect states"},
+        {"E", "Edit state action"},
+        {"D", "Delete state"},
+        {"S", "Set state to starting/initial"},
+        {"R", "Rename state"},
+        {"", ""},
+        {"<h2>FSM ACTIONS</h2>",""},
+        {"SPACE","Toggle interpretation"},
+        {"CTRL + S","Save current FSM"},
+        {"CTRL + SHIFT + S","Save current FSM to new file"},
+        {"CTRL + O","Open FSM"},
+        {"CTRL + N","New FSM"},
+        {"F5","Rename FSM"},
+        {"F9","Resize Work Area"}
+    };
+
+    for (const auto &hotkey : hotkeys) {
+        form->addRow(new QLabel("<b>" + hotkey.first + "</b>"), new QLabel(hotkey.second));
+    }
+
+    // Finalize scroll area
+    scrollArea->setWidget(scrollWidget);
+    mainLayout->addWidget(scrollArea);
+
+    // OK button
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok, Qt::Horizontal, &dialog);
+    connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    mainLayout->addWidget(buttonBox);
+
+    dialog.resize(500,300);
+    dialog.exec();
+
 }
 
 void EditorWindow::handleActionRenameFsm()
