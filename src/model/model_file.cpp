@@ -174,6 +174,9 @@ bool FsmModel::parseTransitionLine(const QString &line) {
 
 void FsmModel::loadFromStream(QTextStream &in)
 {
+    // Clear current FSM data before loading a new one
+    this->cleanup();
+
     // Section tracking for which part of the file is being parsed
     QString line;
 
@@ -355,9 +358,6 @@ void FsmModel::saveToStream(QTextStream &out)
 
 void FsmModel::loadFile(const QString &filename)
 {
-    // Clear current FSM data before loading a new one
-    this->cleanup();
-
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         throwError(ERROR_GENERIC, "Couldn't open the file");
