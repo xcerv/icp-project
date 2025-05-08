@@ -138,14 +138,38 @@ QJSValue ScriptHelper::valueof(const QString &name)
 
 bool ScriptHelper::defined(const QString &name)
 {
-    return m_model->varsInternal.contains(name) 
-            || m_model->varsInput.contains(name)
-            || m_model->varsOutput.contains(name);
+    // Internal variable is considered to be always defined
+    if(m_model->varsInternal.contains(name)){
+        return true;
+    }
+
+    // Check if input variable with he name is defined
+    auto it_in = m_model->varsInput.constFind(name);
+    if (it_in != m_model->varsInput.constEnd()) { 
+        if (!it_in.value().isEmpty()) {
+            return true;
+        }
+    }
+
+    // Check if output variable with he name is defined
+    auto it_out = m_model->varsOutput.constFind(name);
+    if (it_out != m_model->varsOutput.constEnd()) { 
+        if (!it_out.value().isEmpty()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 qint64 ScriptHelper::elapsed()
 {
-    return static_cast<ActionState*>(m_model->getActiveState())->getElapsed();
+    return static_cast<ActionState*>(ActionState::getLastState())->getElapsed();
+}
+
+qint64 ScriptHelper::elapsedEntry()
+{
+    return static_cast<ActionState*>(ActionState::getLastState())->getElapsedSinceEntry();
 }
 
 qint32 ScriptHelper::atoi(const QJSValue &value)
