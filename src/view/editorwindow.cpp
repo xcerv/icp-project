@@ -381,7 +381,7 @@ void EditorWindow::handleActionAbout()
 
 void EditorWindow::handleActionHotkeys()
 {
-    QMessageBox::information(this,"About",
+    QMessageBox::information(this,"Hotkeys",
         QStringLiteral(
             "A --> Add new state\n\n"
             "C --> Connect states\n\n"
@@ -394,9 +394,9 @@ void EditorWindow::handleActionHotkeys()
             "CTRL + O --> Open FSM\n\n"
             "CTRL + N --> New FSM\n\n"
             "F5 --> Rename FSM\n\n"
-            "F9 --> Resize Work Area\n\n"
+            "F9 --> Resize Work Area"
         )    
-        );
+    );
 }
 
 void EditorWindow::handleActionRenameFsm()
