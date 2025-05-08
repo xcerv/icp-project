@@ -30,7 +30,8 @@ class ActionState : public QState
         QPoint m_position; ///< The current position of the state in editor
 
         static QPointer<ActionState> m_lastState; ///< last visited state
-        QElapsedTimer m_timeVisited; ///< Time the state was entered
+        QElapsedTimer m_timeVisited; ///< Time the state was entered without changing to any other state
+        QElapsedTimer m_timeSinceEntry; ///< Time the state was entered
         
         void onEntry(QEvent *event) override; ///< Method that is executed when state is entered 
 
@@ -95,6 +96,12 @@ class ActionState : public QState
          * @return Returns milliseconds spent in this state as qint64
          */
         qint64 getElapsed() const;
+
+        /**
+         * @brief Returns the amount of time spent in this state
+         * @return Returns milliseconds spent in this state as qint64
+         */
+        qint64 getElapsedSinceEntry() const;
 };
 
 
