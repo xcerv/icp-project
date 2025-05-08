@@ -11,6 +11,7 @@
 
 #include "editorwindow.h"
 #include "mvc_interface.h"
+#include <QAction>
 #include <QObject>
 #include <QString>
 #include <QPoint>
@@ -113,7 +114,10 @@ void EditorWindow::updateActiveState(const QString &name)
     activeState = allStates[name];
     activeState->recolor("navy","white","w");
 
-    this->startButton->setEnabled(true);
+    if(!isInterpreting){
+        this->startButton->setEnabled(true);
+        this->startInterpretationAct->setEnabled(true);
+    }
 }
 
 void EditorWindow::updateCondition(size_t transitionId, const QString &condition)
@@ -180,6 +184,7 @@ void EditorWindow::destroyState(const QString &name)
     if(w == activeState){
         activeState = nullptr;
         this->startButton->setEnabled(false);
+        this->startInterpretationAct->setEnabled(false);
     }
     w->blockSignals(true);
     QObject::disconnect(w, nullptr, nullptr, nullptr);

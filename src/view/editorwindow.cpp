@@ -67,6 +67,8 @@ EditorWindow::EditorWindow(QWidget *parent)
     // Link important elements to attributes
     stopButton = ui->stopBtn;
     startButton = ui->startBtn;
+    stopInterpretationAct = ui->actionStopInterpret;
+    startInterpretationAct = ui->actionStartInterpret;
     inputSubmitButton = ui->submitBtn;
 
     inputEventField = static_cast<InputEventLineEdit*>(ui->inputField);
@@ -86,6 +88,8 @@ EditorWindow::EditorWindow(QWidget *parent)
     // Don't enable buttons with space by default and handle it manually
     stopButton->setFocusPolicy(Qt::NoFocus);
     startButton->setFocusPolicy(Qt::NoFocus);
+    this->stopInterpretationAct->setEnabled(false);
+    this->startInterpretationAct->setEnabled(false);
     QAction* toggleInterpretation = new QAction("Toggle Interpret", this);
     this->addAction(toggleInterpretation);
     connect(toggleInterpretation, &QAction::triggered, this, &EditorWindow::handleActionToggleInterpretation);
@@ -217,6 +221,9 @@ void EditorWindow::startButtonClick()
     this->stopButton->setEnabled(true);
     this->startButton->setEnabled(false);
 
+    this->stopInterpretationAct->setEnabled(true);
+    this->startInterpretationAct->setEnabled(false);
+
     // Disable variable editing
     this->variablesDisplay->setActButtonsAll(false);
 
@@ -237,6 +244,9 @@ void EditorWindow::stopButtonClick()
     this->inputSubmitButton->setEnabled(false);
     this->stopButton->setEnabled(false);
     this->startButton->setEnabled(true);
+
+    this->stopInterpretationAct->setEnabled(false);
+    this->startInterpretationAct->setEnabled(true);
 
     this->inputEventCombox->clear();
     this->inputEventCombox->addItem("..."); // Add just ... by default
@@ -1130,7 +1140,7 @@ QString EditorWindow::renamingWindow(QString title){
 
 void EditorWindow::insertFSMState(QPoint position, QString name){
     // Enable interpretation only once at least one state exits
-    this->startButton->setEnabled(true);
+    //this->startButton->setEnabled(true);
 
     StateFSMWidget * s = new StateFSMWidget(position,this);
     s->setParent(workArea);

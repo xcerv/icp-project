@@ -366,6 +366,8 @@ private:
     // Interpreter buttons
     QPushButton * stopButton = nullptr; ///< Button for stopping interpreattion
     QPushButton * startButton = nullptr; ///< Button for starting interpretation
+    QAction * stopInterpretationAct = nullptr;
+    QAction * startInterpretationAct = nullptr;
     QPushButton * inputSubmitButton = nullptr; ///< Button for submitting input
 
     InputEventLineEdit * inputEventField = nullptr; ///< Text field for inputting event value
