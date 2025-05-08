@@ -389,7 +389,6 @@ void EditorWindow::handleActionAbout()
 
 void EditorWindow::handleActionHotkeys()
 {
-    //::renamingWindow()
     QDialog dialog(this);
     dialog.setWindowTitle("Hotkeys");
 

@@ -146,7 +146,7 @@ QTextEdit, QListView {
            <x>0</x>
            <y>0</y>
            <width>228</width>
-           <height>318</height>
+           <height>317</height>
           </rect>
          </property>
          <layout class="QGridLayout" name="gridLayout"/>
@@ -332,7 +332,6 @@ QPushButton:disabled {
     <font>
      <family>Nimbus Mono PS</family>
      <pointsize>-1</pointsize>
-     <weight>50</weight>
      <italic>false</italic>
      <bold>false</bold>
     </font>
@@ -412,12 +411,12 @@ QPushButton:disabled {
   </action>
   <action name="actionHelp">
    <property name="text">
-    <string>Help</string>
+    <string>Help ...</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>About ...</string>
    </property>
   </action>
   <action name="actionNetStartListening">
@@ -452,7 +451,7 @@ QPushButton:disabled {
   </action>
   <action name="actionHotkeys">
    <property name="text">
-    <string>Hotkeys</string>
+    <string>Hotkeys ...</string>
    </property>
   </action>
  </widget>
