@@ -199,6 +199,7 @@ EditorWindow::~EditorWindow()
 void EditorWindow::startButtonClick()
 {
     cancelActionMove();
+    cancelActionConnect();
 
     if(isInterpreting)
         return;
@@ -502,7 +503,7 @@ void EditorWindow::handleActionConnectState(StateFSMWidget *state)
     if(state == nullptr || isInterpreting) return;
 
     // Cursor to cross
-    QApplication::setOverrideCursor(Qt::CrossCursor);
+    QApplication::setOverrideCursor(Qt::CrossCursor);    
 
     isStateConnecting = true;
     manipulatedState = state->getName();
@@ -764,7 +765,7 @@ void EditorWindow::workAreaLeftClick(QPoint position){
 
 
     if(isStateMoving && movingStateWidget && ghostStateWidget){
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
         workArea->setMouseTracking(false);
 
         ghostStateWidget->hide();
@@ -963,7 +964,7 @@ void EditorWindow::stateFSMLeftClick(){
     // Finalized connection
     if(isStateConnecting){
         model->updateTransition(0, manipulatedState, stateClicked->getName());
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
         isStateConnecting = false;
         return;
     }
@@ -1314,7 +1315,7 @@ void EditorWindow::workAreaMouseMoved(QPoint pos) {
 void EditorWindow::cancelActionMove()
 {
     if (isStateMoving && movingStateWidget) {
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
         workArea->setMouseTracking(false);
 
         for(const auto &val : allStates.values()){
@@ -1338,7 +1339,7 @@ void EditorWindow::cancelActionConnect()
 {
     if(isStateConnecting)
     {
-        QApplication::restoreOverrideCursor();
+        QApplication::setOverrideCursor(Qt::ArrowCursor);
         isStateConnecting = false;
     }
 }
