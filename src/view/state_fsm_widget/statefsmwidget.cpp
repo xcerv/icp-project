@@ -89,8 +89,10 @@ QPoint StateFSMWidget::getPosition(){
 }
 
 void StateFSMWidget::setPosition(QPoint pos){
-    position = pos;
-    move(pos);
+    if (position != pos){
+        position = pos;
+        move(pos);
+    } 
 }
 
 void StateFSMWidget::recolor(const QString& c1, const QString& c2, const QString& ar) {

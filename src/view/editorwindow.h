@@ -134,11 +134,40 @@ public slots:
      */
     void handleActionHotkeys();
     /**
+     * @brief Renames FSM
+     */
+    void handleActionRenameFsm();
+    /**
+     * @brief Resizes the work area
+     */
+    void handleActionResize();
+    /**
+     * @brief Renames a state
+     */
+    void handleActionRenameState(StateFSMWidget* state);
+    /**
+     * @brief Edits a state action
+     */
+    void handleActionEditState(StateFSMWidget* state);
+    /**
+     * @brief Makes a state active/inintial
+     */
+    void handleActionActiveState(StateFSMWidget* state);
+    /**
+     * @brief Deletes a hover-over state
+     */
+    void handleActionDeleteState(StateFSMWidget* state);
+    /**
      * @brief Inserts a new state
      * @param position Position of the state
      */
     void handleActionAddState(QPoint position);
 
+    /**
+     * @brief Handler for moving a state
+     * @param position 
+     */
+    void handleActionConnectState(StateFSMWidget* state);
     /**
      * @brief Handler for moving a state
      * @param position 
@@ -149,6 +178,22 @@ public slots:
      * @brief Cancels movement of a state
      */
     void cancelActionMove();
+
+    /**
+     * @brief Cancels connecting action of a state
+     */
+    void cancelActionConnect();
+
+    /**
+     * @brief Dynamically update transitions when moving an object
+     */
+    void movementUpdateTransitions();
+
+    /**
+     * @brief Returns the StateFSMWidget that is pointed at by the mouse
+     * @return Pointer to the FSM widget or nullptr if nothing is found
+     */
+    StateFSMWidget* getHoveredState();
 
     /* Work Area UI Elements */
     /**
