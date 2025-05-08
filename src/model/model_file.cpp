@@ -172,7 +172,7 @@ bool FsmModel::parseTransitionLine(const QString &line) {
     return true;
 }
 
-void FsmModel::loadToStream(QTextStream &in)
+void FsmModel::loadFromStream(QTextStream &in)
 {
     // Section tracking for which part of the file is being parsed
     QString line;
@@ -365,7 +365,7 @@ void FsmModel::loadFile(const QString &filename)
     }
 
     QTextStream stream(&file);
-    this->loadToStream(stream);
+    this->loadFromStream(stream);
 
     file.close();
 }

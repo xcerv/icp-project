@@ -202,3 +202,13 @@ bool FsmModel::emptyStates() const
 {
     return this->getActiveState() == nullptr;
 }
+
+void FsmModel::loadStream(QTextStream &stream)
+{
+    this->loadFromStream(stream);
+}
+
+void FsmModel::saveStream(QTextStream &stream)
+{
+    this->saveToStream(stream);
+}

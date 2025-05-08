@@ -13,6 +13,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QTextStream>
 
 namespace FsmFormats
 {
@@ -180,6 +181,18 @@ class FsmInterface
          * @param filename The path where to save the file
          */
         virtual void saveFile(const QString &filename) = 0;
+        
+        /**
+         * @brief Loads a defined fsm from a stream
+         * @param stream Stream from which to load
+         */
+        virtual void loadStream(QTextStream &stream) = 0;
+
+        /**
+         * @brief Saves FSM to given stream
+         * @param stream Stream to which to save
+         */
+        virtual void saveStream(QTextStream &stream) = 0;
 
         /**
          * @brief Renames the entire FSM

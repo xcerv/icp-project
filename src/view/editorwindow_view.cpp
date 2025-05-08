@@ -299,6 +299,18 @@ void EditorWindow::saveFile(const QString &filename)
     return;
 }
 
+void EditorWindow::loadStream(QTextStream &stream)
+{
+    (void)stream;
+    return;
+}
+
+void EditorWindow::saveStream(QTextStream &stream)
+{
+    (void)stream;
+    return;
+}
+
 void EditorWindow::renameFsm(const QString &name)
 {
     setWindowTitle(name);

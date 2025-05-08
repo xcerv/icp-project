@@ -20,7 +20,6 @@ bool FsmNetworkManager::parsePacket(const QByteArray &data, QString &outName, QS
 {
     if(data.isEmpty())
         return false;
-
         
     auto separatorName = data.indexOf('\0');
     if(separatorName < 0 || separatorName >= data.size()-1){

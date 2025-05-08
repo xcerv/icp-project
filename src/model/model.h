@@ -130,6 +130,8 @@ class FsmModel : public QObject, public FsmInterface
 
         void loadFile(const QString &filename) override;
         void saveFile(const QString &filename) override;
+        void loadStream(QTextStream &stream) override;
+        void saveStream(QTextStream &stream) override;
 
         void renameFsm(const QString &name) override;
 
@@ -158,7 +160,7 @@ class FsmModel : public QObject, public FsmInterface
          * @brief Loads model internal representation from given stream
          * @param in The stream from which to read
          */
-        void loadToStream(QTextStream &in);
+        void loadFromStream(QTextStream &in);
 
         /**
          * @brief Saves model's state to given stream

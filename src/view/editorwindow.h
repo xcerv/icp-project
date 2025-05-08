@@ -319,6 +319,8 @@ private:
 
     void loadFile(const QString &filename) override;
     void saveFile(const QString &filename) override;
+    void loadStream(QTextStream &stream) override;
+    void saveStream(QTextStream &stream) override;
 
     void renameFsm(const QString &name) override;
 
