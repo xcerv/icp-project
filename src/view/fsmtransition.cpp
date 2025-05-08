@@ -26,6 +26,19 @@ FSMTransition::FSMTransition(QWidget *parent)
     editTransitionBtn->show();
     btnSize = QPoint(20, 20);
     editTransitionBtn->setFixedSize(btnSize.x(),btnSize.y());
+    editTransitionBtn->setStyleSheet("QPushButton{"
+                                     "  border-width: 1px;"
+                                     "  border-color: black;"
+                                     "  border-style: solid;"
+                                     "  background-color: white;"
+                                     "  color: navy;"
+                                     "  border-radius: 10px;"
+                                     "}"
+                                     "QPushButton::hover{"
+                                     "  background-color: navy;"
+                                     "  color: white"
+                                     "}");
+
     connect(editTransitionBtn, &QPushButton::clicked, this, &FSMTransition::clickedEdit);
 }
 
