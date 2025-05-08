@@ -190,6 +190,11 @@ public slots:
     void movementUpdateTransitions();
 
     /**
+     * @brief Toggles between interpretation 
+     */
+    void handleActionToggleInterpretation();
+
+    /**
      * @brief Returns the StateFSMWidget that is pointed at by the mouse
      * @return Pointer to the FSM widget or nullptr if nothing is found
      */

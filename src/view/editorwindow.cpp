@@ -84,6 +84,14 @@ EditorWindow::EditorWindow(QWidget *parent)
 
     connect(inputEventCombox, &QComboBox::currentTextChanged, this, &EditorWindow::inputComboxChanged);
 
+    // Don't enable buttons with space by default and handle it manually
+    stopButton->setFocusPolicy(Qt::NoFocus);
+    startButton->setFocusPolicy(Qt::NoFocus);
+    QAction* toggleInterpretation = new QAction("Toggle Interpret", this);
+    this->addAction(toggleInterpretation);
+    connect(toggleInterpretation, &QAction::triggered, this, &EditorWindow::handleActionToggleInterpretation);
+    toggleInterpretation->setShortcut(QKeySequence(Qt::Key_Space));
+
     // === Logging Window ===
     loggingWindow = new LoggingWindow(this);
     loggingWindow->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
@@ -389,10 +397,14 @@ void EditorWindow::handleActionHotkeys()
             "D --> Delete state\n\n"
             "S --> Set state to starting/initial\n\n"
             "R --> Rename state\n\n"
+            "\n"
+            "SPACE --> Toggle interpretation\n\n"
+            "\n"
             "CTRL + S --> Save current FSM\n\n"
             "CTRL + SHIFT +  S --> Save current FSM to new file\n\n"
             "CTRL + O --> Open FSM\n\n"
             "CTRL + N --> New FSM\n\n"
+            "\n"
             "F5 --> Rename FSM\n\n"
             "F9 --> Resize Work Area"
         )    
@@ -1264,6 +1276,22 @@ void EditorWindow::movementUpdateTransitions()
                     allTransitionsUI[key]->relocateTransition(srcPos, srcSize, dstPos, dstSize);
                 }
             }
+        }
+    }
+}
+
+void EditorWindow::handleActionToggleInterpretation()
+{
+    if(isInterpreting)
+    {
+        if(this->stopButton->isEnabled()){
+            this->stopButtonClick();
+        }
+    }
+    else
+    {
+        if(this->startButton->isEnabled()){
+            this->startButtonClick();
         }
     }
 }
