@@ -172,19 +172,9 @@ bool FsmModel::parseTransitionLine(const QString &line) {
     return true;
 }
 
-void FsmModel::loadFile(const QString &filename)
+void FsmModel::loadToStream(QTextStream &in)
 {
-    // Clear current FSM data before loading a new one
-    this->cleanup();
-
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        throwError(ERROR_GENERIC, "Couldn't open the file");
-        return;
-    }
-
-     // Section tracking for which part of the file is being parsed
-    QTextStream in(&file);
+    // Section tracking for which part of the file is being parsed
     QString line;
 
     Section currentSection = NONE;
@@ -223,7 +213,7 @@ void FsmModel::loadFile(const QString &filename)
             continue;
         }
 
-         // Parse the content according to the current section
+        // Parse the content according to the current section
         switch (currentSection) {
             case NAME:
                 renameFsm(line);
@@ -273,20 +263,10 @@ void FsmModel::loadFile(const QString &filename)
                 break;
         }
     }
-
-    file.close();
 }
 
-void FsmModel::saveFile(const QString &filename)
+void FsmModel::saveToStream(QTextStream &out)
 {
-    QFile file(filename);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        throwError(ERROR_GENERIC, "Couldn't open the file for writing");
-        return;
-    }
-
-    QTextStream out(&file);
-
     // Name
     out << "Name:\n";
     out << "\t" << machine.objectName() << "\n";
@@ -307,7 +287,7 @@ void FsmModel::saveFile(const QString &filename)
 
     // Internal variables
     out << "Variables:\n";
-     for (auto variable = varsInternal.begin(); variable != varsInternal.end(); variable++) {
+        for (auto variable = varsInternal.begin(); variable != varsInternal.end(); variable++) {
         QString type;
         const QVariant &val = variable.value();
 
@@ -329,8 +309,8 @@ void FsmModel::saveFile(const QString &filename)
             default:
                 continue;
         }
-     
- 
+        
+    
         out << "\t" << type << " " << variable.key() << " = " << val.toString() << "\n";
     }
     out << "\n";
@@ -370,6 +350,36 @@ void FsmModel::saveFile(const QString &filename)
 
         out << "\t" << t->sourceState()->objectName() << " -> " << t->targetState()->objectName() << ": {" << condition << "}\n";
     }
+}
+
+
+void FsmModel::loadFile(const QString &filename)
+{
+    // Clear current FSM data before loading a new one
+    this->cleanup();
+
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        throwError(ERROR_GENERIC, "Couldn't open the file");
+        return;
+    }
+
+    QTextStream stream(&file);
+    this->loadToStream(stream);
+
+    file.close();
+}
+
+void FsmModel::saveFile(const QString &filename)
+{
+    QFile file(filename);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        throwError(ERROR_GENERIC, "Couldn't open the file for writing");
+        return;
+    }
+
+    QTextStream out(&file);
+    this->saveToStream(out);
 
     file.close();
 }

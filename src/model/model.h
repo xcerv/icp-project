@@ -30,6 +30,7 @@
 #include <QObject>
 #include <QVariant>
 #include <QRegularExpression>
+#include <QTextStream>
 
 #define FORMAT_CHECK(errMsg, regex, ...) do{if (!checkAllValidFormat(FsmFormats::regex, __VA_ARGS__))           \
                                     {                                                                           \
@@ -152,6 +153,18 @@ class FsmModel : public QObject, public FsmInterface
          =   Model specific
          ======================
         */
+
+        /**
+         * @brief Loads model internal representation from given stream
+         * @param in The stream from which to read
+         */
+        void loadToStream(QTextStream &in);
+
+        /**
+         * @brief Saves model's state to given stream
+         * @param in The stream to save to
+         */
+        void saveToStream(QTextStream &out);
 
         /**
          * @brief Returns the name of the active state
