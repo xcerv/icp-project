@@ -1206,17 +1206,41 @@ void EditorWindow::editTransitionHanling(FSMTransition * transition){
     QLineEdit *conditionEdit = new QLineEdit(&dialog);
     mainLayout->addWidget(conditionEdit);
 
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
-    QPushButton *deleteButton = new QPushButton("Delete", &dialog);
-    buttonBox->addButton(deleteButton, QDialogButtonBox::DestructiveRole);
+    QDialogButtonBox *buttonBox;
+    if(isInterpreting){
+        buttonBox = new QDialogButtonBox(QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+        conditionEdit->setStyleSheet("background-color: transparent");
+        conditionEdit->setFrame(false);
+    }else{
+        buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);
+        QPushButton *deleteButton = new QPushButton("Delete", &dialog);
+        buttonBox->addButton(deleteButton, QDialogButtonBox::DestructiveRole);
+
+        // OK
+        connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
+            size_t selectedId = idComboBox->currentData().toULongLong();
+            model->updateCondition(selectedId, conditionEdit->text());
+            dialog.accept();
+        });
+
+        // Delete
+        connect(deleteButton, &QPushButton::clicked, [&]() {
+            size_t selectedId = idComboBox->currentData().toULongLong();
+            transition->subTransition(selectedId);
+            model->destroyTransition(selectedId);
+            dialog.accept();
+        });
+    }
+
+    // Cancel
+    connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
     mainLayout->addWidget(buttonBox);
 
     // Block edits when interpretation is ON
     if(isInterpreting)
-    {
-        deleteButton->setDisabled(true);   
+    {  
         conditionEdit->setReadOnly(true);   
-        buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);   
     }
 
     // change fields when a different ID is selected
@@ -1228,24 +1252,6 @@ void EditorWindow::editTransitionHanling(FSMTransition * transition){
     };
     updateFields();
     connect(idComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), updateFields);
-
-    // OK
-    connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
-        size_t selectedId = idComboBox->currentData().toULongLong();
-        model->updateCondition(selectedId, conditionEdit->text());
-        dialog.accept();
-    });
-
-    // Cancel
-    connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
-
-    // Delete
-    connect(deleteButton, &QPushButton::clicked, [&]() {
-        size_t selectedId = idComboBox->currentData().toULongLong();
-        transition->subTransition(selectedId);
-        model->destroyTransition(selectedId);
-        dialog.accept();
-    });
 
     dialog.exec();
 }
