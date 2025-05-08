@@ -295,10 +295,10 @@ private:
     void updateVarOutput(const QString &name, const QString &value) override;
     void updateVarInternal(const QString &name, const QVariant &value) override;
     /**
-     * @brief helper for more efficient updating
-     * @param type
-     * @param name
-     * @param value
+     * @brief helper for more efficient updating of variables
+     * @param type whether its input/output or internal
+     * @param name name of updated variable
+     * @param value value of updated variable
      */
     void updateVar(enum variableType type, const QString &name, const QString &value);
 
@@ -312,8 +312,8 @@ private:
     void destroyVarInternal(const QString &name) override;
     /**
      * @brief helper for more efficient deleting
-     * @param type
-     * @param name
+     * @param type whether its input/output or internal
+     * @param name name of variable to be deleted
      */
     void destroyVar(enum variableType type, const QString &name);
 

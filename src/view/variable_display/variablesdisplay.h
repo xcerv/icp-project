@@ -12,7 +12,6 @@
 #define VARIABLESDISPLAY_H
 
 #include "qlabel.h"
-#include "qpushbutton.h"
 #include "view/internal_representations.h"
 #include <QWidget>
 
@@ -21,7 +20,7 @@ class VariablesDisplay;
 }
 
 /**
- * @brief 
+ * @brief a widget that displays variables
  */
 class VariablesDisplay : public QWidget
 {

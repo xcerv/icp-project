@@ -11,7 +11,7 @@
 #ifndef INTERNAL_REPRESENTATIONS_H
 #define INTERNAL_REPRESENTATIONS_H
 
-#include<QLabel>
+#include <QLabel>
 
 /**
  * @brief enumeration of possible types of variables in FSM
@@ -20,7 +20,7 @@ enum variableType{
     INPUTV,
     OUTPUTV,
     INTERNALV,
-    NUMV // Count of all variable types
+    NUMV ///< Count of all variable types
 };
 
 /**

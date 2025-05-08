@@ -21,6 +21,9 @@ class WorkArea;
 }
 QT_END_NAMESPACE
 
+/**
+ * @brief class that defines the work area widget
+ */
 class WorkArea : public QWidget
 {
     Q_OBJECT
@@ -73,7 +76,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
 
 private:
-    QPoint size;//current size of work area
+    QPoint size;///< current size of work area
 };
 
 #endif // WORKAREA_H

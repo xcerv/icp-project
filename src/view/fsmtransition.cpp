@@ -143,7 +143,7 @@ void FSMTransition::relocateTransition(QPoint startPoint, QPoint startSize, QPoi
             //     [ ]
             startPos = startPoint;
             finPos = finSize;
-        }else if(true){
+        }else{
             //     [ ]
             //    A
             //   /

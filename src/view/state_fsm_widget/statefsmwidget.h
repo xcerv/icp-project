@@ -13,7 +13,6 @@
 
 #include <QWidget>
 #include <QLabel>
-#include <vector>
 
 namespace Ui {
 class StateFSMWidget;

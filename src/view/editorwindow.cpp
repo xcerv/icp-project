@@ -10,8 +10,8 @@
  */
 
 #include "view/editorwindow.h"
-#include "qdebug.h"
 #include "ui_editorwindow.h"
+#include "editorwindow.h"
 #include "view/state_fsm_widget/statefsmwidget.h"
 #include "view/logging_window/loggingwindow.h"
 #include "view/input_event_edit/input_event_line_edit.h"
@@ -26,7 +26,6 @@
 #include <QFileDialog>
 #include <QTextEdit>
 #include <QScreen>
-#include "editorwindow.h"
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -390,6 +389,7 @@ void EditorWindow::handleActionAbout()
 
 void EditorWindow::handleActionHotkeys()
 {
+    //::renaminigWindow()
     QMessageBox::information(this,"Hotkeys",
         QStringLiteral(
             "A --> Add new state\n\n"
@@ -694,10 +694,11 @@ void EditorWindow::variableToBeAdded(enum variableType type){
         typeSelector->addItem("Float");
         form.addRow("Type:", typeSelector);
 
+        // rewriting value
         QPointer<QWidget> valueInput = new QLineEdit(&dialog);
         form.addRow("Value:", valueInput);
 
-        // dynamic replacement
+        // dynamic replacement (String variable has LineEdit, Bool variable has ComboBox, ...)
         connect(typeSelector, &QComboBox::currentTextChanged, [&form, &valueInput, &dialog](const QString &text){
             QWidget *newInput = nullptr;
 
@@ -724,10 +725,10 @@ void EditorWindow::variableToBeAdded(enum variableType type){
 
             if (newInput) {
                 if (valueInput) {
-                    form.removeRow(2);  // careful: remove correct row
+                    form.removeRow(2);
                     delete valueInput;
                 }
-                //add waiting here?
+
                 valueInput = newInput;
                 form.insertRow(2, "Value:", valueInput);
             }
@@ -978,7 +979,7 @@ void EditorWindow::stateFSMLeftClick(){
 bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
     bool canBeInserted = true;
     QPoint sizeWA = workArea->getSizeWA();
-    QPoint sizeS; sizeS.setX(160); sizeS.setY(200); //TODO: fix if states can be multiple sizes
+    QPoint sizeS; sizeS.setX(160); sizeS.setY(200); //TODO: fix if states can be different sizes
     //check if fits into workArea
     int sx = position.x() + sizeS.x();
     int sy = position.y() + sizeS.y();
@@ -997,7 +998,7 @@ bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
         QPoint fSize = state->getSize();
         int fsx = fPos.x() + fSize.x();
         int fsy = fPos.y() + fSize.y();
-        canBeInserted = canBeInserted && !( //TODO: fix if states can be diffrent sizes
+        canBeInserted = canBeInserted && !(
                             (fPos.x() < position.x() && fsx > position.x() && fPos.y() < position.y() && fsy > position.y()) ||
                             (fPos.x() < sx && fsx > sx && fPos.y() < sy && fsy > sy) ||
                             (fPos.x() < position.x() && fsx > position.x() && fPos.y() < sy && fsy > sy) ||
@@ -1059,6 +1060,7 @@ QString EditorWindow::renamingWindow(QString title){
         dialog.setWindowTitle(title);
 
         // Get Mouse pos
+
         QPoint mousePos = QCursor::pos();
         QSize dialogSize = dialog.size();
 
@@ -1127,10 +1129,6 @@ void EditorWindow::closeEvent(QCloseEvent *event)
     msgBox.setText("Do you want to save before closing program?");
     msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel | QMessageBox::Close);
 
-    /*
-    QAbstractButton *closeButton = msgBox.button(QMessageBox::Close);
-    if (closeButton) closeButton->setIcon(QIcon());
-    */
     QAbstractButton *cancelButton = msgBox.button(QMessageBox::Cancel);
     if (cancelButton) cancelButton->setIcon(QIcon());
 
@@ -1256,7 +1254,7 @@ void EditorWindow::movementUpdateTransitions()
                     srcPos = ghostStateWidget->pos();
                     srcSize = QPoint(ghostStateWidget->size().width(), ghostStateWidget->size().height());
                     dstPos = srcPos;
-                    dstSize = dstSize;
+                    dstSize = srcSize;
                 }
                 else if(movingStateWidget == src)
                 {

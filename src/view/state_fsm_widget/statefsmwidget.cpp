@@ -17,10 +17,17 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
     , ui(new Ui::StateFSMWidget)
 {
     ui->setupUi(this);
+
     size.setX(160);
     size.setY(200);
     setFixedSize(160,200);
 
+
+    /*
+    size.setX(160);
+    size.setY(160);
+    setFixedSize(160,160);
+*/
     ui->scrollArea->setWidgetResizable(true);
     ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
