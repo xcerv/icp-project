@@ -127,6 +127,11 @@ class ScriptHelper : public QObject
          */
         Q_INVOKABLE qint64 elapsed();
         /**
+         * @brief Returns the time since last entering the current state (resets on everyEntry)
+         * @return Time in milliseconds
+         */
+        Q_INVOKABLE qint64 elapsedEntry();
+        /**
          * @brief Converts given value to integer
          * @param value The value to convert
          * @return Argument convereted to integer

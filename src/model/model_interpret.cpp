@@ -110,6 +110,7 @@ void FsmModel::stopInterpretation()
     // On full stop restore original values
     this->restoreInterpretationBackup();
 
+    // Stop unprocessed delayed transition events
     for(auto &tr : this->transitions)
     {
         tr->stopTimer();

@@ -20,7 +20,8 @@ ActionState::ActionState(const QString &action, const QPoint &position)
     :
     m_action{action},
     m_position{position},
-    m_timeVisited{}
+    m_timeVisited{},
+    m_timeSinceEntry{}
 {
     
 }
@@ -35,6 +36,9 @@ void ActionState::onEntry(QEvent *event)
         ActionState::setLastState(this);
         m_timeVisited.start();
     }
+
+    // Always reset this timer
+    m_timeSinceEntry.start();
 
     qInfo() << "Interpreter: State entered: " << this->objectName();
 
@@ -92,6 +96,11 @@ ActionState *ActionState::getLastState()
 qint64 ActionState::getElapsed() const
 {
     return m_timeVisited.elapsed();
+}
+
+qint64 ActionState::getElapsedSinceEntry() const
+{
+    return m_timeSinceEntry.elapsed();
 }
 
 QPointer<ActionState> ActionState::m_lastState = nullptr;

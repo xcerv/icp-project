@@ -90,7 +90,7 @@ bool CombinedTransition::eventTest(QEvent *e)
 {
     if(e == nullptr || !this->machine()->isRunning()) return false;
 
-    qDebug() << "In transition" << this->m_id << " Event type " << e->type();
+    // Debug() << "In transition" << this->m_id << " Event type " << e->type();
 
     if(e->type() == FsmInputEvent::getType()) // Initial input trigger
     {
