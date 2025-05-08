@@ -36,6 +36,8 @@ EditorWindow::EditorWindow(QWidget *parent)
     statusBarLabel = new QLabel("");
     statusBar()->addWidget(statusBarLabel);
 
+    ui->menubar->setStyleSheet( "QMenu::item { padding: 0px 30px 0px 5px;}");
+
     // Variable display
     variablesDisplay = new VariablesDisplay(this);
     variablesDisplay->move(15, 35); // top-left corner
@@ -844,12 +846,12 @@ void EditorWindow::workAreaRightClick(QPoint position){
 
     QMenu menu(this);  // create a QMenu
 
-    QAction* addStateAction = menu.addAction("Add new state ...");
+    QAction* addStateAction = menu.addAction("Add new state...");
     QAction* closeWindowAction = menu.addAction("Close program");
-    QAction* renameFSMAction = menu.addAction("Rename FSM ...");
-    QAction* resizeWorkareaAction = menu.addAction("Resize work-area ...");
-    QAction* loadFileAction = menu.addAction("Load file ...");
-    QAction* saveFileAction = menu.addAction("Save file as ...");
+    QAction* renameFSMAction = menu.addAction("Rename FSM...");
+    QAction* resizeWorkareaAction = menu.addAction("Resize work-area...");
+    QAction* loadFileAction = menu.addAction("Load file...");
+    QAction* saveFileAction = menu.addAction("Save file as...");
 
     if (isInterpreting){
         addStateAction->setEnabled(false);
@@ -958,9 +960,9 @@ void EditorWindow::stateFSMRightClick(){
 
     QMenu menu(this);  // create a QMenu
 
-    QAction* renameStateAction = menu.addAction("Rename ...");
-    QAction* editOutputAction = menu.addAction("Edit state action ...");
-    QAction* connectToAction = menu.addAction("Connect to ...");
+    QAction* renameStateAction = menu.addAction("Rename...");
+    QAction* editOutputAction = menu.addAction("Edit state action...");
+    QAction* connectToAction = menu.addAction("Connect to...");
     QAction* setStartAction = menu.addAction("Set as starting");
     QAction* moveStateAction = menu.addAction("Move state");
     QAction* deleteAction = menu.addAction("Delete");
