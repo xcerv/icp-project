@@ -207,17 +207,14 @@ public slots:
     /**
      * @brief what happens after workArea is right clicked (now spawns new state)
      * @param position
-     * @todo bring up menu with options to do (add state, resize workArea, .. )
      */
     void workAreaRightClick(QPoint position);
     /**
      * @brief after any FSM is right clicked
-     * @todo bring up menu with possible actions (delete, copy, add condition, connect, set as first state, .. )
      */
     void stateFSMRightClick();
     /**
      * @brief after any FSM is left clicked
-     * @todo should work only for connecting, maybe opening detailed info about state??
      */
     void stateFSMLeftClick();
     /**

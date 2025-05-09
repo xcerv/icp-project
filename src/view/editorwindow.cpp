@@ -1020,7 +1020,7 @@ void EditorWindow::stateFSMLeftClick(){
 bool EditorWindow::checkIfFSMFits(QPoint position, StateFSMWidget * skip){
     bool canBeInserted = true;
     QPoint sizeWA = workArea->getSizeWA();
-    QPoint sizeS; sizeS.setX(160); sizeS.setY(200); //TODO: fix if states can be different sizes
+    QPoint sizeS; sizeS.setX(160); sizeS.setY(200);
     //check if fits into workArea
     int sx = position.x() + sizeS.x();
     int sy = position.y() + sizeS.y();
