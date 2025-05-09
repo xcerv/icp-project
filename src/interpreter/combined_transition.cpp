@@ -102,10 +102,13 @@ bool CombinedTransition::eventTest(QEvent *e)
         if(static_cast<FsmInputEvent*>(e)->getName() != this->m_name)
             return false;
 
+        // Safety check (just do nothing)
+        if(this->machine() == nullptr || this->machine()->parent() == nullptr) 
+            return false;
+
         // Try guard condition here...
         if(!m_guard.isEmpty())
         {
-            /** @todo Additional checks? */
             QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent()); // Get the parent of main statemachine --> the QJSEngine 
             QJSValue guard_result = engine->evaluate(this->m_guard);
             
