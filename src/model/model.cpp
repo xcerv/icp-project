@@ -21,6 +21,18 @@
 
 
 /* Templates */
+
+/**
+ * @brief If given entity doesn't exist yet, it is added; otherwise it is merely updated
+ * @tparam Key The key to search the entity by
+ * @tparam Value The new value to use for the entity
+ * @tparam UpdateFunc The function used for updating the entity
+ * @tparam InsertFunc The function used for inserting to the container
+ * @param container The container of given entity type
+ * @param key The key to search by
+ * @param updater The specific updater function
+ * @param inserter The specific inserter function
+ */
 template <typename Key, typename Value, typename UpdateFunc, typename InsertFunc>
 void updateOrInsert(QHash<Key, Value> &container, const Key &key, UpdateFunc &&updater, InsertFunc &&inserter)
 {

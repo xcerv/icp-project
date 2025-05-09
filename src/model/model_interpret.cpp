@@ -35,6 +35,7 @@ void FsmModel::renameFsm(const QString &name)
 
 void FsmModel::startInterpretation()
 {
+    // If there are no states or no active state, exit
     if(this->emptyStates()){
         qCritical() << "INTERPRETATION: Attempt to interpret empty state machine";
         this->view->stopInterpretation();
@@ -51,6 +52,7 @@ void FsmModel::startInterpretation()
     backup.vOutput = this->varsOutput;
     backup.initialState = this->machine.initialState();
 
+    // By default, no state is 'last' until one is entered
     ActionState::setLastState(nullptr);
 
     this->machine.start();
@@ -105,6 +107,7 @@ void FsmModel::stopInterpretation()
 
     qInfo() << "Interpretation stopped...";
 
+    // Stop the machine immediatelly
     this->machine.stop();
 
     // On full stop restore original values
@@ -116,8 +119,7 @@ void FsmModel::stopInterpretation()
         tr->stopTimer();
     }
 
+    // Request cleanup; optional
     this->engine.collectGarbage();
     return;
 }
-
-// Should there be pause method?

@@ -13,16 +13,10 @@
 
 #include "mvc_interface.h"
 
-// #include "fsm_state/fsm_state.h"
-// #include "fsm_condition/fsm_condition.h"
-// #include "fsm_transition/fsm_transition.h"
-// #include "fsm_action/fsm_action.h"
-// #include "fsm_variable/fsm_variable.h"
-
-#include "action_state.h"
-#include "combined_transition.h"
-#include "script_helper.h"
-#include "fsm_exceptions.h"
+#include "interpreter/action_state.h"
+#include "interpreter/combined_transition.h"
+#include "interpreter/script_helper.h"
+#include "exceptions/fsm_exceptions.h"
 
 #include <QJSEngine>
 #include <QStateMachine>
@@ -32,6 +26,7 @@
 #include <QRegularExpression>
 #include <QTextStream>
 
+// Checks a format of given type of entity (by its QString value) and possibly throws an error
 #define FORMAT_CHECK(errMsg, regex, ...) do{if (!checkAllValidFormat(FsmFormats::regex, __VA_ARGS__))           \
                                     {                                                                           \
                                         this->view->throwError(ERROR_INVALID_NAMING_FORMAT, errMsg);            \
@@ -39,6 +34,7 @@
                                     }                                                                           \
                                     }while(0)
 
+// Checks a format of given type of entity (by its QString value) and possibly throws an exception
 #define FORMAT_CHECK_EXCEPTION(errMsg, regex, ...) do{if (!checkAllValidFormat(FsmFormats::regex, __VA_ARGS__))         \
                                                     {                                                                   \
                                                         throw FsmModelException(ERROR_INVALID_NAMING_FORMAT, errMsg);   \
@@ -104,9 +100,9 @@ class FsmModel : public QObject, public FsmInterface
         virtual ~FsmModel();
 
         /* 
-         =========================
-         =   Interface methods
-         =========================
+         =============================================
+         =   Interface methods (see mvc_interface.h)
+         =============================================
         */
        
         void updateState(const QString &name, const QPoint &pos) override;
@@ -135,9 +131,8 @@ class FsmModel : public QObject, public FsmInterface
 
         void renameFsm(const QString &name) override;
 
-        // This may be used only one-way
         void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const override;
-        void log() const override; // Request log
+        void log() const override;
 
         void startInterpretation() override;
         void stopInterpretation() override;

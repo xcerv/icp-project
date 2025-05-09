@@ -103,4 +103,5 @@ qint64 ActionState::getElapsedSinceEntry() const
     return m_timeSinceEntry.elapsed();
 }
 
+// By default, last state is nullptr
 QPointer<ActionState> ActionState::m_lastState = nullptr;

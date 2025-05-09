@@ -22,6 +22,13 @@
 #include <QtWidgets>
 
 
+/**
+ * @brief Converts all elements of a hashmap into strings with their values
+ * @tparam Key The key used by the hashmap
+ * @tparam Value The value type used by the hashmap
+ * @param container The actual hashmap container
+ * @param out The string to which the result is saved
+ */
 template <typename Key, typename Value>
 void hashmapToString(const QHash<Key, Value> &container, QString &out)
 {
@@ -78,7 +85,7 @@ void FsmModel::log(const QString &time, const QString &state, const QString &var
             << "Outputs: " << "\n" << qUtf8Printable(varOutputs)
             << "Internals: " << "\n" << qUtf8Printable(varInternals);
 
-    return; // Null operation for model?
+    return;
 }
 
 void FsmModel::log() const
@@ -87,8 +94,8 @@ void FsmModel::log() const
     QString inputs;
     QString outputs;
     QString internals;
-    QVariant test;
     
+    // Convert hasmaps into string representations
     hashmapToString(this->varsInput, inputs);
     hashmapToString(this->varsOutput, outputs);
     hashmapToString(this->varsInternal, internals);
@@ -105,6 +112,7 @@ void FsmModel::cleanup()
 {
     qWarning() << "Performing cleanup...";
 
+    // Stop interpretation
     if (machine.isRunning()) {
         machine.stop();
     }
@@ -123,16 +131,18 @@ void FsmModel::cleanup()
         }
     }
 
-    /** @todo Check that the removal here is correct; state should have ownership of its transition and will delete them too... probably */
+    // Clear hasmaps
     states.clear();
     qDeleteAll(states.values());
     transitions.clear();
     qDeleteAll(transitions.values());
 
+    // Clear variables
     varsInternal.clear();
     varsInput.clear();
     varsOutput.clear();
 
+    // Reset initial state to nothing
     this->machine.setInitialState(nullptr);
 
     // Reset transition unique id;
@@ -143,7 +153,6 @@ void FsmModel::cleanup()
 
 void FsmModel::throwError(FsmErrorType errNum)
 {
-    // Some internal handling prior?
     view->throwError(errNum);
 }
 

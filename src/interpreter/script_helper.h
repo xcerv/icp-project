@@ -17,6 +17,7 @@
 #include <QHash>
 #include <QJSEngine>
 
+// Forward declaration (avoid cyclical include)
 class FsmModel;
 
 /**
