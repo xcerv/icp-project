@@ -332,6 +332,9 @@ void EditorWindow::cleanup(){
 
     activeState = nullptr;
 
+    this->cancelActionMove();
+    this->cancelActionConnect();
+
     //qDeleteAll(workArea->children());
     qDeleteAll(allStates);
     qDeleteAll(allTransitionsUI);
