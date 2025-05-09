@@ -27,7 +27,7 @@
 #include "view/variable_display/variablesdisplay.h"
 #include "view/logging_window/loggingwindow.h"
 #include "view/internal_representations.h"
-#include "view/fsmtransition.h"
+#include "view/fsm_transition/fsmtransition.h"
 
 #include "mvc_interface.h"
 
