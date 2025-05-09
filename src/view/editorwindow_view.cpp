@@ -166,6 +166,7 @@ void EditorWindow::updateVarOutput(const QString &name, const QString &value)
 
 void EditorWindow::updateVar(enum variableType type, const QString &name, const QString &value){
     fileModified = true;
+
     if(allVars[type].contains(name)){
         statusBarLabel->setText("changed value of variable: " + name);
         FSMVariable &chng = allVars[type][name];
@@ -323,6 +324,26 @@ void EditorWindow::updateVarInternal(const QString &name, const QVariant &value)
 
     QString v = value.toString();
     updateVar(INTERNALV, name, v);
+    
+    QLabel * labelName = this->allVars[INTERNALV].value(name).name;
+
+    switch(value.type())
+    {
+        case QVariant::Bool:
+            labelName->setText("bool " + name);
+            break;
+        case QVariant::Int:
+            labelName->setText("int " + name);
+            break;
+        case QVariant::String:
+            labelName->setText("string " + name);
+            break;
+        case QVariant::Double:
+            labelName->setText("float " + name);
+            break;
+        default:
+            break;
+    }
 }
 
 
