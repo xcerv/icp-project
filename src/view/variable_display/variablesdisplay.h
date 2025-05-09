@@ -1,7 +1,7 @@
 /**
  * Project name: ICP Project 2024/2025
  *
- * @file variabledisplay.h
+ * @file variablesdisplay.h
  * @author  xkadlet00
  *
  * @brief Defines the interface of display of input/output/internal variables
@@ -46,6 +46,8 @@ public:
     /**
      * @brief inserts a variable
      * @param type under which label the new variable belongs
+     * @param name Name of the variable
+     * @param value Value of the variable
      * @return returns a variable that was added (in Qt representation)
      */
     FSMVariable insertVariable(enum variableType type, QString name, QString value);
@@ -77,14 +79,13 @@ public:
 
     /**
      * @brief activates/deactivates *ALL* buttons (delete and edit and add)
-     * @param b true or false based on whether we are activating or deactivating them
-     * @param type what type input/output/internal i am activating it for
+     * @param activate true or false based on whether we are activating or deactivating them
      */
     void setActButtonsAll(bool activate);
 
     /**
      * @brief activates/deactivates buttons (delete and edit), but enables them for adding new
-     * @param b true or false based on whether we are activating or deactivating them
+     * @param activate true or false based on whether we are activating or deactivating them
      * @param type what type input/output/internal i am activating it for
      */
     void setActButtonsAdding(bool activate, variableType type);

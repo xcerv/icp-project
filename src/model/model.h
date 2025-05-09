@@ -164,7 +164,7 @@ class FsmModel : public QObject, public FsmInterface
 
         /**
          * @brief Saves model's state to given stream
-         * @param in The stream to save to
+         * @param out The stream to save to
          */
         void saveToStream(QTextStream &out);
 
@@ -233,8 +233,7 @@ class FsmModel : public QObject, public FsmInterface
          * @tparam Value The type of value that is stored in the container
          * @param container Container storing the elements
          * @param key The key to look for in the container
-         * @param errnum The error number thrown when element is not found
-         * @param errMsg The specific message that may be used when printing error to user
+         * @param err The error number/message thrown when element is not found
          * @return Returns the element of type Value
          */
         template <typename Key, typename Value>
@@ -258,8 +257,8 @@ class FsmModel : public QObject, public FsmInterface
          * @tparam UpdateFunc The function that is used to update the element 
          * @param container Container storing the elements
          * @param key The key to look for in the container
-         * @param errnum The error number thrown when element is not found
-         * @param errmsg The specific message that may be used when printing error to user
+         * @param updater The function used for updating the value
+         * @param err The error number/message thrown when element is not found
          */
         template <typename Key, typename Value, typename UpdateFunc>
         void safeUpdate(QHash<Key, Value> &container, const Key &key, UpdateFunc &&updater, const FsmModelException &err)
@@ -278,6 +277,7 @@ class FsmModel : public QObject, public FsmInterface
         /**
          * @brief Parses given line into its Input and Output variables interpretation
          * @param line The line to be parsed
+         * @param type The type of the variable to parse(Output or Input)
          */
         bool parseInOutVariableLine(const QString &line, int type);
         
@@ -315,7 +315,6 @@ class FsmModel : public QObject, public FsmInterface
         /**
          * @brief Parses given line into its transition interpretation
          * @param line The line to be parsed
-         * @param id The identifier of the transition
          */
         bool parseTransitionLine(const QString &line);
 };

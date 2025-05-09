@@ -111,7 +111,7 @@ class FsmInterface
          * @brief Update the condition of an transition
          * @param transitionId The unique id of a transition to update
          * @param condition The updated condition the transition uses
-         * @note The format is: INPUT [ JS CODE ] @TIMEOUT
+         * @note The format is: INPUT [ JS CODE ] @ TIMEOUT
          */
         virtual void updateCondition(size_t transitionId, const QString &condition) = 0;
         

@@ -1,7 +1,7 @@
 /**
  * Project name: ICP Project 2024/2025
  *
- * @file editorwindow.c
+ * @file editorwindow.cpp
  * @author  xkadlet00
  * @author  xcervia00
  *

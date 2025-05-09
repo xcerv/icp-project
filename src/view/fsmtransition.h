@@ -1,7 +1,7 @@
 /**
  * Project name: ICP Project 2024/2025
  *
- * @file fsmtransition.
+ * @file fsmtransition.h
  * @author  xkadlet00
  * @author  xcervia00
  *

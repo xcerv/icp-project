@@ -55,7 +55,7 @@ public:
     QPoint getPosition();
     /**
      * @brief sets new position of state
-     * @param pos new position (move there)
+     * @param positon new position (move there)
      */
     void setPosition(QPoint positon);
     /**

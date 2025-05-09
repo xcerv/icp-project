@@ -1,7 +1,7 @@
 /**
  * Project name: ICP Project 2024/2025
  *
- * @file internal_repressentations.h
+ * @file internal_representations.h
  * @author  xkadlet00
  *
  * @brief Helper header for enumerations, etc.

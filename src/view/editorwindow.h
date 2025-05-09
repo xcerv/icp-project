@@ -59,17 +59,15 @@ public:
 
     /**
      * @brief resizes workArea
-     * @param width
-     * @param height
-     * @todo check if no states "fall out"
+     * @param width Width of the area
+     * @param height Height of the area
      */
     void resizeWorkArea(int width, int height);
 
     /**
      * @brief adds new FSM state into workArea if possible
-     * @param coords
-     * @param name
-     * @todo check if doesnt fall out of workArea + doesnt collide with other states
+     * @param position Position to insert at
+     * @param name The name of the FSM State
      */
     void insertFSMState(QPoint position, QString name);
 
@@ -164,13 +162,13 @@ public slots:
     void handleActionAddState(QPoint position);
 
     /**
-     * @brief Handler for moving a state
-     * @param position 
+     * @brief Handler for connecting a state
+     * @param state 
      */
     void handleActionConnectState(StateFSMWidget* state);
     /**
      * @brief Handler for moving a state
-     * @param position 
+     * @param movingState The state stat is being moved
      */
     void handleActionMoveState(StateFSMWidget* movingState);
 
