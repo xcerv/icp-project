@@ -1025,8 +1025,6 @@ void EditorWindow::networkClientStart()
 
 void EditorWindow::networkClientStop()
 {
-    qDebug() << "CALLED ME";
-
     if(this->networkManager == nullptr)
         return;
 
