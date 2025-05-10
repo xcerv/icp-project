@@ -24,6 +24,12 @@
 background: #b3d1ff/*#F0F5FF*/
 }
 
+QTextEdit { 
+color: navy; 
+font: 14px &quot;Nimbus Mono PS&quot;; 
+padding: 5px 5px 5px 5px;
+}
+
 QLabel{
 color: navy;
 font:14px &quot;Nimbus Mono PS&quot;;
@@ -132,7 +138,6 @@ QTextEdit, QListView {
       <font>
        <family>Nimbus Mono PS</family>
        <pointsize>-1</pointsize>
-       <weight>50</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
@@ -149,37 +154,16 @@ QTextEdit, QListView {
     </widget>
    </item>
    <item>
-    <widget class="QScrollArea" name="scrollArea">
-     <property name="styleSheet">
-      <string notr="true">
-border-radius: 5px;</string>
+    <widget class="QTextEdit" name="output">
+     <property name="cursor" stdset="0">
+      <cursorShape>ArrowCursor</cursorShape>
+     </property>
+     <property name="mouseTracking">
+      <bool>false</bool>
      </property>
      <property name="frameShape">
-      <enum>QFrame::Box</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Plain</enum>
-     </property>
-     <property name="lineWidth">
-      <number>5</number>
-     </property>
-     <property name="widgetResizable">
-      <bool>true</bool>
-     </property>
-     <widget class="QWidget" name="scrollAreaWidgetContents">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>186</width>
-        <height>182</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2"/>
-     </widget>
     </widget>
    </item>
   </layout>

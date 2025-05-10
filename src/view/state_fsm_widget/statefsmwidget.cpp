@@ -23,46 +23,22 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
     setFixedSize(160,200);
 
 
-    /*
-    size.setX(160);
-    size.setY(160);
-    setFixedSize(160,160);
-*/
-    ui->scrollArea->setWidgetResizable(true);
-    ui->scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
     position = pos;
-    scrollContainer = new QWidget;
-    scrollLayout = new QVBoxLayout(scrollContainer);
-    scrollLayout->setContentsMargins(2, 2, 2, 2);
-    scrollLayout->setSpacing(0);
 
-    scrollContainer->setLayout(scrollLayout);
-    ui->scrollArea->setWidget(scrollContainer);  // add container to scroll area
-    output = new QLabel;
-    output->setText("");
-    output->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
-    output->setWordWrap(true);
-    output->setStyleSheet("QLabel { font-size: 10pt;}");
-    output->setAlignment(Qt::AlignLeft | Qt::AlignTop);
-    scrollLayout->addWidget(output);
+    ui->output->setPlainText("");
+    ui->output->setReadOnly(true);
+    ui->output->setContextMenuPolicy(Qt::NoContextMenu);
+    ui->output->setWordWrapMode(QTextOption::WrapAnywhere);
+    ui->output->viewport()->setCursor(Qt::ArrowCursor);
+    ui->output->setFocusPolicy(Qt::NoFocus);
+    ui->output->viewport()->installEventFilter(this);
+
 }
 
 StateFSMWidget::~StateFSMWidget()
 {
-    /*
-    for (QLabel* label : allOutputs) {
-        delete label;  // free all output labels
-    }
-    allOutputs.clear();  // ensure the vector is empty
-    delete scrollContainer;
-    delete scrollLayout;
-    */
     delete ui;
 }
-
-
 
 void StateFSMWidget::mousePressEvent(QMouseEvent *event) {
     if (event->button() == Qt::LeftButton) {
@@ -72,6 +48,27 @@ void StateFSMWidget::mousePressEvent(QMouseEvent *event) {
     }
 }
 
+bool StateFSMWidget::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == ui->output->viewport() && event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+
+        if (mouseEvent->button() == Qt::LeftButton) {
+            emit leftClick();
+            return true;
+        } else if (mouseEvent->button() == Qt::RightButton) {
+            QWidget *child = ui->output->childAt(mouseEvent->pos());
+            if (child && child->inherits("QScrollBar")) {
+                return false; // let scrollbar handle the event
+            }
+            emit rightClick();
+            return true;
+        }
+    }
+    // pass unhandled events on
+    return QWidget::eventFilter(obj, event);
+}
+
+
 void StateFSMWidget::setName(QString name){
     ui->name->setText(name);
 }
@@ -80,11 +77,11 @@ QString StateFSMWidget::getName(){
     return ui->name->text();
 }
 void StateFSMWidget::setOutput(QString cond){
-    output->setText(cond);
+    ui->output->setPlainText(cond);
 }
 
 QString StateFSMWidget::getOutput(){
-    return output->text();
+    return ui->output->toPlainText();
 }
 
 QPoint StateFSMWidget::getSize(){
@@ -105,6 +102,8 @@ void StateFSMWidget::setPosition(QPoint pos){
 void StateFSMWidget::recolor(const QString& c1, const QString& c2, const QString& ar) {
     QString style = QString(
                         "QWidget { background: %1; }"
+                        "QTextEdit { color: %2; font: 14px \"Nimbus Mono PS\"; "
+                        "   padding: 5px 5px 5px 5px;}"
                         "QLabel { color: %2; font: 14px \"Nimbus Mono PS\"; }"
                         "QScrollArea { border: 5px solid %1; }"
                         "QScrollArea::corner { background: transparent; }"

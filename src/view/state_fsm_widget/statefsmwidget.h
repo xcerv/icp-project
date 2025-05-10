@@ -11,6 +11,7 @@
 #ifndef STATEFSMWIDGET_H
 #define STATEFSMWIDGET_H
 
+#include <QTextEdit>
 #include <QWidget>
 #include <QLabel>
 
@@ -32,7 +33,14 @@ public:
      * @brief adds mousePressEvent
      * @param event what happend (mouse left click / mouse right click)
      */
-    void mousePressEvent(QMouseEvent *event)override;
+    void mousePressEvent(QMouseEvent *event) override;
+    /**
+     * @brief eventFilter filtres events so that custom signals can be emmited
+     * @param obj object that has been interacted with
+     * @param event event that passed
+     * @return true if filter handled the event
+     */
+    bool eventFilter(QObject *obj, QEvent *event) override;
     /**
      * @brief sets name of state
      * @param name name of state to be displayed
@@ -86,11 +94,8 @@ signals:
     void leftClick();
 private:
     Ui::StateFSMWidget *ui;
-    QLayout * scrollLayout; //layout for scroll area
-    QWidget * scrollContainer; //container for scroll area
-    QLabel* output; //outputs of state
-    QPoint position; //position of state wothin workArea
-    QPoint size; //size of state
+    QPoint position; ///< position of state within workArea
+    QPoint size; ///< size of state
 };
 
 #endif // STATEFSMWIDGET_H
