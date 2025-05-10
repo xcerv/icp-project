@@ -17,8 +17,8 @@
 #include <QAbstractSocket>
 #include <QDataStream>
 #include <QRegularExpression>
-#include <QRandomGenerator>
 #include <cstdint>
+#include <random>
 
 #include "mvc_interface.h"
 #include "view/editorwindow.h"
@@ -460,7 +460,12 @@ void FsmNetworkManager::enableClient()
     }
 
     // The source port is selected dynamically between 60001 and MAX
-    auto randomPort = static_cast<quint16>(QRandomGenerator::global()->bounded(static_cast<quint16>(DEFAULT_UDP_PORT), static_cast<quint16>(UINT16_MAX)));
+    std::random_device dev;
+    std::mt19937 rng;
+    rng.seed(dev());
+    std::uniform_int_distribution<quint16> dist(DEFAULT_UDP_PORT, UINT16_MAX);
+
+    auto randomPort = static_cast<quint16>(dist(rng));
     this->startListening(serverAddress.address, randomPort);
     this->isConnected = true;
     this->state = NETWORK_MANAGER_STATE::CLIENT;
