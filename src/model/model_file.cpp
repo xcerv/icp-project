@@ -54,7 +54,7 @@ bool FsmModel::parseInOutVariableLine(const QString &line, int type) {
         return false;
     }
     QString name = match.captured(1);
-    QString value = match.captured(2);
+    QString value = match.captured(3);
     if (value.isEmpty()) value = "";
 
     if(type == Section::INPUT)
