@@ -3,6 +3,7 @@
  *
  * @file workarea.h
  * @author  xkadlet00
+ * @author  xcervia00
  *
  * @brief defines the structure of work area
  *
@@ -37,8 +38,8 @@ public:
     void mousePressEvent(QMouseEvent *event)override;
     /**
      * @brief sets size of work area
-     * @param x coordinate
-     * @param y coordinate
+     * @param x width
+     * @param y heigth
      */
     void setSizeWA(int x, int y);
     /**
