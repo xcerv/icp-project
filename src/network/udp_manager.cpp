@@ -165,7 +165,7 @@ NETWORK_MANAGER_STATE FsmNetworkManager::getState() const
 
 bool FsmNetworkManager::getInitiation()
 {
-    return this->initiatedInterpretation;
+    return this->startedExternally;
 }
 
 void FsmNetworkManager::setAddress(const QHostAddress &address, quint16 port)
@@ -298,6 +298,8 @@ void FsmNetworkManager::messageInput(const NetworkEndpoint &sender, const QByteA
                 this->udpSocket->writeDatagram(msg, client.address, client.port);
             }
         );
+
+        this->ownerObject->inputEvent(eventName, eventValue);
     }
 }
 
@@ -315,10 +317,20 @@ void FsmNetworkManager::messageInterState(const NetworkEndpoint &sender, const Q
     // Stop or start interpretation based on the input
     if(MSG_BOOL_VAL(data.data()) == UDP_BOOL::TRUE)
     {
+        if(isConnected)
+        {
+            this->startedExternally = true;
+        }
+
         this->ownerObject->startInterpretation();
     }
     else if(MSG_BOOL_VAL(data.data()) == UDP_BOOL::FALSE)
     {
+        if(isConnected)
+        {
+            this->startedExternally = false;
+        }
+
         this->ownerObject->stopInterpretation();
     }
 }
@@ -331,11 +343,14 @@ void FsmNetworkManager::actionInterState(bool interpret)
     // Client
     if(isConnected)
     {
+        this->startedExternally = false;
         this->udpSocket->writeDatagram(msg, serverAddress.address, serverAddress.port);
 
     } // Server
     else if(isListening)
     {
+        this->actionSyncExecute();
+
         SERVER_FOR_ALL(
             this->udpSocket->writeDatagram(msg, client.address, client.port);
         );

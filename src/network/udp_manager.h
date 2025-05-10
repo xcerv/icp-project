@@ -128,7 +128,7 @@ class FsmNetworkManager: public QObject
         bool isListening = false; ///< Is the manager currently listening for client Input
         bool isConnected = false; ///< Is the manager currently connected to a server
 
-        bool initiatedInterpretation = false;
+        bool startedExternally = false;
 
         FsmInterface * ownerObject = nullptr; ///< Pointer to the owning interface
 

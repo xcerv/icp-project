@@ -222,20 +222,28 @@ void EditorWindow::startButtonClick()
     if(isInterpreting)
         return;
 
-    isInterpreting = true;
 
     // Register the network action
     if(this->networkManager != nullptr){
-        this->networkButtonsActivity(false);
-        NETWORK_ACTION(actionSyncRequest());
-        NETWORK_ACTION(actionInterState(true));
+        if(networkManager->getInitiation() == false){
+            NETWORK_ACTION(actionInterState(true));
+        }
+        
+        if(networkManager->getState() == CLIENT && !networkManager->getInitiation())
+        {
+            return;
+        }
     }
+
+    isInterpreting = true;
 
     // Allow only variables set prior to interpretation
     QList<QString> keys = allVars[INPUTV].keys();
     for (const QString &key : keys) {
         this->inputEventCombox->addItem(key);
     }
+
+    this->networkButtonsActivity(false);
 
     this->inputEventCombox->setEnabled(true);
     // this->inputSubmitButton->setEnabled(true); // Enable only once ... is not set
