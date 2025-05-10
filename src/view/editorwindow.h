@@ -143,18 +143,22 @@ public slots:
     void handleActionResize();
     /**
      * @brief Renames a state
+     * @param state state to be renamed
      */
     void handleActionRenameState(StateFSMWidget* state);
     /**
      * @brief Edits a state action
+     * @param state state to be eited
      */
     void handleActionEditState(StateFSMWidget* state);
     /**
      * @brief Makes a state active/inintial
+     * @param state to be set to active/initial
      */
     void handleActionActiveState(StateFSMWidget* state);
     /**
      * @brief Deletes a hover-over state
+     * @param state state to be deleted
      */
     void handleActionDeleteState(StateFSMWidget* state);
     /**
@@ -203,12 +207,12 @@ public slots:
     /* Work Area UI Elements */
     /**
      * @brief what happens after workArea is left clicked (no action)
-     * @param position
+     * @param position where realtive to work area click happend
      */
     void workAreaLeftClick(QPoint position);
     /**
      * @brief what happens after workArea is right clicked (now spawns new state)
-     * @param position
+     * @param position where realtive to work area click happend
      */
     void workAreaRightClick(QPoint position);
     /**
