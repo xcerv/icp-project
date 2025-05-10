@@ -413,12 +413,12 @@ QPushButton:disabled {
   </action>
   <action name="actionHelp">
    <property name="text">
-    <string>Help ...</string>
+    <string>Help...</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About ...</string>
+    <string>About...</string>
    </property>
   </action>
   <action name="actionNetStartListening">
@@ -456,7 +456,7 @@ QPushButton:disabled {
   </action>
   <action name="actionHotkeys">
    <property name="text">
-    <string>Hotkeys ...</string>
+    <string>Hotkeys...</string>
    </property>
   </action>
   <action name="actionNetDisconnect">
