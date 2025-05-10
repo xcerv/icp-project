@@ -36,10 +36,15 @@ public:
      * @param num ID of transition
      */
     void addTransition(size_t num);
-    void subTransition(size_t num);
     /**
      * @brief removes a number of a transition this UI element is ment to represent
      * @param num ID of transition
+     */
+    void subTransition(size_t num);
+
+    /**
+     * @brief returns all IDs of transitions this UI element represents
+     * @return IDs of transitions
      */
     QSet<size_t> getTransitions();
 signals:
