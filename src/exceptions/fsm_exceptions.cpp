@@ -4,7 +4,7 @@
 * @file fsm_exceptions.cpp
 * @author  xcervia00
 *
-* @brief New exceptions used by project
+* @brief New exceptions used by project (Primarily within model)
 *
 */
 

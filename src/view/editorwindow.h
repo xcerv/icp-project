@@ -406,8 +406,8 @@ private:
     // Interpreter buttons
     QPushButton * stopButton = nullptr; ///< Button for stopping interpreattion
     QPushButton * startButton = nullptr; ///< Button for starting interpretation
-    QAction * stopInterpretationAct = nullptr;
-    QAction * startInterpretationAct = nullptr;
+    QAction * stopInterpretationAct = nullptr; ///< Stop interpretation button in menubar
+    QAction * startInterpretationAct = nullptr; ///< Start interpretation button in menubar
     QPushButton * inputSubmitButton = nullptr; ///< Button for submitting input
 
     InputEventLineEdit * inputEventField = nullptr; ///< Text field for inputting event value
@@ -422,9 +422,9 @@ private:
     bool isShowingError = false; ///< Is the FSM currently showing error message? 
 
     // State moving Helpers
-    QString manipulatedState;///< A state that is being moved at the moment
-    StateFSMWidget* movingStateWidget = nullptr;
-    QLabel* ghostStateWidget = nullptr;
+    QString manipulatedState; ///< A state that is being moved at the moment
+    StateFSMWidget* movingStateWidget = nullptr; ///< The currently moving state
+    QLabel* ghostStateWidget = nullptr; ///< The 'ghost' moving state
     QPoint movingStateOrigPos; ///< Original position of the moving state
     bool isStateMoving = false;///< wheter or not is any state moving
 

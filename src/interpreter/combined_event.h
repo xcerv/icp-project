@@ -4,7 +4,7 @@
 * @file combined_event.h
 * @author  xcervia00
 *
-* @brief Combined event (string + cond +timeout) used in the FSM application interface
+* @brief Combined event (inputEvent + async Timeout) used in the FSM application - interface
 *
 */
 

@@ -21,6 +21,12 @@ ScriptHelper::ScriptHelper(FsmModel *model, QObject *parent)
     Q_ASSERT(m_model); // Not necessary, but just to be safe
 }
 
+/*
+============================
+  MODEL VAR GETTERS/SETTERS
+============================
+*/
+
 QJSValue ScriptHelper::getInternal(const QString &name)
 {
     if(!m_model->varsInternal.contains(name))

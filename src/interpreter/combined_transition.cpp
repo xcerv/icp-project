@@ -52,7 +52,7 @@ CombinedTransition::CombinedTransition(const QString &unparsed_condition)
 
 bool CombinedTransition::setCondition(const QString &condition)
 {
-   // Regex parsing here...
+   // Regex parsing of the condition in format: INPUT [COND] @TIMEOUT 
    QRegularExpression re(REGEX_TRANSITION_CONDITION);
    QRegularExpressionMatch match = re.match(condition);
 
@@ -89,8 +89,6 @@ void CombinedTransition::stopTimer()
 bool CombinedTransition::eventTest(QEvent *e)
 {
     if(e == nullptr || !this->machine()->isRunning()) return false;
-
-    // Debug() << "In transition" << this->m_id << " Event type " << e->type();
 
     if(e->type() == FsmInputEvent::getType()) // Initial input trigger
     {

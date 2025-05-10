@@ -4,7 +4,7 @@
 * @file combined_event.cpp
 * @author  xcervia00
 *
-* @brief Combined event (string + cond +timeout) used in the FSM application
+* @brief Combined event (inputEvent + async Timeout) used in the FSM application
 *
 */
 
@@ -24,11 +24,11 @@ FsmInputEvent::FsmInputEvent(const QString &inName)
 
 }
 
-const QString &FsmInputEvent::getName() const { return this->name; }
+/* Static InputEvent registration */
 
+const QString &FsmInputEvent::getName() const { return this->name; }
 QEvent::Type FsmInputEvent::getType() { return FsmInputEvent::m_eventType; }
 const QEvent::Type FsmInputEvent::m_eventType = static_cast<QEvent::Type>(QEvent::registerEventType());
-
 
 /* Timeout Event */
 
@@ -39,6 +39,8 @@ FsmTimeoutEvent::FsmTimeoutEvent(QAbstractTransition *objIdentity)
 {
 
 }
+
+/* Static TimeoutEvent registration */
 
 QEvent::Type FsmTimeoutEvent::getType(){return FsmTimeoutEvent::m_eventType;}
 QAbstractTransition* FsmTimeoutEvent::getIdentity(){return m_identity.data();}

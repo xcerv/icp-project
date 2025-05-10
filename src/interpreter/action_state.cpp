@@ -51,7 +51,7 @@ void ActionState::onEntry(QEvent *event)
 void ActionState::executeAction()
 {
     QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent());
-    //auto result = engine->evaluate(QString("with (icp) { %1 }").arg(this->getAction()));
+    //auto result = engine->evaluate(QString("with (icp) { %1 }").arg(this->getAction())); // Optionally remove icp. prefix
     auto result = engine->evaluate(this->getAction());
 }
 

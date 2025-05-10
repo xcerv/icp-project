@@ -29,9 +29,9 @@ class ActionState : public QState
         QString m_action; ///< The actions that will be executed when the state is entered; in form of JS script
         QPoint m_position; ///< The current position of the state in editor
 
-        static QPointer<ActionState> m_lastState; ///< last visited state
-        QElapsedTimer m_timeVisited; ///< Time the state was entered without changing to any other state
-        QElapsedTimer m_timeSinceEntry; ///< Time the state was entered
+        static QPointer<ActionState> m_lastState; ///< Last visited state
+        QElapsedTimer m_timeVisited; ///< Time at which the state was entered without changing to any other state
+        QElapsedTimer m_timeSinceEntry; ///< Time at which the state was entered
         
         void onEntry(QEvent *event) override; ///< Method that is executed when state is entered 
 

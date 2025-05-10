@@ -3,6 +3,7 @@
  *
  * @file model_file.cpp
  * @author xcervia00
+ * @author xzejdoj00
  *
  * @brief Implementation of file operations (load/save) for use in Model class
  *
@@ -18,6 +19,9 @@
 #include "mvc_interface.h"
 #include "model.h"
 
+/**
+ * @brief Sections of the file format
+ */
 enum Section { 
     NONE, 
     NAME, 
@@ -29,16 +33,10 @@ enum Section {
     TRANSITIONS 
 };
 
-// Regular
-#define REGEX_NAME
-// Variable regexes
-
-// Generic regex for variables ==> name and 
+// Generic regex for variables ==> datatype, name and value
 #define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+(\w+)\s*=\s*(\w+)\s*$)"
-// Internal variable regex ==> type and 
-#define REGEX_VARIABLE_INTERNAL "" REGEX_VARIABLE ""
+// Internal variable regex ==> name and value (datatype is string)
 #define REGEX_VARIABLE_INPUT_OUTPUT R"(^(\w+)\s*(=\s*(\w+)\s*)?$)"
-#define REGEX_VARIABLE_OUTPUT REGEX_VARIABLE
 
 // Regex for states
 #define REGEX_STATE R"(^\s*([A-Za-z0-9_-]+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}\s*$)"
@@ -53,6 +51,8 @@ bool FsmModel::parseInOutVariableLine(const QString &line, int type) {
     if (!match.hasMatch()){
         return false;
     }
+
+    // Get the values from matched groups 
     QString name = match.captured(1);
     QString value = match.captured(3);
     if (value.isEmpty()) value = "";
