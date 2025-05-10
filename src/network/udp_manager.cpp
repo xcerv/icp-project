@@ -463,7 +463,7 @@ void FsmNetworkManager::enableClient()
     auto randomPort = static_cast<quint16>(QRandomGenerator::global()->bounded(static_cast<quint16>(DEFAULT_UDP_PORT), static_cast<quint16>(UINT16_MAX)));
     this->startListening(serverAddress.address, randomPort);
     this->isConnected = true;
-    this->state = CLIENT;
+    this->state = NETWORK_MANAGER_STATE::CLIENT;
     
     // Register at server
     this->actionConnect();
@@ -479,14 +479,14 @@ void FsmNetworkManager::cancelClient()
 
     this->stopListening();
     this->isConnected = false;
-    this->state = NONE;
+    this->state = NETWORK_MANAGER_STATE::NONE;
 }
 
 void FsmNetworkManager::enableServer()
 {
     this->startListening(serverAddress.address, serverAddress.port);
     this->isListening = true;
-    this->state = SERVER;
+    this->state = NETWORK_MANAGER_STATE::SERVER;
 }
 
 void FsmNetworkManager::cancelServer()
@@ -501,5 +501,5 @@ void FsmNetworkManager::cancelServer()
     this->clientAddresses.clear();
     this->stopListening();
     this->isListening = false;
-    this->state = NONE;
+    this->state = NETWORK_MANAGER_STATE::NONE;
 }

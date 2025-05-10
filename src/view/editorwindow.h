@@ -32,7 +32,7 @@
 
 #include "mvc_interface.h"
 
-#define NETWORK_ACTION(action) do{if(this->networkManager != nullptr){this->networkManager->action;}}while(0)
+#define NETWORK_ACTION(action) do{if(this->networkManager != nullptr && this->isNetworking){this->networkManager->action;}}while(0)
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -391,7 +391,8 @@ private:
     // ========================
 
     // Network
-    FsmNetworkManager * networkManager = nullptr;
+    FsmNetworkManager * networkManager = nullptr; ///< Object handling network actions
+    bool isNetworking = false; ///< Is application connected as client/server?
     
     // UI elements
     Ui::EditorWindow *ui; ///< The ui itself

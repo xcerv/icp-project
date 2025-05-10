@@ -224,7 +224,7 @@ void EditorWindow::startButtonClick()
 
 
     // Register the network action
-    if(this->networkManager != nullptr){
+    if(this->networkManager != nullptr && this->isNetworking){
         if(networkManager->getInitiation() == false){
             NETWORK_ACTION(actionInterState(true));
         }
@@ -270,8 +270,8 @@ void EditorWindow::stopButtonClick()
     this->model->stopInterpretation();
 
     // Register the network action
-    this->networkButtonsActivity(true);
     NETWORK_ACTION(actionInterState(false));
+    this->networkButtonsActivity(true);
 
     // Reset Input Combox/Submit button to disabled
     this->inputEventCombox->setEnabled(false);
@@ -968,6 +968,8 @@ void EditorWindow::networkServerStart()
     if(this->networkManager == nullptr)
         return;
 
+    isNetworking = true;
+
     qInfo() << "Network: Starting a server on " << this->networkManager->getServerInfo().address.toString() 
             << " via " << this->networkManager->getServerInfo().port;
 
@@ -997,12 +999,16 @@ void EditorWindow::networkServerStop()
     this->ui->actionNetDisconnect->setEnabled(false);
     this->ui->actionNetStartListening->setEnabled(true);
     this->ui->actionNetStopListening->setEnabled(false);
+
+    isNetworking = false;
 }
 
 void EditorWindow::networkClientStart()
 {
     if(this->networkManager == nullptr)
         return;
+
+    isNetworking = true;
 
     qInfo() << "Network: Connecting to server " << this->networkManager->getServerInfo().address.toString() 
             << " via " << this->networkManager->getServerInfo().port;
@@ -1019,6 +1025,8 @@ void EditorWindow::networkClientStart()
 
 void EditorWindow::networkClientStop()
 {
+    qDebug() << "CALLED ME";
+
     if(this->networkManager == nullptr)
         return;
 
@@ -1033,6 +1041,8 @@ void EditorWindow::networkClientStop()
     this->ui->actionNetDisconnect->setEnabled(false);
     this->ui->actionNetStartListening->setEnabled(true);
     this->ui->actionNetStopListening->setEnabled(false);
+
+    isNetworking = false;
 }
 
 void EditorWindow::networkSettings()
@@ -1094,7 +1104,7 @@ void EditorWindow::networkButtonsActivity(bool activate)
     if(this->networkManager == nullptr)
         return;
 
-    
+    qDebug() << this->networkManager->getState();
     switch(this->networkManager->getState())
     {
         case NETWORK_MANAGER_STATE::NONE:
