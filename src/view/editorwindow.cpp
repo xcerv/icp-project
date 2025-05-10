@@ -26,12 +26,16 @@
 #include <QFileDialog>
 #include <QTextEdit>
 #include <QScreen>
+#include <cstdint>
 
 EditorWindow::EditorWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::EditorWindow)
 {
     ui->setupUi(this);
+
+    // Network enabled?
+    networkManager = new FsmNetworkManager(this);
 
     statusBarLabel = new QLabel("");
     statusBar()->addWidget(statusBarLabel);
@@ -187,6 +191,15 @@ EditorWindow::EditorWindow(QWidget *parent)
     // = Right-click actions =
     // Moving 
     connect(workArea, &WorkArea::mouseMoved, this, &EditorWindow::workAreaMouseMoved);
+
+    // === Network actions ===
+    connect(ui->actionNetStartListening, &QAction::triggered, this, &EditorWindow::networkServerStart);
+    connect(ui->actionNetStopListening, &QAction::triggered, this, &EditorWindow::networkServerStop);
+
+    connect(ui->actionNetConnect, &QAction::triggered, this, &EditorWindow::networkClientStart);
+    connect(ui->actionNetDisconnect, &QAction::triggered, this, &EditorWindow::networkClientStop);
+
+    connect(ui->actionNetSettings, &QAction::triggered, this, &EditorWindow::networkSettings);
 }
 
 EditorWindow::~EditorWindow()
@@ -210,6 +223,13 @@ void EditorWindow::startButtonClick()
         return;
 
     isInterpreting = true;
+
+    // Register the network action
+    if(this->networkManager != nullptr){
+        this->networkButtonsActivity(false);
+        NETWORK_ACTION(actionSyncRequest());
+        NETWORK_ACTION(actionInterState(true));
+    }
 
     // Allow only variables set prior to interpretation
     QList<QString> keys = allVars[INPUTV].keys();
@@ -241,6 +261,10 @@ void EditorWindow::stopButtonClick()
     // Remove all input events after interpretation ended
     this->model->stopInterpretation();
 
+    // Register the network action
+    this->networkButtonsActivity(true);
+    NETWORK_ACTION(actionInterState(false));
+
     // Reset Input Combox/Submit button to disabled
     this->inputEventCombox->setEnabled(false);
     this->inputSubmitButton->setEnabled(false);
@@ -268,6 +292,11 @@ void EditorWindow::submitInputClick()
         return;
 
     this->model->inputEvent(this->inputEventCombox->currentText(), this->inputEventField->text());
+
+    // Register the network action
+    NETWORK_ACTION(actionInput(this->inputEventCombox->currentText(), this->inputEventField->text()));
+
+    // Clear the event field
     this->inputEventField->clear();
 }
 
@@ -923,6 +952,169 @@ void EditorWindow::resizeWorkArea(){
     // execute dialog
     if (dialog.exec() == QDialog::Accepted) {
         workArea->setSizeWA(widthInput->value(),heightInput->value());
+    }
+}
+
+void EditorWindow::networkServerStart()
+{
+    if(this->networkManager == nullptr)
+        return;
+
+    qInfo() << "Network: Starting a server on " << this->networkManager->getServerInfo().address.toString() 
+            << " via " << this->networkManager->getServerInfo().port;
+
+    NETWORK_ACTION(enableServer());
+
+    // Adjust buttons
+    this->ui->actionNetSettings->setEnabled(false);
+    this->ui->actionNetConnect->setEnabled(false);
+    this->ui->actionNetDisconnect->setEnabled(false);
+    this->ui->actionNetStartListening->setEnabled(false);
+    this->ui->actionNetStopListening->setEnabled(true);
+}
+
+void EditorWindow::networkServerStop()
+{
+    if(this->networkManager == nullptr)
+        return;
+
+    qInfo() << "Network: Stopping a server on " << this->networkManager->getServerInfo().address.toString() 
+            << " via " << this->networkManager->getServerInfo().port;
+
+    NETWORK_ACTION(cancelServer());
+
+    // Adjust buttons
+    this->ui->actionNetSettings->setEnabled(true);
+    this->ui->actionNetConnect->setEnabled(true);
+    this->ui->actionNetDisconnect->setEnabled(false);
+    this->ui->actionNetStartListening->setEnabled(true);
+    this->ui->actionNetStopListening->setEnabled(false);
+}
+
+void EditorWindow::networkClientStart()
+{
+    if(this->networkManager == nullptr)
+        return;
+
+    qInfo() << "Network: Connecting to server " << this->networkManager->getServerInfo().address.toString() 
+            << " via " << this->networkManager->getServerInfo().port;
+
+    NETWORK_ACTION(enableClient());
+
+    // Adjust buttons
+    this->ui->actionNetSettings->setEnabled(false);
+    this->ui->actionNetConnect->setEnabled(false);
+    this->ui->actionNetDisconnect->setEnabled(true);
+    this->ui->actionNetStartListening->setEnabled(false);
+    this->ui->actionNetStopListening->setEnabled(false);
+}
+
+void EditorWindow::networkClientStop()
+{
+    if(this->networkManager == nullptr)
+        return;
+
+    qInfo() << "Network: Disconnecting from server " << this->networkManager->getServerInfo().address.toString() 
+            << " via " << this->networkManager->getServerInfo().port;
+
+    NETWORK_ACTION(cancelClient());
+
+    // Adjust buttons
+    this->ui->actionNetSettings->setEnabled(true);
+    this->ui->actionNetConnect->setEnabled(true);
+    this->ui->actionNetDisconnect->setEnabled(false);
+    this->ui->actionNetStartListening->setEnabled(true);
+    this->ui->actionNetStopListening->setEnabled(false);
+}
+
+void EditorWindow::networkSettings()
+{
+    if(this->networkManager == nullptr)
+        return;
+
+    auto &serverInfo = this->networkManager->getServerInfo();
+
+    QDialog dialog(this);
+    dialog.setWindowTitle("Network settings");
+
+    QVBoxLayout *mainLayout = new QVBoxLayout(&dialog);
+    
+    // Form layout
+    QFormLayout *formLayout = new QFormLayout();
+    mainLayout->addLayout(formLayout);
+
+    QLabel *hostnameLabel = new QLabel(tr("Hostname: "), &dialog);
+    QLineEdit *hostnameEdit = new QLineEdit(serverInfo.address.toString(), &dialog);
+    formLayout->addRow(hostnameLabel, hostnameEdit);
+
+    QLabel *portLabel = new QLabel(tr("Port: "), &dialog);
+    QSpinBox *portEdit = new QSpinBox(&dialog);
+    portEdit->setMinimum(1);
+    portEdit->setMaximum(UINT16_MAX);
+    portEdit->setValue(serverInfo.port);
+    formLayout->addRow(portLabel, portEdit);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &dialog);;
+
+    connect(buttonBox, &QDialogButtonBox::accepted, [&]() {
+        QHostAddress addr;
+        
+        if(hostnameEdit->text().isEmpty()){
+            addr = DEFAULT_ADDRESS;
+        }
+        else if(hostnameEdit->text() == "Any")
+        {
+            addr = QHostAddress::AnyIPv4;
+        }
+
+        quint16 port = (quint16)portEdit->value();
+
+        this->networkManager->setAddress(addr, port);
+        dialog.accept();
+    });
+
+    // Cancel
+    connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+
+    // Add buttonbox to widget
+    mainLayout->addWidget(buttonBox);
+    dialog.exec();
+}
+
+void EditorWindow::networkButtonsActivity(bool activate)
+{
+    if(this->networkManager == nullptr)
+        return;
+
+    
+    switch(this->networkManager->getState())
+    {
+        case NETWORK_MANAGER_STATE::NONE:
+            this->ui->actionNetStartListening->setEnabled(activate);
+            this->ui->actionNetStopListening->setEnabled(activate);
+            this->ui->actionNetConnect->setEnabled(activate);
+            this->ui->actionNetDisconnect->setEnabled(activate);
+            this->ui->actionNetSettings->setEnabled(activate);
+            break;
+
+        case NETWORK_MANAGER_STATE::SERVER:
+            this->ui->actionNetStartListening->setEnabled(false);
+            this->ui->actionNetStopListening->setEnabled(activate);
+            this->ui->actionNetConnect->setEnabled(false);
+            this->ui->actionNetDisconnect->setEnabled(false);
+            this->ui->actionNetSettings->setEnabled(false);
+            break;
+
+        case NETWORK_MANAGER_STATE::CLIENT:
+            this->ui->actionNetStartListening->setEnabled(false);
+            this->ui->actionNetStopListening->setEnabled(false);
+            this->ui->actionNetConnect->setEnabled(false);
+            this->ui->actionNetDisconnect->setEnabled(activate);
+            this->ui->actionNetSettings->setEnabled(false);
+            break;
+
+        default:
+            break;
     }
 }
 

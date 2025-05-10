@@ -28,9 +28,11 @@
 #include "view/logging_window/loggingwindow.h"
 #include "view/internal_representations.h"
 #include "view/fsm_transition/fsmtransition.h"
+#include "network/udp_manager.h"
 
 #include "mvc_interface.h"
 
+#define NETWORK_ACTION(action) do{if(this->networkManager != nullptr){this->networkManager->action;}}while(0)
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -275,6 +277,38 @@ private:
     void resizeWorkArea();
 
     // ========================
+    //      Network methods 
+    // ========================
+
+    public:
+    /**
+     * @brief Begins listening to network input as a server
+     */
+    void networkServerStart();
+    /**
+     * @brief Stops listening to network input as server
+     */
+    void networkServerStop();
+    /**
+     * @brief Connects to server as client
+     */
+    void networkClientStart();
+    /**
+     * @brief Disconnects from server as client
+     */
+    void networkClientStop();
+    /**
+     * @brief Sets up network settings (ip, port)
+     */
+    void networkSettings();
+
+    /**
+     * @brief Enables or disables network buttons
+     * @param activate Whether to enable or disable the buttons
+     */
+    void networkButtonsActivity(bool activate);
+
+    // ========================
     //       MVC INTERFACE 
     // ========================
 
@@ -346,10 +380,14 @@ private:
      * @brief Scrolls input combox down
      */
     void scrollInputComboxDown();
+    
 
     // ========================
     //       Attributes 
     // ========================
+
+    // Network
+    FsmNetworkManager * networkManager = nullptr;
     
     // UI elements
     Ui::EditorWindow *ui; ///< The ui itself

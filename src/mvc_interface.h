@@ -43,6 +43,8 @@ enum FsmErrorType : int
     ERROR_INTERPRETATION_EVALUATION,
 
     ERROR_FILE_INVALID_FORMAT,    
+
+    ERROR_NETWORK_GENERIC,
 };
 
 /**

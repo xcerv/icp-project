@@ -302,13 +302,13 @@ void EditorWindow::saveFile(const QString &filename)
 
 void EditorWindow::loadStream(QTextStream &stream)
 {
-    (void)stream;
+    this->model->loadStream(stream);
     return;
 }
 
 void EditorWindow::saveStream(QTextStream &stream)
 {
-    (void)stream;
+    this->model->saveStream(stream);
     return;
 }
 
@@ -353,6 +353,7 @@ void EditorWindow::cleanup(){
 
     activeState = nullptr;
 
+    // Stop any active actions
     this->cancelActionMove();
     this->cancelActionConnect();
 
@@ -412,9 +413,8 @@ void EditorWindow::outputEvent(const QString &outName)
 
 void EditorWindow::inputEvent(const QString &name, const QString &value)
 {
-    (void)name;
-    (void)value;
-    return; // Nop?
+    this->model->inputEvent(name, value);
+    return;
 }
 
 void EditorWindow::log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const
@@ -434,7 +434,10 @@ void EditorWindow::log() const
 
 void EditorWindow::startInterpretation()
 {
-    isInterpreting = true;
+    if(isInterpreting == false)
+    {
+        this->startButtonClick();
+    }
 }
 
 void EditorWindow::stopInterpretation()
@@ -443,7 +446,6 @@ void EditorWindow::stopInterpretation()
     {
         this->stopButtonClick();
     }
-    isInterpreting = false;
 }
 
 void EditorWindow::restoreInterpretationBackup()
