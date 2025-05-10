@@ -28,7 +28,7 @@ StateFSMWidget::StateFSMWidget(QPoint pos, QWidget *parent)
     ui->output->setPlainText("");
     ui->output->setReadOnly(true);
     ui->output->setContextMenuPolicy(Qt::NoContextMenu);
-    ui->output->setWordWrapMode(QTextOption::WrapAnywhere);
+    ui->output->setWordWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
     ui->output->viewport()->setCursor(Qt::ArrowCursor);
     ui->output->setFocusPolicy(Qt::NoFocus);
     ui->output->viewport()->installEventFilter(this);
