@@ -3,7 +3,6 @@
  *
  * @file fsmtransition.h
  * @author  xkadlet00
- * @author  xcervia00
  *
  * @brief Transition definition
  *
@@ -22,20 +21,31 @@ class FSMTransition : public QWidget
 public:
     explicit FSMTransition(QWidget *parent = nullptr);
     /**
-     * @brief relocateTransition
-     * @param startPoint
-     * @param startSize
-     * @param finPoint
-     * @param finSize
+     * @brief draws the transition based on the specified states its ment to connect
+     * @param startPoint coordinate of top-left corner of 1. state
+     * @param startSize size of 1. state
+     * @param finPoint coordinate of top-left corner of 1. state
+     * @param finSize size of 2. state
      */
     void relocateTransition(QPoint startPoint, QPoint startSize, QPoint finPoint, QPoint finSize);
 
     virtual ~FSMTransition();
 
+    /**
+     * @brief adds a number of a transition this UI element is ment to represent
+     * @param num ID of transition
+     */
     void addTransition(size_t num);
     void subTransition(size_t num);
+    /**
+     * @brief removes a number of a transition this UI element is ment to represent
+     * @param num ID of transition
+     */
     QSet<size_t> getTransitions();
 signals:
+    /**
+     * @brief signal is emitted when the edit button is clicked
+     */
     void editTransition(FSMTransition *);
 protected:
     /**
@@ -48,15 +58,15 @@ protected:
     void clickedEdit();
 
 private:
-    QPoint startPos;
-    QPoint finPos;
+    QPoint startPos;///< start position of UI transition
+    QPoint finPos;///< end position of UI transition
 
-    QSet<size_t> individualTransitions;
+    QSet<size_t> individualTransitions;///< all the IDs of transitions this UI emement represents
 
-    QPushButton * editTransitionBtn = nullptr;
-    QPoint btnSize;
+    QPushButton * editTransitionBtn = nullptr;///< push button to signify the user wants to edit transitions
+    QPoint btnSize;///< size of the push button
 
-    bool isLoop = false;
+    bool isLoop = false;///< true if the two connected states are one and the same
 
 };
 
