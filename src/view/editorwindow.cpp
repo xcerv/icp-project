@@ -1109,9 +1109,9 @@ void EditorWindow::networkButtonsActivity(bool activate)
     {
         case NETWORK_MANAGER_STATE::NONE:
             this->ui->actionNetStartListening->setEnabled(activate);
-            this->ui->actionNetStopListening->setEnabled(activate);
+            this->ui->actionNetStopListening->setEnabled(false);
             this->ui->actionNetConnect->setEnabled(activate);
-            this->ui->actionNetDisconnect->setEnabled(activate);
+            this->ui->actionNetDisconnect->setEnabled(false);
             this->ui->actionNetSettings->setEnabled(activate);
             break;
 
