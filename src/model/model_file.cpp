@@ -92,7 +92,7 @@ bool FsmModel::parseVariableLine(const QString &line) {
         updateVarInternal(name, QVariant(t));
     } 
     else if (type == "float") {
-        auto t = value.toFloat(&ok);
+        auto t = value.toDouble(&ok);
         if(!ok) 
         {
             return false;

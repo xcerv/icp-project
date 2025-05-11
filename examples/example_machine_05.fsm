@@ -14,6 +14,7 @@ Output:
 	sound
 
 Variables:
+    float time = 0
 
 States:
 	CHOOSE(244,201): {icp.output("sound", "Choose type of clock: ANALOG or DIGITAL");}
