@@ -50,6 +50,7 @@ pack:
 	@cp -r $(EXAMPLES) $(ARCHIVE_NAME)/
 	@mkdir -p $(ARCHIVE_NAME)/$(DOC)
 	@cp README.txt $(ARCHIVE_NAME)/
+	@cp $(DOC)/konceptualni_navrh.pdf $(ARCHIVE_NAME)/$(DOC)/
 	@cp README.md $(ARCHIVE_NAME)/
 	@cp Makefile $(ARCHIVE_NAME)/
 	@cp Doxyfile $(ARCHIVE_NAME)/
