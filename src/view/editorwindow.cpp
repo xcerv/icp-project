@@ -1076,11 +1076,14 @@ void EditorWindow::networkSettings()
         QHostAddress addr;
         
         if(hostnameEdit->text().isEmpty()){
-            addr = DEFAULT_ADDRESS;
+            addr.setAddress(DEFAULT_ADDRESS);
         }
         else if(hostnameEdit->text() == "Any")
         {
-            addr = QHostAddress::AnyIPv4;
+            addr.setAddress(QHostAddress::AnyIPv4);
+        }
+        else{
+            addr.setAddress(hostnameEdit->text());
         }
 
         quint16 port = (quint16)portEdit->value();
