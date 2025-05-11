@@ -11,7 +11,6 @@
 #include "udp_manager.h"
 
 #include <QObject>
-#include <QNetworkDatagram>
 #include <QUdpSocket>
 #include <QHostAddress>
 #include <QAbstractSocket>
