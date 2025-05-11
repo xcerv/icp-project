@@ -59,9 +59,8 @@ void ActionState::executeAction()
     // Evaluate the action
     auto result = engine->evaluate(QStringLiteral("(function(){ %1 })();").arg(this->getAction()));
 
-    if(result.isError())
-    {
-        engine->evaluate("icp.engine_error(6, 'Error occured during action interpretation')");
+    if(result.isError()){
+        qCritical() << "Intepreter: Error during execution of state action of type: " + result.errorType();
     }
 }
 

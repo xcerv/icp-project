@@ -106,6 +106,11 @@ bool CombinedTransition::eventTest(QEvent *e)
         {
             QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent()); // Get the parent of main statemachine --> the QJSEngine 
             QJSValue guard_result = engine->evaluate(this->m_guard);
+
+            if(guard_result.isError())
+            {
+                qCritical() << "Interpreter: Error during guard condition code evaluation";
+            }
             
             // Has to be bool and that is true
             if(!guard_result.isBool() || !guard_result.toBool())
@@ -125,6 +130,11 @@ bool CombinedTransition::eventTest(QEvent *e)
             if(!ok)
             {
                 auto timeoutResult = (static_cast<QJSEngine*>(this->machine()->parent())->evaluate(this->m_timeout));
+
+                if(timeoutResult.isError())
+                {
+                    qWarning() << "Interpreter: Error during timeout code evaluation";
+                }
                 
                 if(timeoutResult.isNumber())
                 {
