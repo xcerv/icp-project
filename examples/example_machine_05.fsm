@@ -1,0 +1,30 @@
+Name:
+	Clocks
+Input:
+	clock
+	cycle = 1000
+
+Output:
+	time
+	sound
+
+Variables:
+
+States:
+	CHOOSE(244,201): {icp.output("sound", "Choose type of clock: ANALOG or DIGITAL");}
+	DIGITAL(478,363): {icp.output("sound", "beep"); icp.set("time", icp.elapsed()/1000);  icp.output("time", "Time: " + icp.get("time") + "s");}
+	ANALOG(472,26): {}
+	9(799,226): {icp.output("sound", "tock"); icp.set("time", (icp.get("time") + Number(Math.max(icp.valueof("cycle"), 1))/1000));  icp.output("time", "Time: " + icp.get("time") + "s");}
+	3(1129,230): {icp.output("sound", "tock"); icp.set("time", (icp.get("time") + Number(Math.max(icp.valueof("cycle"), 1))/1000));  icp.output("time", "Time: " + icp.get("time") + "s");}
+	12(963,28): {icp.output("sound", "tick");  icp.set("time", (icp.get("time") + Number(Math.max(icp.valueof("cycle"), 1))/1000));  icp.output("time", "Time: " + icp.get("time") + "s");}
+	6(964,426): {icp.output("sound", "tick");  icp.set("time", (icp.get("time") + Number(Math.max(icp.valueof("cycle"), 1))/1000));  icp.output("time", "Time: " + icp.get("time") + "s");}
+
+Transitions:
+	ANALOG -> 12: {}
+	CHOOSE -> DIGITAL: {clock [icp.valueof("clock") == "DIGITAL"]}
+	6 -> 9: { @ Number(icp.valueof("cycle"))}
+	12 -> 3: { @ Number(icp.valueof("cycle"))}
+	9 -> 12: { @ Number(icp.valueof("cycle"))}
+	3 -> 6: { @ Number(icp.valueof("cycle"))}
+	DIGITAL -> DIGITAL: { @ Number(icp.valueof("cycle"))}
+	CHOOSE -> ANALOG: {clock [icp.valueof("clock") == "ANALOG"]}
