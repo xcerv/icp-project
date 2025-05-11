@@ -371,7 +371,7 @@ void EditorWindow::handleActionSave()
 
     // Save to last file
     fileModified = false;
-    this->saveFile(this->lastFileName);
+    model->saveFile(this->lastFileName);
 }
 
 void EditorWindow::handleActionNew()
