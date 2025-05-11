@@ -243,7 +243,7 @@ class FsmNetworkManager: public QObject
 
         /**
          * @brief Starts/Stops interpretation of remote server/all clients
-         * @param state The state to set (true if start, false if stop)
+         * @param interpret The state to set (true if start, false if stop)
          */
         void actionInterState(bool interpret);
         /**
