@@ -34,9 +34,9 @@ enum Section {
 };
 
 // Generic regex for variables ==> datatype, name and value
-#define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+(\w+)\s*=\s*(\w+)\s*$)"
+#define REGEX_VARIABLE R"(^\s*(int|float|bool|string)\s+([\w-]+)\s*=\s*([\w-]+)\s*$)"
 // Internal variable regex ==> name and value (datatype is string)
-#define REGEX_VARIABLE_INPUT_OUTPUT R"(^(\w+)\s*(=\s*(\w+)\s*)?$)"
+#define REGEX_VARIABLE_INPUT_OUTPUT R"(^([\w-]+)\s*(=\s*([\w-]+)\s*)?$)"
 
 // Regex for states
 #define REGEX_STATE R"(^\s*([A-Za-z0-9_-]+)\s*\(\s*(\d+)\s*,\s*(\d+)\s*\)\s*:\s*\{\s*(.*)\s*\}\s*$)"

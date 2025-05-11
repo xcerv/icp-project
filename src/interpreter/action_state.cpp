@@ -57,7 +57,12 @@ void ActionState::executeAction()
     //auto result = engine->evaluate(QString("with (icp) { %1 }").arg(this->getAction())); // Optionally remove icp. prefix
     
     // Evaluate the action
-    auto result = engine->evaluate(this->getAction());
+    auto result = engine->evaluate(QStringLiteral("(function(){ %1 })();").arg(this->getAction()));
+
+    if(result.isError())
+    {
+        engine->evaluate("icp.engine_error(6, 'Error occured during action interpretation')");
+    }
 }
 
 QJSEngine *ActionState::m_scriptEngine() const
