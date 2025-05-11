@@ -1,5 +1,10 @@
 Name:
 	Vending Machine
+
+Comment:
+    Simuluje cinnost prodejniho automatu - uzivatel muze vhazovat po jedne mince a zakoupit dany produkt.
+    Jmeno a cenu potraviny dynamicky zpracuje z item_X interni promenne.
+
 Input:
 	coin_inserted
 	select_item

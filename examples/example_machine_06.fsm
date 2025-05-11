@@ -1,0 +1,39 @@
+Name:
+	Heslo
+
+Comment:
+    Zkousi zapis hesla.
+    
+Input:
+	char
+
+Output:
+	out
+
+Variables:
+
+States:
+	INIT(46,262): {icp.output("out", "Input a character of password.")}
+	L(1033,98): {}
+	E(711,97): {}
+	O(1194,97): {}
+	SOLVED(1209,406): {icp.output("out", "CORRECT!")}
+	END(996,410): {icp.stop()}
+	S(872,98): {}
+	H(550,96): {}
+	SINK(561,399): {icp.output("out", "INCORRECT.")}
+
+Transitions:
+	E -> SINK: {char @ 200}
+	L -> O: {char [ icp.valueof("char") == "L" ||  icp.valueof("char") == "l" ] @ 100}
+	S -> L: {char [ icp.valueof("char") == "S" ||  icp.valueof("char") == "s" ] @ 100}
+	O -> SINK: {char @ 200}
+	O -> SOLVED: {char [ icp.valueof("char") == "O" ||  icp.valueof("char") == "o" ] @ 100}
+	INIT -> H: { @ 500}
+	E -> S: {char [ icp.valueof("char") == "E" ||  icp.valueof("char") == "e" ] @ 100}
+	H -> E: {char [ icp.valueof("char") == "H" ||  icp.valueof("char") == "h" ] @ 100}
+	SOLVED -> END: { @ 3000}
+	SINK -> INIT: { @ 1000}
+	S -> SINK: {char @ 200}
+	L -> SINK: {char @ 200}
+	H -> SINK: {char @ 200}

@@ -1,5 +1,9 @@
 Name:
 	Factorial
+
+Comment:
+    Vypocita faktorial ze zadaneho cisla
+
 Input:
 	fac = 5
 

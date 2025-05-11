@@ -1,5 +1,10 @@
 Name:
 	Clocks
+
+Comment:
+    Umoznuje zvolit analogovy/digitalni hodiny.
+    Dale umi nastavit delku casovace.
+
 Input:
 	clock
 	cycle = 1000
