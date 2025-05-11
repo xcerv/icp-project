@@ -1,10 +1,14 @@
+# ICP 2024/25 Project - FSM interpreter and editor
+
 SRC=src
 BUILD=build
 DOC=doc
+DOC_FOLDER=html
+
 EXAMPLES=examples
 DEBUG_DIR=debug_bld
 
-ARCHIVE_NAME=xcervia00-xkadlet00-xzejdoj00
+ARCHIVE_NAME=xcervia00-xkadlet00-xzejdoj00-40-40-20
 
 # Project output
 PROJECT=ICP
@@ -13,8 +17,6 @@ TARGET=icp_fsm_interpreter
 # Qmake
 QMAKE:=qmake
 QT_PRO=$(SRC)/*.pro
-
-
 
 # Merlin specific 
 MERLIN_HOSTNAME:=merlin.fit.vutbr.cz
@@ -58,7 +60,8 @@ pack:
 clean:
 	@rm -rf ./$(BUILD)
 	@rm -rf ./$(DEBUG_DIR)
-	@rm -rf ./$(DOC)/*
+	@rm -rf ./$(DOC)/$(DOC_FOLDER)
+	@rm -f ./$(DOC)/doxygen_warnings.txt
 
 $(BUILD): $(QT_PRO)
 	@mkdir -p $(BUILD)
