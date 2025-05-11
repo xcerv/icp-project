@@ -14,7 +14,6 @@
 
 #include <QObject>
 #include <QSet>
-#include <QNetworkDatagram>
 #include <QUdpSocket>
 #include <QHostAddress>
 #include <QAbstractSocket>

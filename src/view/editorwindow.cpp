@@ -735,7 +735,7 @@ void EditorWindow::variableToBeEdited(enum variableType type){
 
             if (newInput) {
                 if (valueInput) {
-                    form.removeRow(2);  // careful: remove correct row
+                    FORM_REMOVE_ROW(form, 2);  // careful: remove correct row
                     delete valueInput;
                 }
                 //add waiting here?
@@ -842,7 +842,7 @@ void EditorWindow::variableToBeAdded(enum variableType type){
 
             if (newInput) {
                 if (valueInput) {
-                    form.removeRow(2);
+                    FORM_REMOVE_ROW(form, 2);
                     delete valueInput;
                 }
 
@@ -1505,7 +1505,12 @@ void EditorWindow::editTransitionHanling(FSMTransition * transition){
         conditionEdit->setText(cond.condition);
     };
     updateFields();
-    connect(idComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), updateFields);
+
+    #if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+        connect(idComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), updateFields);
+    #else
+        connect(idComboBox, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), updateFields);
+    #endif
 
     dialog.exec();
 }

@@ -14,6 +14,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include <QtGlobal>
 #include <QHash>
 #include <memory>
 #include <QCloseEvent>
@@ -34,6 +35,12 @@
 
 #define NETWORK_ACTION(action) do{if(this->networkManager != nullptr && this->isNetworking){this->networkManager->action;}}while(0)
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 8, 0)
+    #define FORM_REMOVE_ROW(formLayout, rowNum) formLayout.removeRow(rowNum)
+#else
+    #define FORM_REMOVE_ROW(formLayout, rowNum) do{formLayout.removeItem(formLayout.itemAt(rowNum));}while(0)
+#endif
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class EditorWindow;
@@ -51,7 +58,6 @@ public:
 
     EditorWindow(QWidget *parent = nullptr);
     virtual ~EditorWindow();
-
     
     /**
      * @brief Related to MVC interface communication; registers a model to use
@@ -362,9 +368,8 @@ private:
 
     void renameFsm(const QString &name) override;
 
-    // This may be used only one-way
     void log(const QString &time, const QString &state, const QString &varInputs, const QString &varOutputs, const QString &varInternals) const override;
-    void log() const override; // Request log
+    void log() const override;
 
     void startInterpretation() override;
     void stopInterpretation() override;
