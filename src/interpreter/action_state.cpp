@@ -60,7 +60,7 @@ void ActionState::executeAction()
     auto result = engine->evaluate(QStringLiteral("(function(){ %1 })();").arg(this->getAction()));
 
     if(result.isError()){
-        qCritical() << "Intepreter: Error during execution of state action of type: " + result.errorType();
+        qCritical() << "Intepreter: Error during execution of state action";
     }
 }
 
