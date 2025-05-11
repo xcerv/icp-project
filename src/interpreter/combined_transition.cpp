@@ -24,9 +24,7 @@ CombinedTransition::CombinedTransition(const size_t id)
     m_pending{false},
     m_pending_id{-1},
     m_id{id}
-{
-    
-}
+{}
  
 CombinedTransition::CombinedTransition(const QString &name, const QString &guard, const QString &timeout) 
     :
@@ -36,9 +34,7 @@ CombinedTransition::CombinedTransition(const QString &name, const QString &guard
     m_pending{false},
     m_pending_id{-1},
     m_id{0}
-{
-
-}
+{}
 
 CombinedTransition::CombinedTransition(const QString &unparsed_condition)
     :
@@ -82,6 +78,7 @@ void CombinedTransition::stopTimer()
     if(m_pending && m_pending_id != -1)
         this->machine()->cancelDelayedEvent(this->m_pending_id);
 
+    // Mark transition as not pending
     this->m_pending_id = -1;
     this->m_pending = false;
 }

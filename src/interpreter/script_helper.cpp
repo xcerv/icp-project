@@ -4,7 +4,7 @@
 * @file script_helper.cpp
 * @author  xcervia00
 *
-* @brief An implementation of class for accessing/setting variables from within QJSEngine
+* @brief An implementation of class for accessing/setting variables from within QJSEngine + native function definition
 *
 */
 

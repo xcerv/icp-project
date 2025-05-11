@@ -37,11 +37,12 @@ void ActionState::onEntry(QEvent *event)
         m_timeVisited.start();
     }
 
-    // Always reset this timer
+    // Always reset this timer on any state entry
     m_timeSinceEntry.start();
 
     qInfo() << "Interpreter: State entered: " << this->objectName();
 
+    // Trigger action of the state
     this->executeAction();
     if(this->machine()->isRunning()){
         this->machine()->postEvent(new FsmInputEvent("")); // Upon entry, implicitlly fire 'empty' input
@@ -50,13 +51,18 @@ void ActionState::onEntry(QEvent *event)
 
 void ActionState::executeAction()
 {
+    // Get the engine for evaluation
     QJSEngine* engine = static_cast<QJSEngine*>(this->machine()->parent());
+    
     //auto result = engine->evaluate(QString("with (icp) { %1 }").arg(this->getAction())); // Optionally remove icp. prefix
+    
+    // Evaluate the action
     auto result = engine->evaluate(this->getAction());
 }
 
 QJSEngine *ActionState::m_scriptEngine() const
 {
+    // Get the relative parent (script engine) dynamically
     return (this->parent() != nullptr) ? static_cast<QJSEngine*>(this->parent()->parent()) : nullptr;
 }
 

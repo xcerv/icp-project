@@ -16,7 +16,7 @@
 #include <QAbstractTransition>
 
 // Regex to parse the condition by
-#define REGEX_TRANSITION_CONDITION "^ *([a-zA-Z_-]+)? *(\\[([\\x00-\\x7F]+)\\])? *(@ *([\\x00-\\x7F]+))? *$"
+#define REGEX_TRANSITION_CONDITION "^\\s*([a-zA-Z_-]+)?\\s*(\\[([\\x00-\\x7F]+)\\])?\\s*(@\\s*([\\x00-\\x7F]+))?\\s*$"
 
 /**
  * @brief Class used for transitions in ICP FSM - it combines two possible input events (initial Input and Timeout)

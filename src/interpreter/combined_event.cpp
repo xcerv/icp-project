@@ -14,15 +14,13 @@
 #include <QPointer>
 #include <QDebug>
 
-/* Input Event */
+/* === Input Event === */
 
 FsmInputEvent::FsmInputEvent(const QString &inName)
     : 
     QEvent(FsmInputEvent::getType()),
     name(inName)
-{
-
-}
+{}
 
 /* Static InputEvent registration */
 
@@ -30,15 +28,13 @@ const QString &FsmInputEvent::getName() const { return this->name; }
 QEvent::Type FsmInputEvent::getType() { return FsmInputEvent::m_eventType; }
 const QEvent::Type FsmInputEvent::m_eventType = static_cast<QEvent::Type>(QEvent::registerEventType());
 
-/* Timeout Event */
+/* === Timeout Event === */
 
 FsmTimeoutEvent::FsmTimeoutEvent(QAbstractTransition *objIdentity)
     : 
     QEvent(FsmTimeoutEvent::getType()),
     m_identity(objIdentity)
-{
-
-}
+{}
 
 /* Static TimeoutEvent registration */
 
