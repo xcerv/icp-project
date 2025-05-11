@@ -14,7 +14,7 @@ Variables:
 States:
     IDLE (250,100):             { if (icp.defined("set_to")) { icp.set("timeout", Number(icp.valueof("set_to")));}  icp.output("out", "OUT: " + 0);  icp.output("rt", "RT: " + 0); }
     ACTIVE (750,100):           { if (icp.defined("set_to")) { icp.set("timeout", Number(icp.valueof("set_to")));}  icp.output("out", "OUT: " + 1);  icp.output("rt", "RT: " + icp.get("timeout")); }
-    TIMING (500,250):           { if (icp.defined("set_to")) { icp.set("timeout", Number(icp.valueof("set_to")));}  icp.output("rt", "TIME LEFT: " + Math.max(icp.get("timeout") - Number(icp.elapsed()), 0) ); }
+    TIMING (500,250):           { if (icp.defined("set_to")) { icp.set("timeout", Number(icp.valueof("set_to")));}  icp.output("rt", "TIME SINCE ENTRY: " + Number(icp.elapsed()) ); }
 Transitions:
     IDLE -> ACTIVE:             { in [ Number(icp.valueof("in")) == 1  ] }
     ACTIVE -> TIMING:           { in [ Number(icp.valueof("in")) == 0  ] }
