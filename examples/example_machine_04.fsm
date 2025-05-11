@@ -1,0 +1,33 @@
+Name:
+	Vending Machine
+Input:
+	select_item = Cola
+	coin_inserted = 1
+
+Output:
+	display = Insert $1 coins.
+	balance_display = 1
+
+Variables:
+	string item_1 = Water-5
+	string dispensor_internal = Empty
+	int balance = 1
+	string item_2 = Cola-3
+	string item_3 = Chips-3
+
+States:
+	IDLE(357,73): {if (!icp.defined("balance")){ icp.set("balance", 0);}  icp.output("display", "Insert $1 coins.");   icp.output("balance_display", icp.get("balance")); icp.set("dispensor_internal", "Empty");}
+	COLLECTING(878,93): {if (icp.valueof("display") != "Display: Insufficient funds" && Number(icp.valueof("coin_inserted")) == 1)  {icp.set("balance", icp.get("balance") + 1);}  icp.output("balance_display", "Balance: $" + icp.get("balance")); icp.output("display", "Select item or insert more coins.")}
+	DISPENSING(569,452): {icp.output("display", "Dispensing " + icp.get("dispensor_internal") + ". Thank you!");}
+	SELECTING(1107,392): {var index = 1; var selected = icp.valueof("select_item");  while(icp.defined("item_" + index.toString())) {     var item_text = icp.get("item_" + index.toString());     const item_array = item_text.split("-");      if(selected == item_array[0])         {             if(Number(item_array[1]) <= icp.get("balance"))             {                 icp.set("balance", icp.get("balance")-Number(item_array[1]));                 icp.set("dispensor_internal", item_array[0]);                  return;             }             else             {                 icp.output("display", "Display: Insufficient funds");                 return;             }         }     index++; }  icp.output("display", "Display: Unknown item"); return;}
+
+Transitions:
+	DISPENSING -> IDLE: { @ 3000 }
+	IDLE -> COLLECTING: {coin_inserted [ Number(icp.valueof("coin_inserted")) == 1 ]}
+	COLLECTING -> IDLE: {select_item [icp.valueof("select_item") == "CANCEL"]}
+	SELECTING -> DISPENSING: { [icp.get("dispensor_internal") != "Empty"] @ 500}
+	COLLECTING -> SELECTING: {select_item}
+	SELECTING -> IDLE: { [ icp.valueof("display") == "Display: Unknown item" ] @ 1000}
+	SELECTING -> SELECTING: { @ 1500}
+	COLLECTING -> COLLECTING: {coin_inserted [ Number(icp.valueof("coin_inserted")) == 1 ]}
+	SELECTING -> COLLECTING: { [ icp.valueof("display") == "Display: Insufficient funds" ] @ 1000}
