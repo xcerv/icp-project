@@ -14,13 +14,24 @@
 #include <QLineEdit>
 #include <QKeyEvent>
 
+/**
+ * @brief Modification of line edit to detect other button presses (arrow keys)
+ */
 class InputEventLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
+    /**
+     * @brief Constructor for line edit
+     * @param parent Parent widget
+     */
     explicit InputEventLineEdit(QWidget *parent = nullptr);
 
 protected:
+    /**
+     * @brief Key on keyboard was pressed
+     * @param event The event to handle
+     */
     void keyPressEvent(QKeyEvent *event) override;
 
 signals:

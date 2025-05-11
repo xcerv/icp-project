@@ -93,7 +93,7 @@ signals:
      */
     void leftClick();
 private:
-    Ui::StateFSMWidget *ui;
+    Ui::StateFSMWidget *ui; ///< The ui element
     QPoint position; ///< position of state within workArea
     QPoint size; ///< size of state
 };

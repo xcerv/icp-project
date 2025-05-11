@@ -112,9 +112,9 @@ signals:
 private:
 
 
-    Ui::VariablesDisplay *ui;
-    bool shown = true;
-    QLabel *typeVar[3];
+    Ui::VariablesDisplay *ui; ///< The ui itself
+    bool shown = true; ///< Is the variable dispaly shown
+    QLabel *typeVar[3]; ///< Labels of the variables on the menu
 };
 
 #endif // VARIABLESDISPLAY_H

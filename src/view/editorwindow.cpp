@@ -42,7 +42,7 @@ EditorWindow::EditorWindow(QWidget *parent)
 
     ui->menubar->setStyleSheet( "QMenu::item { padding: 0px 30px 0px 5px;}");
 
-    // Variable display
+    // === Variable display ===
     variablesDisplay = new VariablesDisplay(this);
     variablesDisplay->move(15, 35); // top-left corner
     variablesDisplay->raise(); // appearing above other widgets
@@ -54,7 +54,7 @@ EditorWindow::EditorWindow(QWidget *parent)
     connect(variablesDisplay, &VariablesDisplay::removeVariableFromDisplay, this, &EditorWindow::variableToBeDeleted);
     connect(variablesDisplay, &VariablesDisplay::editVariableInDisplay, this, &EditorWindow::variableToBeEdited);
 
-    // WorkAreaContrainer
+    // === WorkAreaContrainer ===
     workAreaScrollContainer = new QWidget();
     workAreaScrollLayout = new QVBoxLayout(workAreaScrollContainer);  // layout for centering
     workAreaScrollContainer->setLayout(workAreaScrollLayout);
@@ -81,14 +81,16 @@ EditorWindow::EditorWindow(QWidget *parent)
     inputEventCombox = ui->inputSelect;
     outputEventField = ui->outputField;
 
+    // Link button clicks
     connect(startButton, &QPushButton::clicked, this, &EditorWindow::startButtonClick);
     connect(stopButton, &QPushButton::clicked, this, &EditorWindow::stopButtonClick);
     connect(inputSubmitButton, &QPushButton::clicked, this, &EditorWindow::submitInputClick);
     connect(inputEventField, &QLineEdit::returnPressed, this, &EditorWindow::submitInputClick);
 
+    // Combox scrolling with arrows
     connect(inputEventField, &InputEventLineEdit::upArrowPressed, this, &EditorWindow::scrollInputComboxUp);
     connect(inputEventField, &InputEventLineEdit::downArrowPressed, this, &EditorWindow::scrollInputComboxDown);
-
+    // React to combox name changes
     connect(inputEventCombox, &QComboBox::currentTextChanged, this, &EditorWindow::inputComboxChanged);
 
     // Don't enable buttons with space by default and handle it manually
@@ -216,25 +218,27 @@ EditorWindow::~EditorWindow()
 
 void EditorWindow::startButtonClick()
 {
+    // Cancel any active actions
     cancelActionMove();
     cancelActionConnect();
 
     if(isInterpreting)
         return;
 
-
     // Register the network action
     if(this->networkManager != nullptr && this->isNetworking){
+        // The click came locally
         if(networkManager->getInitiation() == false){
             NETWORK_ACTION(actionInterState(true));
         }
-        
+        // Client started the interpretation
         if(networkManager->getState() == CLIENT && !networkManager->getInitiation())
         {
             return;
         }
     }
 
+    // Only now enable the flag, to avoid re-entry
     isInterpreting = true;
 
     // Allow only variables set prior to interpretation
@@ -243,6 +247,7 @@ void EditorWindow::startButtonClick()
         this->inputEventCombox->addItem(key);
     }
 
+    // Change button availability buttons
     this->networkButtonsActivity(false);
 
     this->inputEventCombox->setEnabled(true);
@@ -257,6 +262,7 @@ void EditorWindow::startButtonClick()
     // Disable variable editing
     this->variablesDisplay->setActButtonsAll(false);
 
+    // Start the interpretation itself
     this->model->startInterpretation();
 }
 
@@ -616,29 +622,37 @@ void EditorWindow::handleActionMoveState(StateFSMWidget *movingState)
 {
     if(movingState == nullptr || isInterpreting) return;
 
+    // Get current data about the state
     isStateMoving = true;
     movingStateWidget = movingState;
     movingStateOrigPos = movingState->getPosition();
     manipulatedState = movingState->getName();
 
+    // Make other states transparent (ignore mouse events) temporarily
     for(const auto &val : allStates.values()){
         val->setAttribute(Qt::WA_TransparentForMouseEvents, true);
     }
 
+    // Create the ghost widget (transparent represetnation of the state)
     if (!ghostStateWidget) {
         ghostStateWidget = new QLabel(workArea);
         ghostStateWidget->setAttribute(Qt::WA_TransparentForMouseEvents);
     }
 
+    // Set up ghost widget
     auto size = movingStateWidget->getSize();
     ghostStateWidget->setFixedSize(size.x(), size.y());
     ghostStateWidget->move(workArea->mapFromGlobal(workArea->mapToGlobal(movingStateOrigPos)));
     ghostStateWidget->show();
     ghostStateWidget->raise();
 
-    movingStateWidget->hide(); // Maybe??
+    // Hide original widget
+    movingStateWidget->hide();
 
+    // Change cursor
     QApplication::setOverrideCursor(Qt::SizeAllCursor);
+    
+    // Track mouse
     workArea->setMouseTracking(true);
 }
 
@@ -867,11 +881,13 @@ void EditorWindow::resizeWorkArea(int width, int height){
 void EditorWindow::workAreaLeftClick(QPoint position){
     statusBarLabel->setText(QString::number(position.x()) + ", " + QString::number(position.y()));
 
-
+    // Currently moving state --> try to place it
     if(isStateMoving && movingStateWidget && ghostStateWidget){
+        // Reset cursor and stop tracking mouse
         QApplication::setOverrideCursor(Qt::ArrowCursor);
         workArea->setMouseTracking(false);
 
+        // Toggle visibility
         ghostStateWidget->hide();
         movingStateWidget->show();
 
@@ -885,7 +901,7 @@ void EditorWindow::workAreaLeftClick(QPoint position){
             manipulatedState.clear();
         }else{
             cancelActionMove();
-            QMessageBox::warning(this,"Warning","State did not fit.");
+            QMessageBox::warning(this, "Warning", "State did not fit.");
         }
         isStateMoving = false;
     }
@@ -1523,6 +1539,7 @@ void EditorWindow::scrollInputComboxDown()
 
 void EditorWindow::movementUpdateTransitions()
 {
+    // Find transitions related to the moving state
     for(const auto &key : allTransitionsUI.keys()){
         StateFSMWidget* src = allStates.value(key.first, nullptr);
         StateFSMWidget* dst = allStates.value(key.second, nullptr);
@@ -1532,20 +1549,21 @@ void EditorWindow::movementUpdateTransitions()
                 QPoint srcPos, dstPos;
                 QPoint srcSize, dstSize;
 
+                // Transition to itself
                 if(src == dst)
                 {
                     srcPos = ghostStateWidget->pos();
                     srcSize = QPoint(ghostStateWidget->size().width(), ghostStateWidget->size().height());
                     dstPos = srcPos;
                     dstSize = srcSize;
-                }
+                } // Transition from
                 else if(movingStateWidget == src)
                 {
                     srcPos = ghostStateWidget->pos();
                     srcSize = QPoint(ghostStateWidget->size().width(), ghostStateWidget->size().height());
                     dstPos = dst->getPosition();
                     dstSize = dst->getSize();
-                }
+                } // Transition to
                 else
                 {
                     srcPos = src->getPosition();
@@ -1554,6 +1572,7 @@ void EditorWindow::movementUpdateTransitions()
                     dstSize = QPoint(ghostStateWidget->size().width(), ghostStateWidget->size().height());
                 }
 
+                // Update said transition
                 if(src && dst){
                     allTransitionsUI[key]->relocateTransition(srcPos, srcSize, dstPos, dstSize);
                 }
@@ -1596,19 +1615,25 @@ void EditorWindow::workAreaMouseMoved(QPoint pos) {
 void EditorWindow::cancelActionMove()
 {
     if (isStateMoving && movingStateWidget) {
+        // Reset mouse to default
         QApplication::setOverrideCursor(Qt::ArrowCursor);
         workArea->setMouseTracking(false);
 
+        // Make states transparent again
         for(const auto &val : allStates.values()){
             val->setAttribute(Qt::WA_TransparentForMouseEvents, false);
         }
 
+        // Move ghost state back
         if (ghostStateWidget) {
             ghostStateWidget->move(movingStateOrigPos);
             ghostStateWidget->hide();
         }
+        // Move state back to the original position
         movingStateWidget->move(movingStateOrigPos);
         movingStateWidget->show();
+
+        // Final update of transitions
         movementUpdateTransitions();
 
         isStateMoving = false;
@@ -1631,6 +1656,7 @@ StateFSMWidget* EditorWindow::getHoveredState()
     QWidget* currentWidget = workArea->childAt(workArea->mapFromGlobal(QCursor::pos()));
 
     StateFSMWidget* stateHovered = nullptr;
+    // Traverse hiearchy to get the state
     while (currentWidget != nullptr && currentWidget != this->workArea) {
         stateHovered = qobject_cast<StateFSMWidget*>(currentWidget);
         if (stateHovered) {

@@ -15,6 +15,9 @@
 #include <QWidget>
 #include <QSet>
 
+/**
+ * @brief Transition widget for rendering on workarea
+ */
 class FSMTransition : public QWidget
 {
     Q_OBJECT

@@ -28,6 +28,9 @@
 // Extract message type from byte message
 #define MSG_TYPE(msg) MSG_EXTRACT_PARAM((msg), TYPE)
 
+/**
+ * @brief The state/type of the network manager (client/server/nothing)
+ */
 enum NETWORK_MANAGER_STATE : uint8_t
 {
     SERVER,
@@ -40,8 +43,8 @@ enum NETWORK_MANAGER_STATE : uint8_t
  */
 enum UDP_PARAM_POSITIONS : uint8_t
 {
-    TYPE = 0,
-    BOOL = 1,
+    TYPE = 0, // The type of the message
+    BOOL = 1, // The location of boolean in the message
 };
 
 /**
@@ -128,7 +131,7 @@ class FsmNetworkManager: public QObject
         bool isListening = false; ///< Is the manager currently listening for client Input
         bool isConnected = false; ///< Is the manager currently connected to a server
 
-        bool startedExternally = false;
+        bool startedExternally = false; ///< Was the interpretation started externally or initiated by this instance?
 
         FsmInterface * ownerObject = nullptr; ///< Pointer to the owning interface
 
