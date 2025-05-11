@@ -279,13 +279,16 @@ void EditorWindow::stopButtonClick()
     this->stopButton->setEnabled(false);
     this->startButton->setEnabled(true);
 
+    // Reset interpretation buttons in menu
     this->stopInterpretationAct->setEnabled(false);
     this->startInterpretationAct->setEnabled(true);
 
+    // Reset input combox to default (...)
     this->inputEventCombox->clear();
     this->inputEventCombox->addItem("..."); // Add just ... by default
 
-    this->outputEventField->clear(); // Clear outputs from current session
+    // Clear outputs from current session
+    this->outputEventField->clear();
 
     // Enable variable editing
     for(int i = 0; i < NUMV; i++){
@@ -322,8 +325,10 @@ void EditorWindow::inputComboxChanged()
 
 void EditorWindow::handleActionSaveAs()
 {
+    // By default use current workdirectory, otherwise the last directory used
     auto startDirectory = lastFileName.isEmpty() ? QDir::currentPath() : QFileInfo(lastFileName).absolutePath();
 
+    // Create Savefile dialog
     QFileDialog dialog(this, tr("Save FSM As..."));
     dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -331,12 +336,15 @@ void EditorWindow::handleActionSaveAs()
     dialog.setNameFilter(tr("FSM Files (*.fsm);;All Files (*)"));
     dialog.setDefaultSuffix("fsm");    
 
+    // Was the dialogue accepted?
     if(dialog.exec() == QDialog::Accepted){
+        // Get the filename as the first of selected files
         QString fileName = dialog.selectedFiles().value(0);
         
         // Get the directory that was actually chosen
         lastFileName = fileName;
 
+        // Save file and clear dirty flag
         fileModified = false;
         model->saveFile(fileName);
     }
@@ -365,10 +373,17 @@ void EditorWindow::handleActionNew()
     // Creating blank file multiple times
     if(!this->fileModified && lastFileName.isEmpty())
         return;
+    
+    // File was modified ==> Save changes?
+    if(fileModified)
+        this->promptOnModify();
 
+    // Stop interpretation and remove active file
     this->stopButtonClick();
     fileModified = false;
     this->lastFileName.clear();
+
+    // Blank workarea ==> clear all
     this->model->cleanup();
 }
 
@@ -376,41 +391,51 @@ void EditorWindow::handleActionLoad()
 {
     // If there are unsaved changes, prompt user to save them first
     if(fileModified){
-        QMessageBox msgBox(this);
-        msgBox.setWindowTitle("Opening new workplace");
-        msgBox.setIcon(QMessageBox::Warning);
-        msgBox.setText("Do you want to save before opening new file?");
-        msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-
-        QAbstractButton *cancelButton = msgBox.button(QMessageBox::Cancel);
-        if (cancelButton) 
-            cancelButton->setIcon(QIcon());
-
-        msgBox.setDefaultButton(QMessageBox::Cancel);
-        int ret = msgBox.exec();
-
-        // User changed their mind - no opening
-        if(ret == QMessageBox::Cancel){
-            return;
-        }
-
-        // User decided to save first
-        if (ret == QMessageBox::Save) {
-            this->handleActionSave();
-        }
+        this->promptOnModify();
     }
     
+    // Get name of file
     auto fileName = QFileDialog::getOpenFileName();
     if(fileName.isEmpty())
     {
         return;
     }
 
+    // Stop interpretation and load file
     this->stopButtonClick();
     model->loadFile(fileName);
     
+    // Update file state
     lastFileName = fileName;
     fileModified = false;
+}
+
+void EditorWindow::promptOnModify()
+{
+    // Setup prompt
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Opening new workplace");
+    msgBox.setIcon(QMessageBox::Warning);
+    msgBox.setText("Do you want to save before opening new file?");
+    msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+
+    // Add buttons
+    QAbstractButton *cancelButton = msgBox.button(QMessageBox::Cancel);
+    if (cancelButton) 
+        cancelButton->setIcon(QIcon());
+
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    int ret = msgBox.exec();
+
+    // User changed their mind - no opening
+    if(ret == QMessageBox::Cancel){
+        return;
+    }
+
+    // User decided to save first
+    if (ret == QMessageBox::Save) {
+        this->handleActionSave();
+    }
 }
 
 void EditorWindow::handleActionExit()

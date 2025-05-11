@@ -179,6 +179,11 @@ public slots:
     void handleActionMoveState(StateFSMWidget* movingState);
 
     /**
+     * @brief If file was modified, prompt whether it should be saved or not
+     */
+    void promptOnModify();
+
+    /**
      * @brief Cancels movement of a state
      */
     void cancelActionMove();
