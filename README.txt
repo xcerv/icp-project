@@ -25,7 +25,7 @@ Pro implementaci se spoléhá na framework Qt (minimálně verze 5.5.1).
 
 Editor umožňuje specifikovat stavy automatu, přechody mezi nimi a seznam akcí, které se mají při vstupu do stavu vykonat.
 Přechody se mohou provést pouze po zaznamenání vstupní události (může být i prázdná), přičemž se v takovém případě nejprve vyhodnotí podmínka přechodu. 
-Pokud je pravdivá, přechod může mít nadále nastaveno zpoždění, po jehož skončení se přejde do nového stavu – může tak v jednu být existovat více čekajících přechodů.
+Pokud je pravdivá, přechod může mít nadále nastaveno zpoždění, po jehož skončení se přejde do nového stavu – může tak v jednu chvíli existovat více čekajících přechodů.
 
 V editoru je dále možné specifikovat vstupní, výstupní a interní proměnné.
 Interní mají konkrétní datový typ a jsou využívány v rámci akcí stavů či podmínkách přechodů jakožto pomocné proměnné.
@@ -38,23 +38,24 @@ Program je rozdělen do několika složek podle významu. Ty jsou:
 * `Makefile` - Makefile pro překlad programu; bliže popsáno v [sekci o sestavení](#sestavení)
 * `examples` - příklady specifikovaných automatů
 * `doc` - složka pro generovanou programovou dokumentaci
-* `navrh.pdf` - popis konceptuálního návrhu
+* `doc/konceptualni_navrh.pdf` - popis konceptuálního návrhu
 * `src` - zdrojové soubory
     - `model` - vnitřní reprezentace automatu; odděleno od zobrazování
     - `interpreter` - pomocné struktury pro interpretaci automatu z vnitřní reprezentace
-    - `view` - implementace zobrazování automatu; řízené stavem vnitřní reprezentace
+    - `network` - modul pro komunikaci po síti
+    - `view` - implementace zobrazování automatu a uživatelského vstupu; řízené stavem vnitřní reprezentace
     - `mvc_interface.h` - sdílená knihovna pro komunikaci mezi model-view-controller entitami
     - `img` - ikony využívané view
-    - `exceptions` - výjimky specifické pro interpret
+    - `exceptions` - výjimky specifické pro interpret/model
 
 ## Sestavení
 Pro sestavení stačí pouze spustit Makefile příkazem `make` v kořenovém adresáři projektu.
-Předpokládá se nainstalovaná knihovna Qt, včetně Qml rozšíření, alespoň ve verzi 5.5.1.
-Pro kompilaci se také využívá qmake v dané verzi.
+Předpokládá se nainstalovaná knihovna Qt, včetně Qml rozšíření, alespoň ve verzi 5.5.1 (ideálně ale vyšší).
+Při kompilaci se také využívá qmake v dané verzi.
 Projekt byl primárně vyvíjen na platformě Linux.
 
 Makefile podporuje následující příkazy:
-* `make` - Zkompiluje projekt do binárního souboru icp_fsm_interpreter
+* `make` - Zkompiluje projekt do binárního souboru icp_fsm_interpreter do složky `build`
 * `make run` - Program zkompiluje a poté spustí
 * `make doxygen` - Vygeneruje projektovou dokumentaci pomocí doxygen do složky `doc`
 * `make clean` - Smaže veškeré produkty kompilace (včetně obsahu složky `doc`) 
@@ -65,7 +66,7 @@ Makefile podporuje následující příkazy:
 ## Spuštění
 Pro spuštění stačí pouze spustit příkaz:
 ```
-./icp_fsm_interpreter
+./build/icp_fsm_interpreter
 ```
 v kořenové složce programu, či případně využít `make run`.
 
