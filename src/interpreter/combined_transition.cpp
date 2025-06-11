@@ -191,12 +191,17 @@ void CombinedTransition::onTransition(QEvent * e)
         return; // Throw exception?
 
     auto parentState = static_cast<QState*>(this->parent());
+    this->stopTimer();
 
-    // Stop any pending timers
-    foreach(auto &tr, parentState->transitions())
-    {
-        auto curr = static_cast<CombinedTransition*>(tr);
-        curr->stopTimer();
+    // Don't reset timers on transition
+    if(this->sourceState() != this->targetState()){
+
+        // Stop any pending timers
+        foreach(auto &tr, parentState->transitions())
+        {
+            auto curr = static_cast<CombinedTransition*>(tr);
+            curr->stopTimer();
+        }
     }
 }
 
